@@ -1,13 +1,38 @@
 # godot-in-action
 
-这是一个为后续实现 Godot demo 准备的本地工作台仓库。当前仓库不是单一、可直接运行的 Godot 项目，而是把 Godot 引擎源码、官方文档源码、官方 demo 项目集，以及社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
+这是一个 Godot 学习和 demo 开发工作台。仓库已经包含两个独立可运行项目：`demo_2d/` 的 `Signal Sweep` 和 `demo_3d/` 的 `Beacon Runner 3D`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
 
 ## 仓库定位
 
 - 目标：为自定义 Godot demo 的设计、实现、验证提供本地参考资料和独立 demo 工程。
 - 当前状态：已包含独立 `demo_2d/` 和 `demo_3d/`；根目录仍是工作台，不是 Godot 项目。
 - 使用方式：把这里当作 Godot 本地知识库与样例库，而不是把根目录直接当成一个 Godot 工程打开。
-- GitHub 提交范围：提交本仓库原创文档、配置、后续独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
+- GitHub 提交范围：提交本仓库原创文档、配置、独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
+
+## 快速开始
+
+前提：安装 Godot `4.6.2`，并确认 `godot` 命令在 PATH 中。
+
+运行当前 2D demo：
+
+```sh
+godot --path demo_2d
+```
+
+运行当前 3D demo：
+
+```sh
+godot --path demo_3d
+```
+
+提交前快速验证两个 demo：
+
+```sh
+godot --headless --path demo_2d --quit-after 1
+godot --headless --editor --quit --path demo_2d
+godot --headless --path demo_3d --quit-after 1
+godot --headless --editor --quit --path demo_3d
+```
 
 ## 当前内容总览
 
@@ -20,7 +45,7 @@
 | `demo_2d/` | Signal Sweep | 当前 2D demo | Godot 4.6.2 验证的俯视收集/躲避 demo |
 | `demo_3d/` | Beacon Runner 3D | 当前 3D demo | Godot 4.6.2 验证的 3D 收集/躲避 demo |
 
-其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/` 和 `awesome-godot-master/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开后续 demo。
+其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/` 和 `awesome-godot-master/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开当前或后续 demo。
 
 ## 关键结论
 
@@ -28,7 +53,7 @@
 2. 当前本地“运行环境”和“底层参考”以 `4.6.2 / 4.6` 为主。
 3. 官方 demo 项目集是 `4.2` 系列，适合学习结构和写法，但不应无条件假定和 `4.6.2` 完全等价。
 4. `godot-docs-stable/` 是文档源码仓库，不是离线 HTML 成品；适合全文搜索、读 `.rst` 源文件、查目录结构。
-5. 这个仓库更像“Godot 本地知识底座”，后续自己的 demo 建议放在新的独立目录中。
+5. 这个仓库更像“Godot 本地知识底座 + 独立 demo 工作区”；新增 demo 应继续放在新的独立顶层目录中。
 
 ## 快速统计
 
@@ -107,27 +132,23 @@
 
 不要把它当成 Godot API 或当前仓库结构的事实来源。
 
-## 后续自定义 demo 的建议落点
+## 新增自定义 demo 的建议落点
 
-当前根目录下的 5 个主目录都更适合视为“上游镜像”或“参考资料”。如果要开始实现我们自己的 demo，建议：
+当前根目录下的 Godot 参考资料目录更适合视为“上游镜像”或“参考资料”。如果要开始实现新的自定义 demo，建议：
 
 1. 新建一个独立顶层目录，例如 `demo/`、`sandbox/`、`playground/`，或按具体主题命名。
 2. 在该目录下单独维护自己的 `project.godot`、场景、脚本、资源和说明文档。
 3. 默认以 `Godot 4.6.2` 为目标版本开发，参考 `4.2` demo 时明确记录迁移点。
 4. 优先使用 GDScript，除非需求明确要求 C#、GDExtension 或引擎层改动。
 
-## 当前 demo
+## 当前可运行 demo
 
-- `demo_2d/`：独立 Godot 2D demo，项目名 `Signal Sweep`。首版目标是收集信标、躲避巡逻无人机，并在一个固定竞技场中完成胜负闭环。
-- `demo_2d/project.godot`：用 Godot `4.6.2` 或兼容的 4.x 编辑器打开。
-- `demo_2d/README.md`：demo 自己的玩法、操作、结构和运行说明。
-- `demo_2d/DESIGN.md`：首版玩法边界。
-- `demo_2d/REFERENCES.md`：开发时参考过的本地 Godot docs / official demo。
-- `demo_3d/`：独立 Godot 3D demo，项目名 `Beacon Runner 3D`。首版目标是在 3D 训练场里移动、跳跃、收集信标、躲避巡逻无人机，并完成胜负闭环。
-- `demo_3d/project.godot`：用 Godot `4.6.2` 或兼容的 4.x 编辑器打开。
-- `demo_3d/README.md`：3D demo 自己的玩法、操作、结构和运行说明。
-- `demo_3d/DESIGN.md`：3D 首版玩法边界。
-- `demo_3d/REFERENCES.md`：3D demo 开发时参考过的本地 Godot docs / official demo。
+| 项目 | 入口 | 已实现玩法 | 说明 |
+| --- | --- | --- | --- |
+| `Signal Sweep` | `demo_2d/project.godot` | 俯视飞船移动、收集 8 个信标、躲避弹射巡逻无人机、3 点护盾、45 秒倒计时、胜负/重开 | 详见 `demo_2d/README.md`、`demo_2d/DESIGN.md`、`demo_2d/REFERENCES.md` |
+| `Beacon Runner 3D` | `demo_3d/project.godot` | 3D 胶囊角色移动/跳跃、收集 5 个发光信标、躲避 2 个线段巡逻无人机、3 点护盾、60 秒倒计时、胜负/重开 | 详见 `demo_3d/README.md`、`demo_3d/DESIGN.md`、`demo_3d/REFERENCES.md` |
+
+两个 demo 的首版都使用 Godot 内置几何/Label/灯光等 placeholder，不依赖外部美术、音频、字体或模型资产。
 
 ## 常用命令
 
@@ -186,6 +207,7 @@ godot --headless --editor --quit --path demo_3d
 ## 当前限制
 
 - 根目录不是一个可直接运行的 Godot 工程。
+- 当前 2D/3D demo 是首版垂直切片，暂未包含音频、主菜单、导出预设或完整关卡流程。
 - 文档当前是源码形式，若需要浏览完整离线站点，还要额外构建或下载离线 HTML。
 - 本地参考 demo 与当前编辑器版本存在 `4.2` 对 `4.6.2` 的版本差，需要在实现时留意兼容性。
 - GitHub 普通 Git 不包含 macOS 编辑器 app；编辑器二进制对 LLM 参考价值低，而且超过 GitHub 普通单文件限制。
