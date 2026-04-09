@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 18.0
+
+[node name="Player" type="Area2D"]
+collision_layer = 1
+collision_mask = 6
+script = ExtResource("1_player_script")
+
+[node name="Hull" type="Polygon2D" parent="."]
+color = Color(0.141176, 0.858824, 0.894118, 1)
+polygon = PackedVector2Array(24, 0, -18, -15, -10, 0, -18, 15)
+
+[node name="Core" type="Polygon2D" parent="."]
+color = Color(0.956863, 0.972549, 0.611765, 1)
+polygon = PackedVector2Array(5, 0, -7, -6, -12, 0, -7, 6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_player")

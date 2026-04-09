@@ -114,6 +114,14 @@
 3. 默认以 `Godot 4.6.2` 为目标版本开发，参考 `4.2` demo 时明确记录迁移点。
 4. 优先使用 GDScript，除非需求明确要求 C#、GDExtension 或引擎层改动。
 
+## 当前 demo
+
+- `demo_2d/`：独立 Godot 2D demo，项目名 `Signal Sweep`。首版目标是收集信标、躲避巡逻无人机，并在一个固定竞技场中完成胜负闭环。
+- `demo_2d/project.godot`：用 Godot `4.6.2` 或兼容的 4.x 编辑器打开。
+- `demo_2d/README.md`：demo 自己的玩法、操作、结构和运行说明。
+- `demo_2d/DESIGN.md`：首版玩法边界。
+- `demo_2d/REFERENCES.md`：开发时参考过的本地 Godot docs / official demo。
+
 ## 适合后续 LLM/代理的理解方式
 
 - 把本仓库理解成“Godot 本地参考仓库”，不是单一应用项目。

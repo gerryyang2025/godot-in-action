@@ -19,6 +19,15 @@
 
 实现一个范围可控、可运行、可继续扩展的 Godot 2D 游戏 demo，先完成一个“可玩 1 分钟”的垂直切片，再逐步补素材、关卡、UI、音效和文档。
 
+## 当前进度
+
+- 已启动独立项目：`demo_2d/`
+- 当前 demo 名称：`Signal Sweep`
+- 当前核心循环：开始游戏、移动飞船、收集信标、躲避无人机、护盾扣减、倒计时、胜利/失败、按键重开。
+- 已安装 CLI：`godot` 指向本机 Godot `4.6.2.stable.official.71f334935`。
+- 已完成静态检查：`res://` 引用路径存在，`demo_2d/` 和根 `README.md` 没有 `git diff --check` 问题。
+- 已完成 Godot 检查：`godot --headless --editor --quit --path demo_2d` 导入成功；`godot --headless --path demo_2d --quit-after 1` 主场景启动成功。
+
 ## 2. 阶段计划
 
 ### 阶段 A：确定 demo 方向
