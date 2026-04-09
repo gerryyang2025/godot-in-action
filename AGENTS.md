@@ -157,7 +157,9 @@ godot --headless --editor --quit --path demo_2d
 ## 11. GitHub 协作约定
 
 - 仓库首页信息维护在 `README.md`。
-- 后续实现计划维护在 `PLAN.md`。
+- demo 路线图总入口维护在 `PLAN.md`。
+- 2D demo 详细计划维护在 `PLAN_2D.md`。
+- 3D demo 详细计划维护在 `PLAN_3D.md`。
 - 贡献流程维护在 `CONTRIBUTING.md`。
 - 安全报告范围维护在 `SECURITY.md`。
 - 求助入口维护在 `SUPPORT.md`。
