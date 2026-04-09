@@ -24,10 +24,6 @@ exports/
 *.wasm
 *.zip
 
-# Local Godot editor binary.
-# The executable inside this app bundle is larger than GitHub's normal Git file limit.
-/Godot_v4.6.2-stable_macos.universal/
-
 # Version the Godot reference directories even when they contain files that match
 # generic build/export patterns. This keeps clones useful for offline research.
 !/awesome-godot-master/
