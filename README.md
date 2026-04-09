@@ -195,6 +195,8 @@ godot --headless --editor --quit --path demo_3d
 - `PLAN.md`：demo 路线图总入口。
 - `PLAN_2D.md`：实现 Godot 2D 游戏 demo 的详细阶段计划。
 - `PLAN_3D.md`：实现 Godot 3D 游戏 demo 的详细阶段计划。
+- `PLAN_2D_ART.md`：2D demo 的美术、VFX、UI 和渲染优化计划。
+- `PLAN_3D_ART.md`：3D demo 的模型、材质、灯光、相机、VFX 和渲染优化计划。
 - `CONTRIBUTING.md`：人类和 AI 协作者的贡献流程。
 - `SECURITY.md`：安全问题报告范围和方式。
 - `SUPPORT.md`：求助入口和上游问题分流。
