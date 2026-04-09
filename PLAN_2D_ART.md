@@ -1,14 +1,16 @@
 # Signal Sweep 2D 美术与渲染优化计划
 
-本计划用于把 `demo_2d/` 从“可玩 placeholder”推进到“有明确视觉方向的 2D 垂直切片”。它只规划 `demo_2d/` 内的原创美术、材质、VFX、UI 和相机反馈；不要把美术实验混入 Godot 上游参考目录。
+本计划用于基于现有 `demo_2d/` 创建一个独立的 2D 美术优化示例，而不是直接修改原始 `Signal Sweep` 基线。建议新建 `demo_2d_art/`，把美术、材质、VFX、UI 和相机反馈实验都放在这个独立目录中；不要把美术实验混入 Godot 上游参考目录，也不要覆盖原来的 `demo_2d/`。
 
 ## 0. 默认方向
 
-- 目标项目：`demo_2d/`
-- 当前 demo：`Signal Sweep`
+- 基线参考项目：`demo_2d/`
+- 目标美术示例项目：`demo_2d_art/`
+- 基线 demo：`Signal Sweep`
 - 目标引擎：`Godot 4.6.2`
 - 默认视觉关键词：深空训练场、霓虹信号、雷达扫描、清晰危险航线、干净战术 HUD。
 - 首版仍优先：读图清楚、玩法反馈强、运行稳定、资产来源明确。
+- 原则：保留 `demo_2d/` 作为当前玩法基线；所有美术优化默认在 `demo_2d_art/` 中实现。
 
 ## 1. 当前视觉现状
 
@@ -40,12 +42,17 @@
 - `godot-demo-projects-4.2-31d1c0c/2d/screen_space_shaders/`
 - `godot-demo-projects-4.2-31d1c0c/2d/dodge_the_creeps/`
 
-## 3. 建议资产目录
+## 3. 目录与资产约定
 
-保留现有 `scenes/`、`scripts/`。新增资产时建议使用：
+建议先复制或重建一个独立项目目录，再逐步迁移玩法脚本和场景：
 
 ```text
-demo_2d/
+demo_2d_art/
+  project.godot
+  README.md
+  DESIGN.md
+  REFERENCES.md
+  ART_DIRECTION.md
   assets/
     sprites/
     textures/
@@ -58,18 +65,25 @@ demo_2d/
     themes/
 ```
 
+实施边界：
+
+- 不要直接在 `demo_2d/` 中替换现有 placeholder 资源。
+- 如果需要复用现有玩法逻辑，可以从 `demo_2d/` 复制场景/脚本到 `demo_2d_art/`，再在新目录中重构。
+- `demo_2d/` 继续作为“玩法基线”保留，便于和美术优化版做 A/B 对照。
+
 提交规则：
 
 - 提交原创源资产、Godot 项目内使用的图片/字体/材质/shader。
 - 如果 Godot 为资源创建 `*.import` sidecar，随源资产一起提交。
 - 不提交 `.godot/`、导出包、录屏文件、临时截图和设计工具缓存。
-- 外部资产必须在 `demo_2d/README.md` 或 attribution 文件中记录来源、作者、许可证和下载日期。
+- 外部资产必须在 `demo_2d_art/README.md` 或 attribution 文件中记录来源、作者、许可证和下载日期。
 
 ## 4. 分阶段计划
 
 ### 阶段 2A：建立 2D 视觉规格
 
-- [ ] 在 `demo_2d/ART_DIRECTION.md` 写 1 页视觉方向。
+- [ ] 创建独立项目目录 `demo_2d_art/`，不要在 `demo_2d/` 上直接开工。
+- [ ] 在 `demo_2d_art/ART_DIRECTION.md` 写 1 页视觉方向。
 - [ ] 定义 6 到 10 个主色：背景、面板、玩家、玩家核心、信标、危险、护盾、文字、强调。
 - [ ] 定义形状语言：玩家偏三角/箭头，信标偏圆/菱形，危险偏尖角/红环。
 - [ ] 定义像素/矢量/程序化图形路线；首选一种，不混用过多风格。
@@ -79,7 +93,7 @@ demo_2d/
 
 - [ ] 不打开 Godot 也能通过 `ART_DIRECTION.md` 理解最终画面目标。
 
-### 阶段 2B：替换玩家/信标/无人机的 placeholder 表现
+### 阶段 2B：在独立示例中替换玩家/信标/无人机的 placeholder 表现
 
 - [ ] 为玩家拆分 `Body`、`Core`、`Thruster`、`ShieldRing`、`HitFlash` 等视觉子节点。
 - [ ] 给玩家增加移动方向推进器、加速拖尾或轻量残影。
@@ -130,37 +144,39 @@ demo_2d/
 
 ### 阶段 2F：资产管线和性能检查
 
-- [ ] 在 `demo_2d/README.md` 记录新增资产路径、来源和运行要求。
-- [ ] 在 `demo_2d/REFERENCES.md` 记录实际参考过的 art / shader / particle demo。
+- [ ] 在 `demo_2d_art/README.md` 记录新增资产路径、来源和运行要求。
+- [ ] 在 `demo_2d_art/REFERENCES.md` 记录实际参考过的 art / shader / particle demo。
 - [ ] 控制每次导入资源的数量；先替换关键对象，不批量搬入素材包。
 - [ ] 对粒子、shader、光照做“最小有效数量”检查。
 - [ ] 保留 placeholder 回退路径，直到新资产在 Godot 中验证过。
 
 验收：
 
-- [ ] `git status --short --ignored=matching demo_2d` 中没有意外缓存、导出包或本地设计工具产物。
+- [ ] `git status --short --ignored=matching demo_2d_art` 中没有意外缓存、导出包或本地设计工具产物。
 
 ## 5. 提交前验证
 
 ```sh
-godot --headless --path demo_2d --quit-after 1
-godot --headless --editor --quit --path demo_2d
-git diff --check -- demo_2d README.md PLAN.md PLAN_2D_ART.md
+godot --headless --path demo_2d_art --quit-after 1
+godot --headless --editor --quit --path demo_2d_art
+git diff --check -- demo_2d_art README.md PLAN.md PLAN_2D_ART.md
 git status --short
 ```
 
 人工检查建议：
 
-- [ ] 用 `godot --path demo_2d` 玩一次完整胜利或失败流程。
+- [ ] 用 `godot --path demo_2d_art` 玩一次完整胜利或失败流程。
 - [ ] 在窗口原始尺寸和拉大尺寸各看一次 HUD 和对象读图。
 - [ ] 检查 Godot Debugger 是否有缺失资源、shader 编译错误、import warning。
 - [ ] 截 1 张“游玩中”截图，和 `ART_DIRECTION.md` 的目标对照。
 
 ## 6. 首轮美术优化完成标准
 
-- [ ] `Signal Sweep` 有一份清晰的 `ART_DIRECTION.md`。
+- [ ] `demo_2d_art/` 是一个独立可运行的 2D 美术优化示例。
+- [ ] `Signal Sweep` 美术优化版有一份清晰的 `ART_DIRECTION.md`。
 - [ ] 玩家、信标、无人机不再只是基础 Polygon/Line placeholder。
 - [ ] 至少有 3 类事件反馈：收集、受击、胜利/失败。
 - [ ] 背景、边界、HUD、核心对象形成统一的“信号训练场”风格。
 - [ ] 没有引入无来源记录的外部图片、字体、音频或素材包。
-- [ ] 2D demo 的两条 Godot headless 验证通过。
+- [ ] `demo_2d/` 原始玩法基线没有被直接改写。
+- [ ] `demo_2d_art/` 的两条 Godot headless 验证通过。
