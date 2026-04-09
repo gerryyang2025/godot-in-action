@@ -24,7 +24,9 @@
 
 - [ ] `git status --short` 中没有意外的编辑器 app、缓存或导出包。
 - [ ] 变更过的 Godot 项目能用目标版本打开。
-- [ ] 主场景可以从项目设置中的 main scene 运行。
+- [ ] 当前 demo 可以运行：`godot --path demo_2d`
+- [ ] 当前 demo 可以 headless 启动：`godot --headless --path demo_2d --quit-after 1`
+- [ ] 当前 demo 可以导入/加载编辑器：`godot --headless --editor --quit --path demo_2d`
 - [ ] README 或 demo 自身文档已同步更新。
 - [ ] 如果引入了第三方资源，已记录来源、作者和许可证。
 

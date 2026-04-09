@@ -12,6 +12,13 @@ godot --path demo_2d
 
 如果你的 Godot 不在 PATH 中，请用本机 Godot 4.6.2 编辑器打开 `demo_2d/project.godot`。
 
+## 测试
+
+```sh
+godot --headless --path demo_2d --quit-after 1
+godot --headless --editor --quit --path demo_2d
+```
+
 ## 操作
 
 - `WASD` / 方向键：移动

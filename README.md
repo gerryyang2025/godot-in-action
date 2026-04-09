@@ -122,6 +122,21 @@
 - `demo_2d/DESIGN.md`：首版玩法边界。
 - `demo_2d/REFERENCES.md`：开发时参考过的本地 Godot docs / official demo。
 
+## 常用命令
+
+打开当前 2D demo：
+
+```sh
+godot --path demo_2d
+```
+
+提交前快速验证当前 2D demo：
+
+```sh
+godot --headless --path demo_2d --quit-after 1
+godot --headless --editor --quit --path demo_2d
+```
+
 ## 适合后续 LLM/代理的理解方式
 
 - 把本仓库理解成“Godot 本地参考仓库”，不是单一应用项目。

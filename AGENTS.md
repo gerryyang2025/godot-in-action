@@ -102,6 +102,23 @@
 
 如果用户说“分析当前工程”，默认解释为分析整个根仓库及其顶层资料结构，而不是分析某一个具体 demo。
 
+## 7.1. 当前 demo 常用命令
+
+运行当前 2D demo：
+
+```sh
+godot --path demo_2d
+```
+
+快速验证当前 2D demo：
+
+```sh
+godot --headless --path demo_2d --quit-after 1
+godot --headless --editor --quit --path demo_2d
+```
+
+如果 Godot 因沙箱无法写用户级日志/设置而失败，改在非沙箱环境运行同一条命令；不要因此把 `.godot/`、`export_presets.cfg` 或用户级 editor settings 提交进仓库。
+
 ## 8. 推荐参考入口
 
 遇到这些任务时，优先查看这些目录：
