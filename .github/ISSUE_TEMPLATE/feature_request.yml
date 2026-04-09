@@ -1,0 +1,49 @@
+name: Feature request
+description: Propose a Godot demo idea, improvement, or repository-maintenance task.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be possible when this is done?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - 2D demo gameplay
+        - Godot project setup
+        - Documentation
+        - Repository maintenance
+        - Research/reference notes
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Proposed target directory
+      placeholder: demo_2d/
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: Local references
+      description: List relevant local official demos or docs, if known.
+      placeholder: godot-demo-projects-4.2-31d1c0c/2d/platformer/
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Player can ...
+        - [ ] Main scene runs ...
+    validations:
+      required: true

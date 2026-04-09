@@ -1,0 +1,34 @@
+# macOS / editor noise
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+*~
+
+# Local Godot editor/project cache.
+# Keep project.godot, scenes, scripts, resources, and *.import metadata tracked.
+.godot/
+.import/
+export_presets.cfg
+
+# Godot exports / builds
+builds/
+exports/
+*.apk
+*.aab
+*.app
+*.dmg
+*.exe
+*.pck
+*.wasm
+*.zip
+
+# Local Godot reference cache.
+# These directories are useful on this machine, but are too large / upstream-owned
+# to commit into the root GitHub repository.
+/Godot_v4.6.2-stable_macos.universal/
+/godot-4.6.2-stable/
+/godot-docs-stable/
+/godot-demo-projects-4.2-31d1c0c/
+/awesome-godot-master/

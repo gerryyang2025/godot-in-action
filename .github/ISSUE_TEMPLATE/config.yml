@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Godot documentation
+    url: https://docs.godotengine.org/
+    about: Use the official Godot documentation for engine usage questions.
+  - name: Godot Engine issues
+    url: https://github.com/godotengine/godot/issues
+    about: Report engine bugs to Godot's upstream repository.
