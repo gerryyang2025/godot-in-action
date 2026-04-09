@@ -16,12 +16,13 @@
 - 默认使用 GDScript，除非任务明确要求其他语言。
 - 不要在仓库根目录创建 `project.godot`。
 - 新 demo 默认放在独立顶层目录，例如 `demo_2d/`。
-- 不要把本地 Godot 编辑器、Godot 引擎源码、官方文档镜像、官方 demo 镜像提交进根仓库。
+- Godot 引擎源码、官方文档镜像、官方 demo 镜像和 awesome-godot 清单是本仓库的参考资料，可以提交。
+- 不要把本地 macOS Godot 编辑器 app 提交进普通 Git；如果需要分发编辑器，请先配置 Git LFS 或使用 Release 资产。
 - 如果参考 `godot-demo-projects-4.2-31d1c0c/`，请记住它是 Godot `4.2.x` demo，需要按 `4.6.2` 重新验证。
 
 ## 提交前检查
 
-- [ ] `git status --short` 中没有意外的上游镜像、编辑器 app、缓存或导出包。
+- [ ] `git status --short` 中没有意外的编辑器 app、缓存或导出包。
 - [ ] 变更过的 Godot 项目能用目标版本打开。
 - [ ] 主场景可以从项目设置中的 main scene 运行。
 - [ ] README 或 demo 自身文档已同步更新。

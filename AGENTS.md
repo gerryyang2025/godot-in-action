@@ -7,36 +7,31 @@
 - 这是一个 Godot 本地工作台/参考仓库，不是单一可运行应用。
 - 根目录没有 `project.godot`，因此根目录本身不是 Godot 项目。
 - 当前仓库的主体内容是上游镜像和本地参考资料。
-- 在 GitHub 维度，根仓库应只跟踪原创文档、配置、GitHub 元数据和未来独立 demo；大体积本地参考镜像默认不提交。
+- 在 GitHub 维度，根仓库跟踪原创文档、配置、GitHub 元数据、未来独立 demo，以及选定的 Godot 参考资料目录。
 
 ## 2. 顶层目录语义
 
-- `Godot_v4.6.2-stable_macos.universal/`
-  - 本地 Godot 编辑器二进制。
-  - 用于打开或导入具体 demo 项目，不是源码目录。
-  - 已在根目录 `.gitignore` 中忽略。
 - `godot-4.6.2-stable/`
   - Godot 4.6.2 引擎源码。
   - 用于确认底层实现、类行为、引擎约束、平台差异。
-  - 已在根目录 `.gitignore` 中忽略。
+  - 应纳入根仓库 Git 版本控制。
 - `godot-docs-stable/`
   - Godot 4.6 stable 文档源码仓库。
   - 主要是 `.rst` 源文件，适合检索和阅读，不等于构建完成的文档站。
-  - 已在根目录 `.gitignore` 中忽略。
+  - 应纳入根仓库 Git 版本控制。
 - `godot-demo-projects-4.2-31d1c0c/`
   - 官方 demo 项目快照，面向 Godot 4.2.x。
   - 其中每个包含 `project.godot` 的目录，都是一个独立 demo。
-  - 已在根目录 `.gitignore` 中忽略。
+  - 应纳入根仓库 Git 版本控制。
 - `awesome-godot-master/`
   - 社区资源导航清单。
   - 只用于发现资源，不作为 API 或仓库结构的事实依据。
-  - 已在根目录 `.gitignore` 中忽略。
+  - 应纳入根仓库 Git 版本控制。
 
 ## 3. 默认编辑边界
 
 除非用户明确要求，否则以下目录默认视为只读参考，不应直接改动：
 
-- `Godot_v4.6.2-stable_macos.universal/`
 - `godot-4.6.2-stable/`
 - `godot-docs-stable/`
 - `godot-demo-projects-4.2-31d1c0c/`
@@ -44,7 +39,9 @@
 
 如果用户要求“开始做自己的 demo”，优先新建独立顶层目录承载新项目，而不是把代码混进这些上游目录中。
 
-提交前应运行或等效检查 `git status --short`。若看到上述参考目录、`.godot/`、`.DS_Store`、导出包、编辑器 app 出现在待提交列表里，先停下来检查忽略规则和提交范围。
+提交前应运行或等效检查 `git status --short`。若看到 `.godot/`、`.DS_Store`、导出包、编辑器 app 出现在待提交列表里，先停下来检查忽略规则和提交范围。Godot 参考资料目录出现在待提交列表中是允许的。
+
+本机 Godot 编辑器 app 不需要出现在仓库中；用已安装的 Godot 4.6.2 打开 demo。
 
 ## 4. 版本判断规则
 
@@ -138,7 +135,7 @@
 
 如果需要用一句话描述这个仓库，应表述为：
 
-“这是一个围绕 Godot 4.6.2 编辑器/源码、4.6 文档和 4.2 官方 demo 组织的本地参考工作台，用于为后续独立 demo 开发提供资料基础。”
+“这是一个围绕 Godot 4.6.2 源码、4.6 文档和 4.2 官方 demo 组织的本地参考工作台，用于为后续独立 demo 开发提供资料基础。”
 
 ## 11. GitHub 协作约定
 
@@ -148,4 +145,5 @@
 - 安全报告范围维护在 `SECURITY.md`。
 - 求助入口维护在 `SUPPORT.md`。
 - Issue 和 PR 模板位于 `.github/`。
-- 不要为了“完善 GitHub 社区资料”而给上游镜像目录补根仓库许可证声明；上游内容应保留自己的许可证和来源。
+- 不要为了“完善 GitHub 社区资料”而给上游参考资料目录补根仓库许可证声明；上游内容应保留自己的许可证和来源。
+- 不要把 Godot 编辑器二进制加入普通 Git；它对 LLM 参考价值低，且 macOS universal 可执行文件超过 GitHub 普通单文件限制。

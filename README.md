@@ -1,25 +1,24 @@
 # godot-in-action
 
-这是一个为后续实现 Godot demo 准备的本地工作台仓库。当前仓库不是单一、可直接运行的 Godot 项目，而是把 Godot 编辑器、引擎源码、官方文档源码、官方 demo 项目集，以及社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
+这是一个为后续实现 Godot demo 准备的本地工作台仓库。当前仓库不是单一、可直接运行的 Godot 项目，而是把 Godot 引擎源码、官方文档源码、官方 demo 项目集，以及社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
 
 ## 仓库定位
 
 - 目标：为后续自定义 Godot demo 的设计、实现、验证提供本地参考资料。
 - 当前状态：仓库里还没有“我们自己的 Godot 项目”，现有内容以官方或社区上游镜像为主。
 - 使用方式：把这里当作 Godot 本地知识库与样例库，而不是把根目录直接当成一个 Godot 工程打开。
-- GitHub 提交范围：默认只提交本仓库原创文档、配置和后续独立 demo；本地 Godot 编辑器/源码/文档/demo 镜像默认由根目录 `.gitignore` 忽略。
+- GitHub 提交范围：提交本仓库原创文档、配置、后续独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
 
 ## 当前内容总览
 
 | 路径 | 内容 | 角色 | 备注 |
 | --- | --- | --- | --- |
-| `Godot_v4.6.2-stable_macos.universal/` | Godot macOS 编辑器二进制 | 运行/打开项目 | `Info.plist` 显示版本为 `4.6.2` |
 | `godot-4.6.2-stable/` | Godot 引擎源码 | 底层行为与 API 参考 | 含 `SConstruct`、`version.py` 等构建入口 |
 | `godot-docs-stable/` | Godot 官方文档源码 | 概念与 API 文档参考 | `conf.py` 中版本为 `4.6`，当前是 reST 源码，不是已构建 HTML |
 | `godot-demo-projects-4.2-31d1c0c/` | Godot 官方 demo 项目集 | 场景/脚本/玩法实现参考 | 共 `108` 个 demo，目录名表明是 `4.2` 分支快照 |
 | `awesome-godot-master/` | Awesome Godot 资源清单 | 扩展资源发现 | 适合找第三方项目、插件、模板，不是 API 真正依据 |
 
-以上 5 个顶层目录是当前机器上的本地参考缓存。它们对学习和检索很有用，但体积大、属于上游内容，不是根 GitHub 仓库默认要提交的内容。
+其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/` 和 `awesome-godot-master/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开后续 demo。
 
 ## 关键结论
 
@@ -135,7 +134,7 @@
 - `SUPPORT.md`：求助入口和上游问题分流。
 - `.github/ISSUE_TEMPLATE/`：bug / feature issue 模板。
 - `.github/PULL_REQUEST_TEMPLATE.md`：PR 描述和验证清单。
-- `.gitignore`：忽略 Godot 缓存、导出产物、本地上游参考镜像和编辑器二进制。
+- `.gitignore`：忽略 Godot 缓存、导出产物和本地编辑器二进制；显式允许提交 Godot 参考资料目录。
 - `.gitattributes`：统一常见 Godot/Markdown/YAML 文本文件换行，并标记常见二进制资产。
 - `.editorconfig`：统一基础文本格式、换行和缩进约定。
 
@@ -145,3 +144,4 @@
 - 根目录不是一个可直接运行的 Godot 工程。
 - 文档当前是源码形式，若需要浏览完整离线站点，还要额外构建或下载离线 HTML。
 - demo 与当前编辑器版本存在 `4.2` 对 `4.6.2` 的版本差，需要在实现时留意兼容性。
+- GitHub 普通 Git 不包含 macOS 编辑器 app；编辑器二进制对 LLM 参考价值低，而且超过 GitHub 普通单文件限制。

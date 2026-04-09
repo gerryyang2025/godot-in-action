@@ -24,11 +24,17 @@ exports/
 *.wasm
 *.zip
 
-# Local Godot reference cache.
-# These directories are useful on this machine, but are too large / upstream-owned
-# to commit into the root GitHub repository.
+# Local Godot editor binary.
+# The executable inside this app bundle is larger than GitHub's normal Git file limit.
 /Godot_v4.6.2-stable_macos.universal/
-/godot-4.6.2-stable/
-/godot-docs-stable/
-/godot-demo-projects-4.2-31d1c0c/
-/awesome-godot-master/
+
+# Version the Godot reference directories even when they contain files that match
+# generic build/export patterns. This keeps clones useful for offline research.
+!/awesome-godot-master/
+!/awesome-godot-master/**
+!/godot-4.6.2-stable/
+!/godot-4.6.2-stable/**
+!/godot-docs-stable/
+!/godot-docs-stable/**
+!/godot-demo-projects-4.2-31d1c0c/
+!/godot-demo-projects-4.2-31d1c0c/**

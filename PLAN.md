@@ -8,7 +8,7 @@
 - 默认语言：`GDScript`
 - 项目类型：独立 2D demo
 - 建议项目目录：`demo_2d/`
-- 本地编辑器：`Godot_v4.6.2-stable_macos.universal/Contents/MacOS/Godot`
+- 本地编辑器：请安装 Godot `4.6.2`，并使用 Godot.app、系统 PATH 中的 `godot`，或你自己的绝对路径运行项目。
 - 不直接修改的参考目录：
   - `godot-4.6.2-stable/`
   - `godot-docs-stable/`
@@ -133,8 +133,8 @@ demo_2d/
 可选命令参考：
 
 ```sh
-./Godot_v4.6.2-stable_macos.universal/Contents/MacOS/Godot --path demo_2d
-./Godot_v4.6.2-stable_macos.universal/Contents/MacOS/Godot --headless --editor --quit --path demo_2d
+godot --path demo_2d
+godot --headless --editor --quit --path demo_2d
 ```
 
 产出物：
