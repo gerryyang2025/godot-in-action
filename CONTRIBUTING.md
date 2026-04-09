@@ -1,6 +1,6 @@
 # Contributing
 
-感谢你愿意改进 `godot-in-action`。这个仓库当前是 Godot 本地参考工作台，未来会承载独立的 Godot 2D demo。
+感谢你愿意改进 `godot-in-action`。这个仓库是 Godot 本地参考工作台，并承载独立的 Godot 2D/3D demo。
 
 ## 开始之前
 
@@ -17,7 +17,7 @@
 - 默认目标 Godot 版本是 `4.6.2`。
 - 默认使用 GDScript，除非任务明确要求其他语言。
 - 不要在仓库根目录创建 `project.godot`。
-- 新 demo 默认放在独立顶层目录，例如 `demo_2d/`。
+- 新 demo 默认放在独立顶层目录，例如 `demo_2d/` 或 `demo_3d/`。
 - Godot 引擎源码、官方文档镜像、官方 demo 镜像和 awesome-godot 清单是本仓库的参考资料，可以提交。
 - 不要把本地 macOS Godot 编辑器 app 提交进普通 Git；如果需要分发编辑器，请先配置 Git LFS 或使用 Release 资产。
 - 如果参考 `godot-demo-projects-4.2-31d1c0c/`，请记住它是 Godot `4.2.x` demo，需要按 `4.6.2` 重新验证。
@@ -26,9 +26,12 @@
 
 - [ ] `git status --short` 中没有意外的编辑器 app、缓存或导出包。
 - [ ] 变更过的 Godot 项目能用目标版本打开。
-- [ ] 当前 demo 可以运行：`godot --path demo_2d`
-- [ ] 当前 demo 可以 headless 启动：`godot --headless --path demo_2d --quit-after 1`
-- [ ] 当前 demo 可以导入/加载编辑器：`godot --headless --editor --quit --path demo_2d`
+- [ ] 当前 2D demo 可以运行：`godot --path demo_2d`
+- [ ] 当前 2D demo 可以 headless 启动：`godot --headless --path demo_2d --quit-after 1`
+- [ ] 当前 2D demo 可以导入/加载编辑器：`godot --headless --editor --quit --path demo_2d`
+- [ ] 当前 3D demo 可以运行：`godot --path demo_3d`
+- [ ] 当前 3D demo 可以 headless 启动：`godot --headless --path demo_3d --quit-after 1`
+- [ ] 当前 3D demo 可以导入/加载编辑器：`godot --headless --editor --quit --path demo_3d`
 - [ ] README 或 demo 自身文档已同步更新。
 - [ ] 如果引入了第三方资源，已记录来源、作者和许可证。
 

@@ -6,8 +6,8 @@
 
 - 这是一个 Godot 本地工作台/参考仓库，不是单一可运行应用。
 - 根目录没有 `project.godot`，因此根目录本身不是 Godot 项目。
-- 当前仓库的主体内容是上游镜像和本地参考资料。
-- 在 GitHub 维度，根仓库跟踪原创文档、配置、GitHub 元数据、未来独立 demo，以及选定的 Godot 参考资料目录。
+- 当前仓库的主体内容是上游镜像、本地参考资料和独立 demo。
+- 在 GitHub 维度，根仓库跟踪原创文档、配置、GitHub 元数据、独立 demo，以及选定的 Godot 参考资料目录。
 
 ## 2. 顶层目录语义
 
@@ -27,6 +27,12 @@
   - 社区资源导航清单。
   - 只用于发现资源，不作为 API 或仓库结构的事实依据。
   - 应纳入根仓库 Git 版本控制。
+- `demo_2d/`
+  - 当前独立 2D demo：Signal Sweep。
+  - 是我们自己的 Godot 项目，可以按用户需求修改。
+- `demo_3d/`
+  - 当前独立 3D demo：Beacon Runner 3D。
+  - 是我们自己的 Godot 项目，可以按用户需求修改。
 
 ## 3. 默认编辑边界
 
@@ -115,6 +121,19 @@ godot --path demo_2d
 ```sh
 godot --headless --path demo_2d --quit-after 1
 godot --headless --editor --quit --path demo_2d
+```
+
+运行当前 3D demo：
+
+```sh
+godot --path demo_3d
+```
+
+快速验证当前 3D demo：
+
+```sh
+godot --headless --path demo_3d --quit-after 1
+godot --headless --editor --quit --path demo_3d
 ```
 
 如果 Godot 因沙箱无法写用户级日志/设置而失败，改在非沙箱环境运行同一条命令；不要因此把 `.godot/`、`export_presets.cfg` 或用户级 editor settings 提交进仓库。

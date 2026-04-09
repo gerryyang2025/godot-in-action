@@ -1,0 +1,181 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player_scene"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.0627451, 0.0901961, 0.129412, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
+albedo_color = Color(0.133333, 0.627451, 0.690196, 1)
+emission_enabled = true
+emission = Color(0.027451, 0.176471, 0.211765, 1)
+emission_energy_multiplier = 0.35
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pillar"]
+albedo_color = Color(0.956863, 0.972549, 0.611765, 1)
+emission_enabled = true
+emission = Color(0.211765, 0.184314, 0.0470588, 1)
+emission_energy_multiplier = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(24, 0.4, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(24, 0.4, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_long"]
+size = Vector3(24, 1.6, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_long"]
+size = Vector3(24, 1.6, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_short"]
+size = Vector3(0.5, 1.6, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_short"]
+size = Vector3(0.5, 1.6, 18)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pillar"]
+top_radius = 0.55
+bottom_radius = 0.55
+height = 1.8
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pillar"]
+height = 1.8
+radius = 0.55
+
+[sub_resource type="BoxMesh" id="BoxMesh_ramp"]
+size = Vector3(3.4, 0.35, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ramp"]
+size = Vector3(3.4, 0.35, 2.4)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main_script")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, 35, 0)
+light_energy = 2.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 10, 14)
+fov = 62.0
+
+[node name="Arena" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, -0.2, 0)
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Arena/Floor"]
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="NorthWall" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 0.8, -9)
+
+[node name="WallMesh" type="MeshInstance3D" parent="Arena/NorthWall"]
+mesh = SubResource("BoxMesh_wall_long")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/NorthWall"]
+shape = SubResource("BoxShape3D_wall_long")
+
+[node name="SouthWall" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 0.8, 9)
+
+[node name="WallMesh" type="MeshInstance3D" parent="Arena/SouthWall"]
+mesh = SubResource("BoxMesh_wall_long")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/SouthWall"]
+shape = SubResource("BoxShape3D_wall_long")
+
+[node name="WestWall" type="StaticBody3D" parent="Arena"]
+position = Vector3(-12, 0.8, 0)
+
+[node name="WallMesh" type="MeshInstance3D" parent="Arena/WestWall"]
+mesh = SubResource("BoxMesh_wall_short")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestWall"]
+shape = SubResource("BoxShape3D_wall_short")
+
+[node name="EastWall" type="StaticBody3D" parent="Arena"]
+position = Vector3(12, 0.8, 0)
+
+[node name="WallMesh" type="MeshInstance3D" parent="Arena/EastWall"]
+mesh = SubResource("BoxMesh_wall_short")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastWall"]
+shape = SubResource("BoxShape3D_wall_short")
+
+[node name="CenterPillar" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 0.9, -1.0)
+
+[node name="PillarMesh" type="MeshInstance3D" parent="Arena/CenterPillar"]
+mesh = SubResource("CylinderMesh_pillar")
+surface_material_override/0 = SubResource("StandardMaterial3D_pillar")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/CenterPillar"]
+shape = SubResource("CylinderShape3D_pillar")
+
+[node name="Ramp" type="StaticBody3D" parent="Arena"]
+position = Vector3(-3.0, 0.22, 1.2)
+rotation_degrees = Vector3(-12, 24, 0)
+
+[node name="RampMesh" type="MeshInstance3D" parent="Arena/Ramp"]
+mesh = SubResource("BoxMesh_ramp")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/Ramp"]
+shape = SubResource("BoxShape3D_ramp")
+
+[node name="Player" parent="." instance=ExtResource("2_player_scene")]
+position = Vector3(0, 1.1, 5.8)
+
+[node name="GameTickTimer" type="Timer" parent="."]
+wait_time = 1.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer"]
+offset_left = 32.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 24
+text = "BEACON RUNNER 3D"
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
+offset_left = 32.0
+offset_top = 62.0
+offset_right = 252.0
+offset_bottom = 88.0
+text = "Beacons: 0/5"
+
+[node name="ShieldLabel" type="Label" parent="CanvasLayer"]
+offset_left = 292.0
+offset_top = 62.0
+offset_right = 512.0
+offset_bottom = 88.0
+text = "Shields: 3"
+
+[node name="TimeLabel" type="Label" parent="CanvasLayer"]
+offset_left = 552.0
+offset_top = 62.0
+offset_right = 772.0
+offset_bottom = 88.0
+text = "Time: 60"
+
+[node name="MessageLabel" type="Label" parent="CanvasLayer"]
+offset_left = 32.0
+offset_top = 674.0
+offset_right = 1248.0
+offset_bottom = 708.0
+text = "Press Space or Enter to start"
+horizontal_alignment = 1

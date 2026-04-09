@@ -13,6 +13,14 @@
 - 编辑器导入验证：`godot --headless --editor --quit --path demo_3d`
 - 实现原则：优先使用 Godot 内置 3D primitive / placeholder 材质，不依赖外部模型、贴图或音频。
 
+## 当前进度
+
+- 已启动独立项目：`demo_3d/`
+- 当前 demo 名称：`Beacon Runner 3D`
+- 当前核心循环：开始游戏、控制 3D 胶囊角色、跳跃、收集 5 个绿色信标、躲避 2 个红色巡逻无人机、护盾扣减、倒计时、胜利/失败、按键重开。
+- 已完成主场景验证：`godot --headless --path demo_3d --quit-after 1`
+- 已完成编辑器导入验证：`godot --headless --editor --quit --path demo_3d`
+
 ## 1. 3D demo 建议方向
 
 首版推荐做一个范围小、和 2D demo 一样容易验证的 3D demo：
@@ -156,12 +164,12 @@ git diff --check -- demo_3d README.md PLAN_3D.md
 
 ## 3. 3D 首版完成标准
 
-- [ ] `demo_3d/project.godot` 存在，并能被 Godot 4.6.2 导入。
-- [ ] `demo_3d/scenes/main.tscn` 是 main scene。
-- [ ] 玩家能控制一个 3D 角色或载具。
-- [ ] demo 有明确目标、危险、UI 反馈、胜负条件、重开流程。
-- [ ] `godot --headless --path demo_3d --quit-after 1` 通过。
-- [ ] `demo_3d/README.md` 说明玩法、操作、运行方式、测试方式和本地参考来源。
+- [x] `demo_3d/project.godot` 存在，并能被 Godot 4.6.2 导入。
+- [x] `demo_3d/scenes/main.tscn` 是 main scene。
+- [x] 玩家能控制一个 3D 角色或载具。
+- [x] demo 有明确目标、危险、UI 反馈、胜负条件、重开流程。
+- [x] `godot --headless --path demo_3d --quit-after 1` 通过。
+- [x] `demo_3d/README.md` 说明玩法、操作、运行方式、测试方式和本地参考来源。
 
 ## 4. 3D 开始前决策点
 

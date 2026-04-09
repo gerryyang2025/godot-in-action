@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/drone.gd" id="1_drone_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drone"]
+albedo_color = Color(1, 0.172549, 0.247059, 1)
+emission_enabled = true
+emission = Color(1, 0.172549, 0.247059, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="SphereMesh" id="SphereMesh_drone"]
+radius = 0.45
+height = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wing"]
+size = Vector3(1.5, 0.12, 0.22)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_drone"]
+radius = 0.72
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wing"]
+albedo_color = Color(0.0784314, 0.0901961, 0.121569, 1)
+
+[node name="Drone" type="Area3D" groups=["drones"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_drone_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_drone")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("SphereMesh_drone")
+surface_material_override/0 = SubResource("StandardMaterial3D_drone")
+
+[node name="Wing" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_wing")
+surface_material_override/0 = SubResource("StandardMaterial3D_wing")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Visual"]
+light_color = Color(1, 0.172549, 0.247059, 1)
+light_energy = 0.55
+omni_range = 3.0
