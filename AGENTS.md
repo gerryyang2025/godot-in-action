@@ -33,6 +33,12 @@
 - `demo_3d/`
   - 当前独立 3D demo：Beacon Runner 3D。
   - 是我们自己的 Godot 项目，可以按用户需求修改。
+- `demo_2d_art/`
+  - 当前独立 2D art-pass demo：Signal Sweep Art。
+  - 保留 `demo_2d/` 玩法基线，在独立目录中验证美术、HUD、shader 和反馈升级。
+- `demo_3d_art/`
+  - 当前独立 3D art-pass demo：Beacon Runner 3D Art。
+  - 保留 `demo_3d/` 玩法基线，在独立目录中验证材质、环境、轮廓和 HUD 升级。
 
 ## 3. 默认编辑边界
 
@@ -136,6 +142,32 @@ godot --headless --path demo_3d --quit-after 1
 godot --headless --editor --quit --path demo_3d
 ```
 
+运行当前 2D art demo：
+
+```sh
+godot --path demo_2d_art
+```
+
+快速验证当前 2D art demo：
+
+```sh
+godot --headless --path demo_2d_art --quit-after 1
+godot --headless --editor --quit --path demo_2d_art
+```
+
+运行当前 3D art demo：
+
+```sh
+godot --path demo_3d_art
+```
+
+快速验证当前 3D art demo：
+
+```sh
+godot --headless --path demo_3d_art --quit-after 1
+godot --headless --editor --quit --path demo_3d_art
+```
+
 如果 Godot 因沙箱无法写用户级日志/设置而失败，改在非沙箱环境运行同一条命令；不要因此把 `.godot/`、`export_presets.cfg` 或用户级 editor settings 提交进仓库。
 
 ## 8. 推荐参考入口
@@ -179,6 +211,8 @@ godot --headless --editor --quit --path demo_3d
 - demo 路线图总入口维护在 `PLAN.md`。
 - 2D demo 详细计划维护在 `PLAN_2D.md`。
 - 3D demo 详细计划维护在 `PLAN_3D.md`。
+- 2D art-pass demo 详细计划维护在 `PLAN_2D_ART.md`。
+- 3D art-pass demo 详细计划维护在 `PLAN_3D_ART.md`。
 - 贡献流程维护在 `CONTRIBUTING.md`。
 - 安全报告范围维护在 `SECURITY.md`。
 - 求助入口维护在 `SUPPORT.md`。

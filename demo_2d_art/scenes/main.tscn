@@ -1,0 +1,161 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player_scene"]
+[ext_resource type="Shader" path="res://shaders/scan_overlay.gdshader" id="3_scan_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_scan"]
+shader = ExtResource("3_scan_shader")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top"]
+bg_color = Color(0.027451, 0.0627451, 0.105882, 0.84)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.14902, 0.843137, 0.945098, 0.7)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bottom"]
+bg_color = Color(0.027451, 0.0627451, 0.105882, 0.76)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.694118, 0.85098, 0.64)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main_script")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 960.0
+offset_bottom = 640.0
+color = Color(0.0196078, 0.0352941, 0.0666667, 1)
+
+[node name="BackdropNebula" type="Polygon2D" parent="."]
+color = Color(0.101961, 0.290196, 0.501961, 0.22)
+polygon = PackedVector2Array(0, 188, 124, 66, 306, 48, 452, 144, 530, 308, 406, 416, 192, 388, 46, 282)
+
+[node name="BackdropGlow" type="Polygon2D" parent="."]
+color = Color(0.101961, 0.870588, 0.92549, 0.08)
+polygon = PackedVector2Array(484, 96, 688, 62, 852, 146, 900, 324, 812, 508, 644, 564, 504, 472, 446, 274)
+
+[node name="ArenaPanel" type="ColorRect" parent="."]
+offset_left = 48.0
+offset_top = 96.0
+offset_right = 912.0
+offset_bottom = 592.0
+color = Color(0.0352941, 0.0823529, 0.145098, 0.92)
+
+[node name="ArenaGlow" type="ColorRect" parent="."]
+offset_left = 42.0
+offset_top = 90.0
+offset_right = 918.0
+offset_bottom = 598.0
+color = Color(0.0705882, 0.92549, 0.980392, 0.08)
+
+[node name="ArenaGridHorizontal" type="Line2D" parent="."]
+width = 1.0
+default_color = Color(0.14902, 0.596078, 0.709804, 0.2)
+points = PackedVector2Array(48, 176, 912, 176, 912, 256, 48, 256, 48, 336, 912, 336, 912, 416, 48, 416, 48, 496, 912, 496)
+
+[node name="ArenaGridVertical" type="Line2D" parent="."]
+width = 1.0
+default_color = Color(0.14902, 0.596078, 0.709804, 0.18)
+points = PackedVector2Array(144, 96, 144, 592, 240, 592, 240, 96, 336, 96, 336, 592, 432, 592, 432, 96, 528, 96, 528, 592, 624, 592, 624, 96, 720, 96, 720, 592, 816, 592, 816, 96)
+
+[node name="ArenaBorder" type="Line2D" parent="."]
+width = 4.0
+closed = true
+default_color = Color(0.141176, 0.847059, 0.945098, 1)
+points = PackedVector2Array(48, 96, 912, 96, 912, 592, 48, 592)
+
+[node name="ArenaInnerBorder" type="Line2D" parent="."]
+width = 1.0
+closed = true
+default_color = Color(0.65098, 1, 0.988235, 0.4)
+points = PackedVector2Array(64, 112, 896, 112, 896, 576, 64, 576)
+
+[node name="RadarOverlay" type="ColorRect" parent="."]
+offset_right = 960.0
+offset_bottom = 640.0
+material = SubResource("ShaderMaterial_scan")
+
+[node name="Player" parent="." instance=ExtResource("2_player_scene")]
+position = Vector2(480, 344)
+
+[node name="DroneSpawnTimer" type="Timer" parent="."]
+wait_time = 1.8
+
+[node name="GameTickTimer" type="Timer" parent="."]
+wait_time = 1.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ScreenFlash" type="ColorRect" parent="CanvasLayer"]
+offset_right = 960.0
+offset_bottom = 640.0
+color = Color(1, 0.2, 0.24, 0)
+
+[node name="TopBar" type="Panel" parent="CanvasLayer"]
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 936.0
+offset_bottom = 92.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_top")
+
+[node name="BottomBar" type="Panel" parent="CanvasLayer"]
+offset_left = 24.0
+offset_top = 592.0
+offset_right = 936.0
+offset_bottom = 632.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bottom")
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer"]
+offset_left = 48.0
+offset_top = 18.0
+offset_right = 368.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.713726, 1, 0.980392, 1)
+theme_override_font_sizes/font_size = 26
+text = "SIGNAL SWEEP ART"
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
+offset_left = 48.0
+offset_top = 56.0
+offset_right = 238.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.556863, 1, 0.603922, 1)
+text = "Signals: 0/8"
+
+[node name="ShieldLabel" type="Label" parent="CanvasLayer"]
+offset_left = 292.0
+offset_top = 56.0
+offset_right = 482.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(1, 0.905882, 0.505882, 1)
+text = "Shields: 3"
+
+[node name="TimeLabel" type="Label" parent="CanvasLayer"]
+offset_left = 536.0
+offset_top = 56.0
+offset_right = 726.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.972549, 0.917647, 0.623529, 1)
+text = "Time: 45"
+
+[node name="MessageLabel" type="Label" parent="CanvasLayer"]
+offset_left = 48.0
+offset_top = 600.0
+offset_right = 912.0
+offset_bottom = 632.0
+theme_override_colors/font_color = Color(0.72549, 0.968627, 1, 1)
+text = "Press Space or Enter to start"
+horizontal_alignment = 1

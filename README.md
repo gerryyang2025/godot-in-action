@@ -1,11 +1,11 @@
 # godot-in-action
 
-这是一个 Godot 学习和 demo 开发工作台。仓库已经包含两个独立可运行项目：`demo_2d/` 的 `Signal Sweep` 和 `demo_3d/` 的 `Beacon Runner 3D`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
+这是一个 Godot 学习和 demo 开发工作台。仓库已经包含四个独立可运行项目：`demo_2d/` 的 `Signal Sweep`、`demo_3d/` 的 `Beacon Runner 3D`、`demo_2d_art/` 的 `Signal Sweep Art` 和 `demo_3d_art/` 的 `Beacon Runner 3D Art`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
 
 ## 仓库定位
 
 - 目标：为自定义 Godot demo 的设计、实现、验证提供本地参考资料和独立 demo 工程。
-- 当前状态：已包含独立 `demo_2d/` 和 `demo_3d/`；根目录仍是工作台，不是 Godot 项目。
+- 当前状态：已包含独立 `demo_2d/`、`demo_3d/`、`demo_2d_art/` 和 `demo_3d_art/`；根目录仍是工作台，不是 Godot 项目。
 - 使用方式：把这里当作 Godot 本地知识库与样例库，而不是把根目录直接当成一个 Godot 工程打开。
 - GitHub 提交范围：提交本仓库原创文档、配置、独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
 
@@ -25,14 +25,36 @@ godot --path demo_2d
 godot --path demo_3d
 ```
 
-提交前快速验证两个 demo：
+运行当前 2D art demo：
+
+```sh
+godot --path demo_2d_art
+```
+
+运行当前 3D art demo：
+
+```sh
+godot --path demo_3d_art
+```
+
+提交前快速验证四个 demo：
 
 ```sh
 godot --headless --path demo_2d --quit-after 1
 godot --headless --editor --quit --path demo_2d
 godot --headless --path demo_3d --quit-after 1
 godot --headless --editor --quit --path demo_3d
+godot --headless --path demo_2d_art --quit-after 1
+godot --headless --editor --quit --path demo_2d_art
+godot --headless --path demo_3d_art --quit-after 1
+godot --headless --editor --quit --path demo_3d_art
 ```
+
+命令说明：
+
+- `godot --path <demo_dir>`：正常启动项目并打开窗口，适合实际试玩、查看画面和交互。
+- `godot --headless --path <demo_dir> --quit-after 1`：无窗口快速启动项目并在 `1` 次迭代后退出，适合提交前做冒烟检查；这里的 `1` 代表迭代次数，不是 `1` 秒。
+- `godot --headless --editor --quit --path <demo_dir>`：以编辑器模式导入并加载项目后退出，适合检查资源导入、脚本加载和编辑器侧报错。
 
 ## 当前内容总览
 
@@ -44,6 +66,8 @@ godot --headless --editor --quit --path demo_3d
 | `awesome-godot-master/` | Awesome Godot 资源清单 | 扩展资源发现 | 适合找第三方项目、插件、模板，不是 API 真正依据 |
 | `demo_2d/` | Signal Sweep | 当前 2D demo | Godot 4.6.2 验证的俯视收集/躲避 demo |
 | `demo_3d/` | Beacon Runner 3D | 当前 3D demo | Godot 4.6.2 验证的 3D 收集/躲避 demo |
+| `demo_2d_art/` | Signal Sweep Art | 独立 2D art-pass demo | 保留 `demo_2d/` 玩法基线，验证 HUD / shader / 视觉升级 |
+| `demo_3d_art/` | Beacon Runner 3D Art | 独立 3D art-pass demo | 保留 `demo_3d/` 玩法基线，验证材质 / 环境 / HUD 升级 |
 
 其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/` 和 `awesome-godot-master/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开当前或后续 demo。
 
@@ -146,9 +170,11 @@ godot --headless --editor --quit --path demo_3d
 | 项目 | 入口 | 已实现玩法 | 说明 |
 | --- | --- | --- | --- |
 | `Signal Sweep` | `demo_2d/project.godot` | 俯视飞船移动、收集 8 个信标、躲避弹射巡逻无人机、3 点护盾、45 秒倒计时、胜负/重开 | 详见 `demo_2d/README.md`、`demo_2d/DESIGN.md`、`demo_2d/REFERENCES.md` |
+| `Signal Sweep Art` | `demo_2d_art/project.godot` | 保留 2D 基线玩法，升级为霓虹雷达风训练场、扫描叠层、推进器/护盾/危险外环反馈 | 详见 `demo_2d_art/README.md`、`demo_2d_art/ART_DIRECTION.md`、`demo_2d_art/REFERENCES.md` |
 | `Beacon Runner 3D` | `demo_3d/project.godot` | 3D 胶囊角色移动/跳跃、收集 5 个发光信标、躲避 2 个线段巡逻无人机、3 点护盾、60 秒倒计时、胜负/重开 | 详见 `demo_3d/README.md`、`demo_3d/DESIGN.md`、`demo_3d/REFERENCES.md` |
+| `Beacon Runner 3D Art` | `demo_3d_art/project.godot` | 保留 3D 基线玩法，升级为带命名材质、雾、导视光边和控制台 HUD 的独立 art-pass 场景 | 详见 `demo_3d_art/README.md`、`demo_3d_art/ART_DIRECTION.md`、`demo_3d_art/REFERENCES.md` |
 
-两个 demo 的首版都使用 Godot 内置几何/Label/灯光等 placeholder，不依赖外部美术、音频、字体或模型资产。
+四个 demo 当前都只使用 Godot 内置节点、primitive、材质、Label 或轻量 shader，不依赖外部美术、音频、字体或模型资产。
 
 ## 常用命令
 
@@ -176,6 +202,32 @@ godot --path demo_3d
 ```sh
 godot --headless --path demo_3d --quit-after 1
 godot --headless --editor --quit --path demo_3d
+```
+
+打开当前 2D art demo：
+
+```sh
+godot --path demo_2d_art
+```
+
+提交前快速验证当前 2D art demo：
+
+```sh
+godot --headless --path demo_2d_art --quit-after 1
+godot --headless --editor --quit --path demo_2d_art
+```
+
+打开当前 3D art demo：
+
+```sh
+godot --path demo_3d_art
+```
+
+提交前快速验证当前 3D art demo：
+
+```sh
+godot --headless --path demo_3d_art --quit-after 1
+godot --headless --editor --quit --path demo_3d_art
 ```
 
 ## 适合后续 LLM/代理的理解方式
@@ -209,7 +261,7 @@ godot --headless --editor --quit --path demo_3d
 ## 当前限制
 
 - 根目录不是一个可直接运行的 Godot 工程。
-- 当前 2D/3D demo 是首版垂直切片，暂未包含音频、主菜单、导出预设或完整关卡流程。
+- 当前 2D/3D 基线 demo 与 2D/3D art demo 都是首版垂直切片，暂未包含音频、主菜单、导出预设或完整关卡流程。
 - 文档当前是源码形式，若需要浏览完整离线站点，还要额外构建或下载离线 HTML。
 - 本地参考 demo 与当前编辑器版本存在 `4.2` 对 `4.6.2` 的版本差，需要在实现时留意兼容性。
 - GitHub 普通 Git 不包含 macOS 编辑器 app；编辑器二进制对 LLM 参考价值低，而且超过 GitHub 普通单文件限制。
