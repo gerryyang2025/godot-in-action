@@ -8,11 +8,11 @@
 
 - `README.md`：当前仓库有什么、哪些目录只是本地参考。
 - `AGENTS.md`：LLM/代理和人类协作者都应遵守的仓库边界。
-- `PLAN.md`：demo 计划总入口。
-- `PLAN_2D.md`：2D demo 的分阶段实现计划。
-- `PLAN_3D.md`：3D demo 的分阶段实现计划。
-- `PLAN_2D_ART.md`：2D art-pass demo 的分阶段实现计划。
-- `PLAN_3D_ART.md`：3D art-pass demo 的分阶段实现计划。
+- `docs/PLAN.md`：demo 计划总入口。
+- `docs/PLAN_2D.md`：2D demo 的分阶段实现计划。
+- `docs/PLAN_3D.md`：3D demo 的分阶段实现计划。
+- `docs/PLAN_2D_ART.md`：2D art-pass demo 的分阶段实现计划。
+- `docs/PLAN_3D_ART.md`：3D art-pass demo 的分阶段实现计划。
 
 ## 开发原则
 

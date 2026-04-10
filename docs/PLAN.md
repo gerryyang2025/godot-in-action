@@ -1,13 +1,13 @@
 # Godot Demo 实现路线图
 
-本文件是当前仓库的计划入口。2D 和 3D demo 的详细执行清单已经拆分到独立文件中，避免后续实现时互相污染。
+本文件是当前仓库的计划入口。2D 和 3D demo 的详细执行清单已经拆分到 `docs/` 下的独立文件中，避免后续实现时互相污染。
 
 ## 计划文件
 
-- `PLAN_2D.md`：`demo_2d/` 的详细实现计划、当前进度、参考样例、验收标准。
-- `PLAN_3D.md`：`demo_3d/` 的详细实现计划、推荐首版方向、3D 参考样例、验收标准。
-- `PLAN_2D_ART.md`：基于 `demo_2d/` 的独立 2D 美术优化示例计划；当前首轮实现已落到 `demo_2d_art/`。
-- `PLAN_3D_ART.md`：基于 `demo_3d/` 的独立 3D 美术优化示例计划；当前首轮实现已落到 `demo_3d_art/`。
+- `docs/PLAN_2D.md`：`demo_2d/` 的详细实现计划、当前进度、参考样例、验收标准。
+- `docs/PLAN_3D.md`：`demo_3d/` 的详细实现计划、推荐首版方向、3D 参考样例、验收标准。
+- `docs/PLAN_2D_ART.md`：基于 `demo_2d/` 的独立 2D 美术优化示例计划；当前首轮实现已落到 `demo_2d_art/`。
+- `docs/PLAN_3D_ART.md`：基于 `demo_3d/` 的独立 3D 美术优化示例计划；当前首轮实现已落到 `demo_3d_art/`。
 - `demo_2d/README.md`：已实现 2D demo 的运行方式、玩法和实现说明。
 - `demo_3d/README.md`：已实现 3D demo 的运行方式、玩法和实现说明。
 - `demo_2d_art/README.md`：已实现 2D art-pass demo 的运行方式、美术目标和实现说明。
@@ -96,8 +96,8 @@ godot --headless --editor --quit --path demo_3d_art
 
 ## 推荐下一步
 
-1. 继续打磨 `demo_2d/` 时，先看 `PLAN_2D.md` 和 `demo_2d/README.md`。
-2. 继续打磨 `demo_3d/` 时，先看 `PLAN_3D.md` 和 `demo_3d/README.md`。
-3. 继续打磨 2D art-pass 时，先看 `PLAN_2D_ART.md` 和 `demo_2d_art/README.md`。
-4. 继续打磨 3D art-pass 时，先看 `PLAN_3D_ART.md` 和 `demo_3d_art/README.md`。
+1. 继续打磨 `demo_2d/` 时，先看 `docs/PLAN_2D.md` 和 `demo_2d/README.md`。
+2. 继续打磨 `demo_3d/` 时，先看 `docs/PLAN_3D.md` 和 `demo_3d/README.md`。
+3. 继续打磨 2D art-pass 时，先看 `docs/PLAN_2D_ART.md` 和 `demo_2d_art/README.md`。
+4. 继续打磨 3D art-pass 时，先看 `docs/PLAN_3D_ART.md` 和 `demo_3d_art/README.md`。
 5. 提交前分别跑目标 demo 的 headless 主场景和编辑器导入验证。

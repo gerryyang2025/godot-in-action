@@ -208,11 +208,11 @@ godot --headless --editor --quit --path demo_3d_art
 ## 11. GitHub 协作约定
 
 - 仓库首页信息维护在 `README.md`。
-- demo 路线图总入口维护在 `PLAN.md`。
-- 2D demo 详细计划维护在 `PLAN_2D.md`。
-- 3D demo 详细计划维护在 `PLAN_3D.md`。
-- 2D art-pass demo 详细计划维护在 `PLAN_2D_ART.md`。
-- 3D art-pass demo 详细计划维护在 `PLAN_3D_ART.md`。
+- demo 路线图总入口维护在 `docs/PLAN.md`。
+- 2D demo 详细计划维护在 `docs/PLAN_2D.md`。
+- 3D demo 详细计划维护在 `docs/PLAN_3D.md`。
+- 2D art-pass demo 详细计划维护在 `docs/PLAN_2D_ART.md`。
+- 3D art-pass demo 详细计划维护在 `docs/PLAN_3D_ART.md`。
 - 贡献流程维护在 `CONTRIBUTING.md`。
 - 安全报告范围维护在 `SECURITY.md`。
 - 求助入口维护在 `SUPPORT.md`。

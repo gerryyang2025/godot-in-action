@@ -161,7 +161,7 @@ demo_2d_art/
 ```sh
 godot --headless --path demo_2d_art --quit-after 1
 godot --headless --editor --quit --path demo_2d_art
-git diff --check -- demo_2d_art README.md PLAN.md PLAN_2D_ART.md
+git diff --check -- demo_2d_art README.md docs/PLAN.md docs/PLAN_2D_ART.md
 git status --short
 ```
 

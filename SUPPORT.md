@@ -14,4 +14,4 @@ Please check:
 
 - `README.md` for repository layout.
 - `AGENTS.md` for repository rules and version boundaries.
-- `PLAN.md` for the current 2D demo roadmap.
+- `docs/PLAN.md` for the current demo roadmap.

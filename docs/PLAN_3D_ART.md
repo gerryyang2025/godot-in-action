@@ -179,7 +179,7 @@ demo_3d_art/
 ```sh
 godot --headless --path demo_3d_art --quit-after 1
 godot --headless --editor --quit --path demo_3d_art
-git diff --check -- demo_3d_art README.md PLAN.md PLAN_3D_ART.md
+git diff --check -- demo_3d_art README.md docs/PLAN.md docs/PLAN_3D_ART.md
 git status --short
 ```
 

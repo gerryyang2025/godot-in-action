@@ -155,7 +155,7 @@ godot --path demo_3d
 godot --headless --path demo_3d --quit-after 1
 godot --headless --editor --quit --path demo_3d
 git status --short
-git diff --check -- demo_3d README.md PLAN_3D.md
+git diff --check -- demo_3d README.md docs/PLAN_3D.md
 ```
 
 产出物：
