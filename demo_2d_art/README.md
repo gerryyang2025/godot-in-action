@@ -1,6 +1,6 @@
 # Signal Sweep Art
 
-`Signal Sweep Art` 是一个独立的 Godot 2D art-pass demo：在保留原始 `Signal Sweep` 玩法基线的前提下，把训练场升级成霓虹雷达风格的可玩示例。
+`Signal Sweep Art` 是一个独立的 Godot 2D art-pass demo：在保留原始 `Signal Sweep` 玩法基线的前提下，把训练场升级成更克制、可读性优先的霓虹雷达风格示例。
 
 ## 运行
 
@@ -55,5 +55,25 @@ godot --headless --editor --quit --path demo_2d_art
 ## 当前实现范围
 
 - 已加入霓虹 HUD、扫描叠层、推进器/护盾/危险外环等第一轮美术升级。
-- 仍然不依赖外部图片、字体或音频素材。
+- 已保留直接服务玩法的反馈：边界脉冲、状态卡片、信标收集爆发、玩家受击护盾脉冲。
+- 已删减大部分无语义的常驻装饰线，背景收敛为星点远景、低对比训练场面板和边界反馈。
+- 已把扫描叠层简化为柔和扫描与轻暗角，不再额外叠加噪点干扰。
+- 已为低护盾和低时间加入更明确的视觉预警。
+- 主场景 `Main` 脚本已提供集中 VFX 参数，可统一开关扫描叠层、屏闪、边界脉冲和收集爆发，方便做可读性对照。
+- 当前继续使用 Godot 默认字体，不依赖外部图片、字体或音频素材。
+- 当前视觉主要由内置节点、程序化图形和仓库内 shader 构成，没有额外素材包依赖。
+- `demo_2d/` 继续保留为玩法基线，可作为 art 版的回退和 A/B 对照目录。
 - 当前是一个固定竞技场，没有关卡切换；原始玩法仍和 `demo_2d/` 保持一致。
+
+## 可调参数
+
+- 在 Godot 编辑器中选中 `scenes/main.tscn` 的 `Main` 根节点，可在 Inspector 里看到 `VFX` 分组。
+- 当前可直接开关或调节：`enable_scan_overlay`、`scan_overlay_strength`、`enable_screen_flash`、`screen_flash_strength`、`enable_edge_pulses`、`edge_pulse_strength`、`enable_collection_burst`、`collection_burst_strength`。
+- 如果要验证“关闭后期效果后是否仍然可读”，优先把 `enable_scan_overlay` 关闭，再检查玩家、信标、无人机和 HUD 是否仍然一眼可分辨。
+
+## 人工验证
+
+- 用 `godot --path demo_2d_art` 打开项目，在原始 `960x640` 窗口下确认顶部状态卡片和底部播报都没有压进竞技场核心路径。
+- 把窗口放大后再检查一次，确认状态卡片仍然停留在顶部信息带里，不会挡住玩家或信标常见活动区域。
+- 在 Inspector 里选中 `Main` 根节点，关闭 `enable_scan_overlay` 后试玩一小段，确认不依赖扫描叠层也能一眼区分玩家、信标、无人机和 HUD 状态。
+- 触发一次收集、一次受击和一次 drone 撞边，确认收集爆发、屏闪和边界脉冲都仍然短促且不会长期遮挡目标。

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player_scene"]
@@ -31,6 +31,18 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_state"]
+bg_color = Color(0.0313726, 0.0745098, 0.121569, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.286275, 0.682353, 0.8, 0.58)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_script")
 
@@ -46,6 +58,48 @@ polygon = PackedVector2Array(0, 188, 124, 66, 306, 48, 452, 144, 530, 308, 406, 
 [node name="BackdropGlow" type="Polygon2D" parent="."]
 color = Color(0.101961, 0.870588, 0.92549, 0.08)
 polygon = PackedVector2Array(484, 96, 688, 62, 852, 146, 900, 324, 812, 508, 644, 564, 504, 472, 446, 274)
+
+[node name="BackdropStars" type="Node2D" parent="."]
+
+[node name="StarA" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(108, 84)
+color = Color(0.784314, 0.945098, 1, 0.58)
+polygon = PackedVector2Array(0, -4, 2, -1, 5, 0, 2, 1, 0, 4, -2, 1, -5, 0, -2, -1)
+
+[node name="StarB" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(218, 56)
+color = Color(0.741176, 0.909804, 1, 0.42)
+polygon = PackedVector2Array(0, -3, 2, 0, 0, 3, -2, 0)
+
+[node name="StarC" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(356, 84)
+color = Color(0.788235, 0.960784, 1, 0.38)
+polygon = PackedVector2Array(0, -4, 2, -1, 4, 0, 2, 1, 0, 4, -2, 1, -4, 0, -2, -1)
+
+[node name="StarD" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(704, 102)
+color = Color(0.694118, 0.917647, 1, 0.46)
+polygon = PackedVector2Array(0, -3, 2, 0, 0, 3, -2, 0)
+
+[node name="StarE" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(846, 78)
+color = Color(0.8, 0.960784, 1, 0.54)
+polygon = PackedVector2Array(0, -4, 1, -1, 4, 0, 1, 1, 0, 4, -1, 1, -4, 0, -1, -1)
+
+[node name="StarF" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(792, 538)
+color = Color(0.752941, 0.92549, 1, 0.34)
+polygon = PackedVector2Array(0, -3, 2, 0, 0, 3, -2, 0)
+
+[node name="StarG" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(164, 560)
+color = Color(0.705882, 0.901961, 0.964706, 0.3)
+polygon = PackedVector2Array(0, -3, 2, 0, 0, 3, -2, 0)
+
+[node name="StarH" type="Polygon2D" parent="BackdropStars"]
+position = Vector2(604, 586)
+color = Color(0.835294, 0.972549, 1, 0.48)
+polygon = PackedVector2Array(0, -4, 1, -1, 4, 0, 1, 1, 0, 4, -1, 1, -4, 0, -1, -1)
 
 [node name="ArenaPanel" type="ColorRect" parent="."]
 offset_left = 48.0
@@ -63,13 +117,8 @@ color = Color(0.0705882, 0.92549, 0.980392, 0.08)
 
 [node name="ArenaGridHorizontal" type="Line2D" parent="."]
 width = 1.0
-default_color = Color(0.14902, 0.596078, 0.709804, 0.2)
+default_color = Color(0.14902, 0.596078, 0.709804, 0.12)
 points = PackedVector2Array(48, 176, 912, 176, 912, 256, 48, 256, 48, 336, 912, 336, 912, 416, 48, 416, 48, 496, 912, 496)
-
-[node name="ArenaGridVertical" type="Line2D" parent="."]
-width = 1.0
-default_color = Color(0.14902, 0.596078, 0.709804, 0.18)
-points = PackedVector2Array(144, 96, 144, 592, 240, 592, 240, 96, 336, 96, 336, 592, 432, 592, 432, 96, 528, 96, 528, 592, 624, 592, 624, 96, 720, 96, 720, 592, 816, 592, 816, 96)
 
 [node name="ArenaBorder" type="Line2D" parent="."]
 width = 4.0
@@ -83,10 +132,56 @@ closed = true
 default_color = Color(0.65098, 1, 0.988235, 0.4)
 points = PackedVector2Array(64, 112, 896, 112, 896, 576, 64, 576)
 
+[node name="ArenaNorthPulse" type="ColorRect" parent="."]
+offset_left = 64.0
+offset_top = 110.0
+offset_right = 896.0
+offset_bottom = 130.0
+color = Color(0.352941, 0.980392, 1, 0)
+
+[node name="ArenaSouthPulse" type="ColorRect" parent="."]
+offset_left = 64.0
+offset_top = 558.0
+offset_right = 896.0
+offset_bottom = 578.0
+color = Color(0.352941, 0.980392, 1, 0)
+
+[node name="ArenaWestPulse" type="ColorRect" parent="."]
+offset_left = 62.0
+offset_top = 112.0
+offset_right = 82.0
+offset_bottom = 576.0
+color = Color(0.352941, 0.980392, 1, 0)
+
+[node name="ArenaEastPulse" type="ColorRect" parent="."]
+offset_left = 878.0
+offset_top = 112.0
+offset_right = 898.0
+offset_bottom = 576.0
+color = Color(0.352941, 0.980392, 1, 0)
+
 [node name="RadarOverlay" type="ColorRect" parent="."]
 offset_right = 960.0
 offset_bottom = 640.0
 material = SubResource("ShaderMaterial_scan")
+
+[node name="CollectionBurst" type="Node2D" parent="."]
+visible = false
+
+[node name="BurstRing" type="Line2D" parent="CollectionBurst"]
+width = 3.0
+closed = true
+default_color = Color(0.517647, 1, 0.678431, 0)
+points = PackedVector2Array(0, -16, 11, -11, 16, 0, 11, 11, 0, 16, -11, 11, -16, 0, -11, -11)
+
+[node name="BurstArc" type="Line2D" parent="CollectionBurst"]
+width = 3.0
+default_color = Color(0.901961, 1, 0.760784, 0)
+points = PackedVector2Array(-8, -22, 5, -25, 18, -14)
+
+[node name="BurstSpark" type="Polygon2D" parent="CollectionBurst"]
+color = Color(0.92549, 1, 0.792157, 0)
+polygon = PackedVector2Array(0, -9, 6, -2, 9, 0, 6, 2, 0, 9, -6, 2, -9, 0, -6, -2)
 
 [node name="Player" parent="." instance=ExtResource("2_player_scene")]
 position = Vector2(480, 344)
@@ -146,10 +241,42 @@ text = "Shields: 3"
 [node name="TimeLabel" type="Label" parent="CanvasLayer"]
 offset_left = 536.0
 offset_top = 56.0
-offset_right = 726.0
+offset_right = 708.0
 offset_bottom = 82.0
 theme_override_colors/font_color = Color(0.972549, 0.917647, 0.623529, 1)
 text = "Time: 45"
+
+[node name="StatePanel" type="Panel" parent="CanvasLayer"]
+offset_left = 756.0
+offset_top = 24.0
+offset_right = 912.0
+offset_bottom = 76.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_state")
+
+[node name="StateAccent" type="ColorRect" parent="CanvasLayer/StatePanel"]
+offset_left = 10.0
+offset_top = 9.0
+offset_right = 14.0
+offset_bottom = 41.0
+color = Color(0.337255, 0.94902, 1, 0.82)
+
+[node name="StateLabel" type="Label" parent="CanvasLayer/StatePanel"]
+offset_left = 26.0
+offset_top = 6.0
+offset_right = 142.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0.717647, 1, 0.980392, 1)
+theme_override_font_sizes/font_size = 16
+text = "READY"
+
+[node name="HintLabel" type="Label" parent="CanvasLayer/StatePanel"]
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 146.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(0.65098, 0.854902, 0.929412, 1)
+theme_override_font_sizes/font_size = 13
+text = "Awaiting deploy"
 
 [node name="MessageLabel" type="Label" parent="CanvasLayer"]
 offset_left = 48.0
