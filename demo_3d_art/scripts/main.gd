@@ -246,9 +246,9 @@ func _show_ready_screen() -> void:
 func _spawn_all_beacons() -> void:
 	for beacon_position in BEACON_POINTS:
 		var beacon = BEACON_SCENE.instantiate()
-		beacon.global_position = beacon_position
 		beacon.collected.connect(_on_beacon_collected)
 		add_child(beacon)
+		beacon.position = beacon_position
 
 
 func _spawn_drone(point_a: Vector3, point_b: Vector3, speed: float, behavior: Dictionary = {}) -> void:

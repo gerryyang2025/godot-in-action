@@ -1,26 +1,36 @@
-extends Area3D
+extends CharacterBody3D
 
 signal player_hit
 
+const WORLD_COLLISION_MASK := 1
+const PLAYER_LINE_OF_SIGHT_MASK := 3
+const STEERING_ANGLES := [0.0, 0.42, -0.42, 0.82, -0.82, 1.18, -1.18]
+
 @export var speed: float = 4.0
+@export var acceleration: float = 16.0
 @export var can_chase: bool = false
 @export var detection_radius: float = 5.8
 @export var chase_speed_multiplier: float = 1.45
 @export var chase_lock_time: float = 1.9
 @export var chase_forget_distance: float = 9.5
 @export var line_of_sight_required: bool = true
+@export var obstacle_probe_distance: float = 1.8
+@export var target_reached_distance: float = 0.4
 
 var _point_a := Vector3.ZERO
 var _point_b := Vector3.ZERO
 var _target := Vector3.ZERO
+var _hover_height := 1.0
 var _age := 0.0
 var _is_chasing := false
 var _chase_timer := 0.0
 var _alert_level := 0.0
 var _player: Node3D
 var _chase_disabled_time := 0.0
+var _steer_bias := 1.0
 
 @onready var _visual: Node3D = $Visual
+@onready var _hitbox: Area3D = $Hitbox
 @onready var _rotor_left: Node3D = $Visual/RotorLeftPivot
 @onready var _rotor_right: Node3D = $Visual/RotorRightPivot
 @onready var _danger_ring: Node3D = $Visual/DangerRing
@@ -29,7 +39,8 @@ var _chase_disabled_time := 0.0
 
 func _ready() -> void:
 	_player = get_tree().get_first_node_in_group(&"player") as Node3D
-	body_entered.connect(_on_body_entered)
+	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
+	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 
 
 func _physics_process(delta: float) -> void:
@@ -37,15 +48,21 @@ func _physics_process(delta: float) -> void:
 	_update_chase_state(delta)
 
 	var active_target := _get_active_target()
+	var movement_direction := _get_movement_direction(active_target)
 	var active_speed := _get_active_speed()
-	global_position = global_position.move_toward(active_target, active_speed * delta)
+	var target_velocity := movement_direction * active_speed
+	velocity.x = move_toward(velocity.x, target_velocity.x, acceleration * delta)
+	velocity.z = move_toward(velocity.z, target_velocity.z, acceleration * delta)
+	velocity.y = 0.0
+	move_and_slide()
+	global_position.y = _hover_height
 
-	if not _is_chasing and global_position.distance_to(_target) < 0.15:
+	var planar_target := Vector3(active_target.x, global_position.y, active_target.z)
+	if not _is_chasing and global_position.distance_to(Vector3(_target.x, global_position.y, _target.z)) < target_reached_distance:
 		_target = _point_a if _target == _point_b else _point_b
 
-	var flat_target := Vector3(active_target.x, global_position.y, active_target.z)
-	if global_position.distance_to(flat_target) > 0.05:
-		look_at(flat_target, Vector3.UP)
+	if global_position.distance_to(planar_target) > 0.05:
+		look_at(planar_target, Vector3.UP)
 
 	_visual.position.y = 0.08 + sin(_age * (7.0 + _alert_level * 3.0)) * (0.05 + _alert_level * 0.015)
 	_rotor_left.rotate_y((18.0 + _alert_level * 10.0) * delta)
@@ -104,17 +121,74 @@ func _get_active_speed() -> float:
 	return speed * chase_speed_multiplier if _is_chasing else speed
 
 
+func _get_movement_direction(active_target: Vector3) -> Vector3:
+	var to_target := Vector3(active_target.x - global_position.x, 0.0, active_target.z - global_position.z)
+	if to_target.length_squared() <= 0.0001:
+		return Vector3.ZERO
+
+	var desired_direction := to_target.normalized()
+	var probe_distance := minf(obstacle_probe_distance, maxf(0.8, to_target.length()))
+	return _get_steered_direction(desired_direction, probe_distance)
+
+
+func _get_steered_direction(desired_direction: Vector3, probe_distance: float) -> Vector3:
+	if _is_path_clear(desired_direction, probe_distance):
+		return desired_direction
+
+	for angle in _ordered_steering_angles():
+		if is_zero_approx(angle):
+			continue
+
+		var candidate := desired_direction.rotated(Vector3.UP, angle).normalized()
+		if _is_path_clear(candidate, probe_distance):
+			_steer_bias = signf(angle)
+			return candidate
+
+	return desired_direction
+
+
+func _ordered_steering_angles() -> Array[float]:
+	var ordered: Array[float] = [0.0]
+
+	for angle in STEERING_ANGLES:
+		if is_zero_approx(angle):
+			continue
+
+		var signed_angle := absf(angle) * _steer_bias if angle > 0.0 else -absf(angle) * _steer_bias
+		if not ordered.has(signed_angle):
+			ordered.append(signed_angle)
+		if not ordered.has(-signed_angle):
+			ordered.append(-signed_angle)
+
+	return ordered
+
+
+func _is_path_clear(direction: Vector3, probe_distance: float) -> bool:
+	var probe_origin := global_position + Vector3.UP * 0.22
+	var probe_target := probe_origin + direction * probe_distance
+	var hit := _intersect_probe(probe_origin, probe_target)
+	return hit.is_empty() or hit.get("collider") == _player
+
+
+func _intersect_probe(from: Vector3, to: Vector3) -> Dictionary:
+	var space_state := get_world_3d().direct_space_state
+	var ray_query := PhysicsRayQueryParameters3D.create(from, to)
+	ray_query.exclude = [self, _hitbox]
+	ray_query.collision_mask = WORLD_COLLISION_MASK
+	return space_state.intersect_ray(ray_query)
+
+
 func _has_line_of_sight_to_player(player_position: Vector3) -> bool:
 	if not line_of_sight_required:
 		return true
 
 	var space_state := get_world_3d().direct_space_state
 	var ray_query := PhysicsRayQueryParameters3D.create(
-		global_position + Vector3.UP * 0.25,
-		player_position + Vector3.UP * 0.4
-	)
-	ray_query.exclude = [self]
-	ray_query.collision_mask = 1
+			global_position + Vector3.UP * 0.25,
+			player_position + Vector3.UP * 0.4
+		)
+	ray_query.exclude = [self, _hitbox]
+	ray_query.collision_mask = PLAYER_LINE_OF_SIGHT_MASK
 
 	var hit := space_state.intersect_ray(ray_query)
 	return hit.is_empty() or hit.get("collider") == _player
@@ -142,9 +216,12 @@ func configure(point_a: Vector3, point_b: Vector3, new_speed: float, behavior: D
 	_chase_timer = 0.0
 	_alert_level = 0.0
 	_chase_disabled_time = 0.0
+	_steer_bias = 1.0
+	_hover_height = point_a.y
+	velocity = Vector3.ZERO
 	global_position = point_a
 
 
-func _on_body_entered(body: Node3D) -> void:
+func _on_hitbox_body_entered(body: Node3D) -> void:
 	if body.is_in_group(&"player"):
 		player_hit.emit()
