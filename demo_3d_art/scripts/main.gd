@@ -11,12 +11,40 @@ const STARTING_SHIELDS = 3
 const STARTING_TIME = 60
 const PLAYER_INVULNERABILITY = 1.2
 const FLASH_FADE_SPEED = 1.8
+const REINFORCEMENT_BEACON_THRESHOLD = 3
 const HUD_SCORE_COLOR = Color(0.576471, 1.0, 0.847059, 1)
 const HUD_SCORE_DONE_COLOR = Color(0.823529, 1.0, 0.901961, 1)
 const HUD_SHIELD_COLOR = Color(1.0, 0.760784, 0.486275, 1)
 const HUD_SHIELD_DANGER_COLOR = Color(1.0, 0.384314, 0.384314, 1)
 const HUD_TIME_COLOR = Color(0.862745, 0.929412, 1.0, 1)
 const HUD_TIME_WARNING_COLOR = Color(1.0, 0.478431, 0.419608, 1)
+const HUD_PATROL_COLOR = Color(1.0, 0.698039, 0.415686, 1)
+
+const OPENING_DRONE_PATROLS = [
+	{
+		"point_a": Vector3(-9.0, 1.0, -1.5),
+		"point_b": Vector3(9.0, 1.0, -1.5),
+		"speed": 4.6
+	},
+	{
+		"point_a": Vector3(6.0, 1.0, -7.0),
+		"point_b": Vector3(-6.0, 1.0, 5.0),
+		"speed": 3.5
+	},
+	{
+		"point_a": Vector3(-8.2, 1.0, 6.0),
+		"point_b": Vector3(-8.2, 1.0, -6.2),
+		"speed": 3.0
+	},
+]
+
+const REINFORCEMENT_DRONE_PATROLS = [
+	{
+		"point_a": Vector3(8.2, 1.0, -6.2),
+		"point_b": Vector3(8.2, 1.0, 6.0),
+		"speed": 3.7
+	},
+]
 
 const BEACON_POINTS = [
 	Vector3(-8.0, 1.0, 3.4),
@@ -38,6 +66,7 @@ var _signals_collected := 0
 var _shields := STARTING_SHIELDS
 var _remaining_time := STARTING_TIME
 var _flash_alpha := 0.0
+var _reinforcement_deployed := false
 
 @onready var _player = $Player
 @onready var _camera: Camera3D = $Camera3D
@@ -72,17 +101,17 @@ func new_game() -> void:
 	_signals_collected = 0
 	_shields = STARTING_SHIELDS
 	_remaining_time = STARTING_TIME
+	_reinforcement_deployed = false
 
 	_clear_group(&"beacons")
 	_clear_group(&"drones")
 
 	_player.start(PLAYER_START)
 	_spawn_all_beacons()
-	_spawn_drone(Vector3(-9.0, 1.0, -1.5), Vector3(9.0, 1.0, -1.5), 4.6)
-	_spawn_drone(Vector3(6.0, 1.0, -7.0), Vector3(-6.0, 1.0, 5.0), 3.5)
+	_spawn_drone_patrols(OPENING_DRONE_PATROLS)
 
 	_game_tick_timer.start()
-	_message_label.text = "Collect 5 glowing beacons. Avoid patrol drones."
+	_message_label.text = "Collect 5 glowing beacons. 3 patrol drones active. Reinforcements arrive after 3 syncs."
 	_update_hud()
 
 
@@ -111,6 +140,20 @@ func _spawn_drone(point_a: Vector3, point_b: Vector3, speed: float) -> void:
 	drone.configure(point_a, point_b, speed)
 
 
+func _spawn_drone_patrols(patrols: Array) -> void:
+	for patrol in patrols:
+		_spawn_drone(patrol["point_a"], patrol["point_b"], patrol["speed"])
+
+
+func _deploy_reinforcement_if_needed() -> String:
+	if _reinforcement_deployed or _signals_collected < REINFORCEMENT_BEACON_THRESHOLD:
+		return ""
+
+	_reinforcement_deployed = true
+	_spawn_drone_patrols(REINFORCEMENT_DRONE_PATROLS)
+	return "Additional patrol deployed on the east lane. Finish the route under pressure."
+
+
 func _on_beacon_collected(beacon: Area3D) -> void:
 	if _state != GameState.PLAYING:
 		return
@@ -121,8 +164,9 @@ func _on_beacon_collected(beacon: Area3D) -> void:
 	if _signals_collected >= TARGET_BEACONS:
 		_finish_game(true)
 	else:
-		_message_label.text = "Beacon synced. Keep running."
-		_flash_screen(Color(0.337255, 1.0, 0.568627, 1), 0.18)
+		var reinforcement_message := _deploy_reinforcement_if_needed()
+		_message_label.text = reinforcement_message if not reinforcement_message.is_empty() else "Beacon synced. Keep running."
+		_flash_screen(HUD_PATROL_COLOR if not reinforcement_message.is_empty() else Color(0.337255, 1.0, 0.568627, 1), 0.22 if not reinforcement_message.is_empty() else 0.18)
 		_update_hud()
 
 
