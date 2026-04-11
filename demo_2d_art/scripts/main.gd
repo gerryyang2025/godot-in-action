@@ -40,7 +40,15 @@ enum GameState {
 	LOST,
 }
 
+enum FinishReason {
+	NONE,
+	SUCCESS,
+	SHIELDS,
+	TIME,
+}
+
 var _state := GameState.READY
+var _finish_reason := FinishReason.NONE
 var _signals_collected := 0
 var _shields := STARTING_SHIELDS
 var _remaining_time := STARTING_TIME
@@ -57,6 +65,7 @@ var _collection_burst_alpha := 0.0
 var _collection_burst_time := 0.0
 
 @onready var _player = $Player
+@onready var _audio = $AudioRoot
 @onready var _drone_spawn_timer: Timer = $DroneSpawnTimer
 @onready var _game_tick_timer: Timer = $GameTickTimer
 @onready var _north_pulse: ColorRect = $ArenaNorthPulse
@@ -77,6 +86,15 @@ var _collection_burst_time := 0.0
 @onready var _state_label: Label = $CanvasLayer/StatePanel/StateLabel
 @onready var _hint_label: Label = $CanvasLayer/StatePanel/HintLabel
 @onready var _message_label: Label = $CanvasLayer/MessageLabel
+@onready var _start_screen: Control = $CanvasLayer/StartScreen
+@onready var _end_screen: Control = $CanvasLayer/EndScreen
+@onready var _end_screen_shade: ColorRect = $CanvasLayer/EndScreen/Shade
+@onready var _result_tag_label: Label = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultTagLabel
+@onready var _result_title_label: Label = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultTitleLabel
+@onready var _result_summary_label: Label = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultSummaryLabel
+@onready var _result_divider: ColorRect = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultDivider
+@onready var _result_stats_label: Label = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultStatsLabel
+@onready var _result_prompt_label: Label = $CanvasLayer/EndScreen/Padding/Center/Panel/Content/ResultPromptLabel
 
 
 func _ready() -> void:
@@ -106,6 +124,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func new_game() -> void:
 	_state = GameState.PLAYING
+	_finish_reason = FinishReason.NONE
 	_signals_collected = 0
 	_shields = STARTING_SHIELDS
 	_remaining_time = STARTING_TIME
@@ -118,10 +137,14 @@ func new_game() -> void:
 
 	_clear_group(&"drones")
 	_clear_group(&"beacons")
+	_hide_start_screen()
+	_hide_end_screen()
 
+	_audio.play_deploy_confirm()
+	_audio.play_gameplay_music()
 	_player.start(PLAYER_START)
 	_spawn_beacon()
-	_spawn_drone()
+	_spawn_drone(false)
 
 	_drone_spawn_timer.wait_time = 2.0
 	_drone_spawn_timer.start()
@@ -133,9 +156,25 @@ func new_game() -> void:
 
 func _show_ready_screen() -> void:
 	_state = GameState.READY
+	_finish_reason = FinishReason.NONE
+	_signals_collected = 0
+	_shields = STARTING_SHIELDS
+	_remaining_time = STARTING_TIME
+	_drone_spawn_count = 0
+	_flash_alpha = 0.0
+	_ui_anim_time = 0.0
 	_player.set_active(false)
+	_drone_spawn_timer.stop()
+	_game_tick_timer.stop()
+	_clear_group(&"drones")
+	_clear_group(&"beacons")
+	_current_beacon = null
+	_clear_edge_pulses()
 	_reset_collection_burst()
-	_message_label.text = "Press Space or Enter to start"
+	_show_start_screen()
+	_hide_end_screen()
+	_audio.play_briefing_music()
+	_message_label.text = "Mission briefing loaded. Press Space or Enter to deploy."
 	_update_hud()
 
 
@@ -148,7 +187,7 @@ func _spawn_beacon() -> void:
 	add_child(_current_beacon)
 
 
-func _spawn_drone() -> void:
+func _spawn_drone(play_spawn_alert: bool = true) -> void:
 	var drone = DRONE_SCENE.instantiate()
 	var speed := randf_range(150.0, 240.0) + float(_drone_spawn_count) * 8.0
 	var start_position := _random_perimeter_position()
@@ -159,6 +198,8 @@ func _spawn_drone() -> void:
 
 	_drone_spawn_count += 1
 	_drone_spawn_timer.wait_time = maxf(0.75, 2.0 - float(_drone_spawn_count) * 0.08)
+	if play_spawn_alert and _state == GameState.PLAYING:
+		_audio.play_drone_spawn_alert(_drone_spawn_count)
 
 
 func _find_spawn_position(minimum_distance_from_player: float) -> Vector2:
@@ -201,11 +242,12 @@ func _on_player_beacon_collected(beacon: Area2D) -> void:
 		_current_beacon = null
 
 	_start_collection_burst(beacon_position)
+	_audio.play_beacon_collect(float(_signals_collected) / float(TARGET_BEACONS))
 
 	if _signals_collected >= TARGET_BEACONS:
 		_message_label.text = COLLECTION_WIN_MESSAGE
 		_trigger_flash(Color(0.31, 1.0, 0.56, 1.0), 0.16)
-		_finish_game(true)
+		_finish_game(FinishReason.SUCCESS)
 	else:
 		_message_label.text = COLLECTION_MESSAGE
 		_trigger_flash(Color(0.36, 1.0, 0.66, 1.0), 0.1)
@@ -219,10 +261,11 @@ func _on_player_drone_hit() -> void:
 
 	_shields -= 1
 	_player.start_invulnerability(PLAYER_INVULNERABILITY)
+	_audio.play_player_hit()
 
 	if _shields <= 0:
 		_trigger_flash(Color(1.0, 0.22, 0.28, 1.0), 0.34)
-		_finish_game(false)
+		_finish_game(FinishReason.SHIELDS)
 	else:
 		_trigger_flash(Color(1.0, 0.24, 0.31, 1.0), 0.24)
 		_message_label.text = "Shield hit! Keep moving."
@@ -231,7 +274,7 @@ func _on_player_drone_hit() -> void:
 
 func _on_drone_spawn_timer_timeout() -> void:
 	if _state == GameState.PLAYING:
-		_spawn_drone()
+		_spawn_drone(true)
 
 
 func _on_game_tick_timer_timeout() -> void:
@@ -240,12 +283,15 @@ func _on_game_tick_timer_timeout() -> void:
 
 	_remaining_time -= 1
 	if _remaining_time <= 0:
-		_finish_game(_signals_collected >= TARGET_BEACONS)
+		_finish_game(FinishReason.SUCCESS if _signals_collected >= TARGET_BEACONS else FinishReason.TIME)
 	else:
+		_audio.play_countdown_warning(_remaining_time)
 		_update_hud()
 
 
-func _finish_game(player_won: bool) -> void:
+func _finish_game(finish_reason: int) -> void:
+	_finish_reason = finish_reason
+	var player_won := finish_reason == FinishReason.SUCCESS
 	_state = GameState.WON if player_won else GameState.LOST
 	_drone_spawn_timer.stop()
 	_game_tick_timer.stop()
@@ -253,9 +299,15 @@ func _finish_game(player_won: bool) -> void:
 
 	if is_instance_valid(_current_beacon):
 		_current_beacon.queue_free()
+		_current_beacon = null
 
+	for drone in get_tree().get_nodes_in_group(&"drones"):
+		drone.set_physics_process(false)
+
+	_audio.play_result(player_won)
 	_message_label.text = "Training complete! Press Space to replay." if player_won else "Signal lost. Press Space to retry."
 	_trigger_flash(Color(0.3, 1.0, 0.62, 1.0), 0.18 if player_won else 0.26)
+	_show_end_screen()
 	_update_hud()
 
 
@@ -282,6 +334,7 @@ func _trigger_flash(color: Color, alpha: float) -> void:
 
 func _on_drone_bounced(edge: StringName, _world_position: Vector2) -> void:
 	if _state == GameState.PLAYING:
+		_audio.play_bounce(edge)
 		_trigger_edge_pulse(edge, 0.42)
 
 
@@ -390,6 +443,70 @@ func _get_state_color() -> Color:
 		GameState.LOST:
 			return STATE_LOST_COLOR
 	return STATE_READY_COLOR
+
+
+func _show_end_screen() -> void:
+	_hide_start_screen()
+	var player_won := _finish_reason == FinishReason.SUCCESS
+	var accent_color := STATE_WON_COLOR if player_won else STATE_LOST_COLOR
+	var report_tag := "MISSION SUCCESS" if player_won else "MISSION FAILED"
+	var report_title := ""
+	var report_summary := ""
+	var report_status := ""
+
+	match _finish_reason:
+		FinishReason.SUCCESS:
+			report_title = "SIGNAL LOCKED"
+			report_summary = "All target signals were secured before hostile traffic could saturate the sweep lane."
+			report_status = "Status: Recovery route complete."
+		FinishReason.SHIELDS:
+			report_title = "SHIELDS COLLAPSED"
+			report_summary = "Repeated drone contact broke the hull shield before the sweep could be finished."
+			report_status = "Failure cause: Shield reserve exhausted."
+		FinishReason.TIME:
+			report_title = "WINDOW CLOSED"
+			report_summary = "The recovery timer expired before the remaining signals could be captured."
+			report_status = "Failure cause: Countdown expired."
+		_:
+			report_title = "RUN ENDED"
+			report_summary = "The exercise has concluded."
+			report_status = "Status: Awaiting redeploy."
+
+	var report_lines := PackedStringArray([
+		"Signals captured: %d/%d" % [_signals_collected, TARGET_BEACONS],
+		"Shields remaining: %d" % max(0, _shields),
+		"Time remaining: %ds" % max(0, _remaining_time),
+		report_status,
+	])
+
+	_result_tag_label.text = report_tag
+	_result_title_label.text = report_title
+	_result_summary_label.text = report_summary
+	_result_stats_label.text = "\n".join(report_lines)
+	_result_prompt_label.text = "Press Space or Enter to redeploy."
+	_result_tag_label.modulate = accent_color
+	_result_title_label.modulate = accent_color
+	_result_divider.color = accent_color
+	_end_screen_shade.color = Color(accent_color.r * 0.12, accent_color.g * 0.12, accent_color.b * 0.16, 0.64)
+	_end_screen.visible = true
+	_message_label.visible = false
+
+
+func _show_start_screen() -> void:
+	_start_screen.visible = true
+	_message_label.visible = false
+
+
+func _hide_start_screen() -> void:
+	_start_screen.visible = false
+	if not _end_screen.visible:
+		_message_label.visible = true
+
+
+func _hide_end_screen() -> void:
+	_end_screen.visible = false
+	if not _start_screen.visible:
+		_message_label.visible = true
 
 
 func _start_collection_burst(world_position: Vector2) -> void:
