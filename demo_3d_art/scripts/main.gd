@@ -160,6 +160,7 @@ var _second_reinforcement_deployed := false
 var _scramble_cooldown_remaining := 0.0
 
 @onready var _player = $Player
+@onready var _audio = $AudioRoot
 @onready var _camera: Camera3D = $Camera3D
 @onready var _game_tick_timer: Timer = $GameTickTimer
 @onready var _score_label: Label = $CanvasLayer/TopContent/TopStack/StatsRow/ScoreLabel
@@ -216,6 +217,8 @@ func new_game() -> void:
 	_hide_start_screen()
 	_hide_end_screen()
 
+	_audio.play_deploy_confirm()
+	_audio.play_gameplay_music()
 	_player.start(PLAYER_START)
 	_spawn_all_beacons()
 	_spawn_drone_patrols(OPENING_DRONE_PATROLS)
@@ -235,6 +238,7 @@ func _show_ready_screen() -> void:
 	_scramble_cooldown_remaining = 0.0
 	_show_start_screen()
 	_hide_end_screen()
+	_audio.play_briefing_music()
 	_message_label.text = "Mission briefing loaded. Press Space or Enter to deploy."
 	_update_hud()
 
@@ -275,6 +279,7 @@ func _deploy_reinforcement_if_needed() -> String:
 
 func _use_scramble_pulse() -> void:
 	if _scramble_cooldown_remaining > 0.0:
+		_audio.play_scramble_denied()
 		_message_label.text = "Scramble pulse recharging. Break line of sight behind pillars or blockers."
 		return
 
@@ -287,6 +292,7 @@ func _use_scramble_pulse() -> void:
 			disrupted_count += 1
 
 	_scramble_cooldown_remaining = SCRAMBLE_COOLDOWN
+	_audio.play_scramble_fire()
 	_player.play_scramble_pulse()
 	_message_label.text = "Scramble pulse fired. Nearby hunters lost lock." if disrupted_count > 0 else "Scramble pulse fired. No hunter was close enough to lock on."
 	_flash_screen(Color(0.509804, 0.913725, 1.0, 1), 0.22)
@@ -298,12 +304,15 @@ func _on_beacon_collected(beacon: Area3D) -> void:
 		return
 
 	_signals_collected += 1
+	_audio.play_beacon_collect(float(_signals_collected) / float(TARGET_BEACONS))
 	beacon.queue_free()
 
 	if _signals_collected >= TARGET_BEACONS:
 		_finish_game(FinishReason.SUCCESS)
 	else:
 		var reinforcement_message := _deploy_reinforcement_if_needed()
+		if not reinforcement_message.is_empty():
+			_audio.play_reinforcement_alert()
 		_message_label.text = reinforcement_message if not reinforcement_message.is_empty() else "Beacon synced. Keep running."
 		_flash_screen(HUD_PATROL_COLOR if not reinforcement_message.is_empty() else Color(0.337255, 1.0, 0.568627, 1), 0.22 if not reinforcement_message.is_empty() else 0.18)
 		_update_hud()
@@ -315,6 +324,7 @@ func _on_drone_player_hit() -> void:
 
 	_shields -= 1
 	_player.start_invulnerability(PLAYER_INVULNERABILITY)
+	_audio.play_player_hit()
 
 	if _shields <= 0:
 		_finish_game(FinishReason.SHIELDS)
@@ -338,6 +348,7 @@ func _on_game_tick_timer_timeout() -> void:
 	if _remaining_time <= 0:
 		_finish_game(FinishReason.TIME)
 	else:
+		_audio.play_countdown_warning(_remaining_time)
 		_update_hud()
 
 
@@ -351,6 +362,7 @@ func _finish_game(finish_reason: int) -> void:
 	for drone in get_tree().get_nodes_in_group(&"drones"):
 		drone.set_physics_process(false)
 
+	_audio.play_result(player_won)
 	_message_label.text = "Route complete. Review the report and press Space to replay." if player_won else "Training failed. Review the report and press Space to retry."
 	_flash_screen(Color(0.337255, 1.0, 0.568627, 1) if player_won else Color(1.0, 0.290196, 0.360784, 1), 0.32)
 	_show_end_screen()
@@ -428,18 +440,24 @@ func _show_end_screen() -> void:
 	_result_divider.color = accent_color
 	_end_screen_shade.color = Color(accent_color.r * 0.12, accent_color.g * 0.12, accent_color.b * 0.16, 0.64)
 	_end_screen.visible = true
+	_message_label.visible = false
 
 
 func _show_start_screen() -> void:
 	_start_screen.visible = true
+	_message_label.visible = false
 
 
 func _hide_start_screen() -> void:
 	_start_screen.visible = false
+	if not _end_screen.visible:
+		_message_label.visible = true
 
 
 func _hide_end_screen() -> void:
 	_end_screen.visible = false
+	if not _start_screen.visible:
+		_message_label.visible = true
 
 
 func _update_scramble_cooldown(delta: float) -> void:

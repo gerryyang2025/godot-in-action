@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player_scene"]
@@ -6,6 +6,7 @@
 [ext_resource type="Material" path="res://materials/arena_panel.tres" id="4_panel_mat"]
 [ext_resource type="Material" path="res://materials/arena_glow.tres" id="5_glow_mat"]
 [ext_resource type="Material" path="res://materials/arena_accent.tres" id="6_accent_mat"]
+[ext_resource type="Script" path="res://scripts/audio_controller.gd" id="7_audio_controller"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.0823529, 0.133333, 0.231373, 1)
@@ -368,6 +369,39 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 [node name="Player" parent="." instance=ExtResource("2_player_scene")]
 position = Vector3(0, 1.1, 9.6)
 
+[node name="AudioRoot" type="Node" parent="."]
+script = ExtResource("7_audio_controller")
+
+[node name="BriefingMusic" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"Music"
+
+[node name="GameplayMusic" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"Music"
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"Ambience"
+
+[node name="UiPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"UI"
+
+[node name="BeaconPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"SFX"
+
+[node name="AbilityPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"SFX"
+
+[node name="ImpactPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"SFX"
+
+[node name="AlertPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"UI"
+
+[node name="WarningPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"UI"
+
+[node name="ResultPlayer" type="AudioStreamPlayer" parent="AudioRoot"]
+bus = &"UI"
+
 [node name="GameTickTimer" type="Timer" parent="."]
 wait_time = 1.0
 
@@ -551,6 +585,20 @@ theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 theme_override_font_sizes/font_size = 18
 text = "Press Space or Enter to deploy."
 horizontal_alignment = 1
+
+[node name="AuthorLabel" type="Label" parent="CanvasLayer/StartScreen"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -38.0
+offset_right = -24.0
+offset_bottom = -14.0
+theme_override_colors/font_color = Color(0.721569, 0.831373, 0.917647, 0.72)
+theme_override_font_sizes/font_size = 14
+text = "Created by Gerry"
+horizontal_alignment = 2
 
 [node name="EndScreen" type="Control" parent="CanvasLayer"]
 visible = false
