@@ -32,22 +32,22 @@ fog_aerial_perspective = 0.42
 fog_sky_affect = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
-size = Vector3(36, 0.4, 28)
+size = Vector3(48, 0.4, 36)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(36, 0.4, 28)
+size = Vector3(48, 0.4, 36)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_long"]
-size = Vector3(36, 1.6, 0.5)
+size = Vector3(48, 1.6, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_long"]
-size = Vector3(36, 1.6, 0.5)
+size = Vector3(48, 1.6, 0.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_short"]
-size = Vector3(0.5, 1.6, 28)
+size = Vector3(0.5, 1.6, 36)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_short"]
-size = Vector3(0.5, 1.6, 28)
+size = Vector3(0.5, 1.6, 36)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_pillar"]
 top_radius = 0.55
@@ -71,10 +71,10 @@ size = Vector3(2.8, 1.4, 0.8)
 size = Vector3(2.8, 1.4, 0.8)
 
 [sub_resource type="BoxMesh" id="BoxMesh_rail_long"]
-size = Vector3(36, 0.14, 0.12)
+size = Vector3(48, 0.14, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_rail_short"]
-size = Vector3(0.12, 0.14, 28)
+size = Vector3(0.12, 0.14, 36)
 
 [sub_resource type="BoxMesh" id="BoxMesh_guide_strip"]
 size = Vector3(1.8, 0.04, 0.22)
@@ -120,16 +120,16 @@ rotation_degrees = Vector3(-52, 38, 0)
 light_color = Color(0.933333, 0.968627, 1, 1)
 light_energy = 2.2
 shadow_enabled = true
-directional_shadow_max_distance = 46.0
+directional_shadow_max_distance = 58.0
 
 [node name="ArenaFill" type="OmniLight3D" parent="."]
 position = Vector3(0, 6.2, 1.5)
 light_color = Color(0.282353, 0.74902, 1, 1)
 light_energy = 0.48
-omni_range = 36.0
+omni_range = 48.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
-position = Vector3(0, 12.3, 25.6)
+position = Vector3(0, 12.8, 32.0)
 fov = 60.0
 
 [node name="Arena" type="Node3D" parent="."]
@@ -145,7 +145,7 @@ surface_material_override/0 = ExtResource("3_floor_mat")
 shape = SubResource("BoxShape3D_floor")
 
 [node name="NorthWall" type="StaticBody3D" parent="Arena"]
-position = Vector3(0, 0.8, -14)
+position = Vector3(0, 0.8, -18)
 
 [node name="WallMesh" type="MeshInstance3D" parent="Arena/NorthWall"]
 mesh = SubResource("BoxMesh_wall_long")
@@ -160,7 +160,7 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 shape = SubResource("BoxShape3D_wall_long")
 
 [node name="SouthWall" type="StaticBody3D" parent="Arena"]
-position = Vector3(0, 0.8, 14)
+position = Vector3(0, 0.8, 18)
 
 [node name="WallMesh" type="MeshInstance3D" parent="Arena/SouthWall"]
 mesh = SubResource("BoxMesh_wall_long")
@@ -175,7 +175,7 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 shape = SubResource("BoxShape3D_wall_long")
 
 [node name="WestWall" type="StaticBody3D" parent="Arena"]
-position = Vector3(-18, 0.8, 0)
+position = Vector3(-24, 0.8, 0)
 
 [node name="WallMesh" type="MeshInstance3D" parent="Arena/WestWall"]
 mesh = SubResource("BoxMesh_wall_short")
@@ -190,7 +190,7 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 shape = SubResource("BoxShape3D_wall_short")
 
 [node name="EastWall" type="StaticBody3D" parent="Arena"]
-position = Vector3(18, 0.8, 0)
+position = Vector3(24, 0.8, 0)
 
 [node name="WallMesh" type="MeshInstance3D" parent="Arena/EastWall"]
 mesh = SubResource("BoxMesh_wall_short")
@@ -205,7 +205,7 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 shape = SubResource("BoxShape3D_wall_short")
 
 [node name="CenterPillar" type="StaticBody3D" parent="Arena"]
-position = Vector3(0, 1.1, -2.0)
+position = Vector3(0.2, 1.1, -2.2)
 
 [node name="PillarMesh" type="MeshInstance3D" parent="Arena/CenterPillar"]
 mesh = SubResource("CylinderMesh_pillar")
@@ -220,7 +220,7 @@ surface_material_override/0 = ExtResource("5_glow_mat")
 shape = SubResource("CylinderShape3D_pillar")
 
 [node name="Ramp" type="StaticBody3D" parent="Arena"]
-position = Vector3(-6.0, 0.22, 3.4)
+position = Vector3(-8.6, 0.22, 4.8)
 rotation_degrees = Vector3(-12, 28, 0)
 
 [node name="RampMesh" type="MeshInstance3D" parent="Arena/Ramp"]
@@ -231,7 +231,7 @@ surface_material_override/0 = ExtResource("4_panel_mat")
 shape = SubResource("BoxShape3D_ramp")
 
 [node name="WestPillar" type="StaticBody3D" parent="Arena"]
-position = Vector3(-7.6, 1.1, -5.4)
+position = Vector3(-11.4, 1.1, -7.0)
 
 [node name="PillarMesh" type="MeshInstance3D" parent="Arena/WestPillar"]
 mesh = SubResource("CylinderMesh_pillar")
@@ -241,7 +241,7 @@ surface_material_override/0 = ExtResource("6_accent_mat")
 shape = SubResource("CylinderShape3D_pillar")
 
 [node name="EastPillar" type="StaticBody3D" parent="Arena"]
-position = Vector3(8.0, 1.1, 5.0)
+position = Vector3(11.8, 1.1, 6.8)
 
 [node name="PillarMesh" type="MeshInstance3D" parent="Arena/EastPillar"]
 mesh = SubResource("CylinderMesh_pillar")
@@ -251,7 +251,7 @@ surface_material_override/0 = ExtResource("6_accent_mat")
 shape = SubResource("CylinderShape3D_pillar")
 
 [node name="RampEast" type="StaticBody3D" parent="Arena"]
-position = Vector3(6.4, 0.22, -4.6)
+position = Vector3(9.8, 0.22, -6.6)
 rotation_degrees = Vector3(-12, -28, 0)
 
 [node name="RampMesh" type="MeshInstance3D" parent="Arena/RampEast"]
@@ -262,7 +262,7 @@ surface_material_override/0 = ExtResource("4_panel_mat")
 shape = SubResource("BoxShape3D_ramp")
 
 [node name="RampNorth" type="StaticBody3D" parent="Arena"]
-position = Vector3(0, 0.22, -9.0)
+position = Vector3(0, 0.22, -12.2)
 rotation_degrees = Vector3(-12, 0, 0)
 
 [node name="RampMesh" type="MeshInstance3D" parent="Arena/RampNorth"]
@@ -273,8 +273,8 @@ surface_material_override/0 = ExtResource("4_panel_mat")
 shape = SubResource("BoxShape3D_ramp")
 
 [node name="SouthwestBlocker" type="StaticBody3D" parent="Arena"]
-position = Vector3(-3.0, 0.7, 6.8)
-rotation_degrees = Vector3(0, 22, 0)
+position = Vector3(-5.0, 0.7, 9.0)
+rotation_degrees = Vector3(0, 18, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/SouthwestBlocker"]
 mesh = SubResource("BoxMesh_blocker")
@@ -284,7 +284,7 @@ surface_material_override/0 = ExtResource("4_panel_mat")
 shape = SubResource("BoxShape3D_blocker")
 
 [node name="NortheastBlocker" type="StaticBody3D" parent="Arena"]
-position = Vector3(3.6, 0.7, -6.6)
+position = Vector3(5.6, 0.7, -9.0)
 rotation_degrees = Vector3(0, -18, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/NortheastBlocker"]
@@ -294,8 +294,174 @@ surface_material_override/0 = ExtResource("4_panel_mat")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/NortheastBlocker"]
 shape = SubResource("BoxShape3D_blocker")
 
+[node name="CentralSouthBlocker" type="StaticBody3D" parent="Arena"]
+position = Vector3(1.2, 0.7, 9.8)
+rotation_degrees = Vector3(0, -16, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/CentralSouthBlocker"]
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/CentralSouthBlocker"]
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="NorthwestBlocker" type="StaticBody3D" parent="Arena"]
+position = Vector3(-10.6, 0.7, -12.8)
+rotation_degrees = Vector3(0, 14, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/NorthwestBlocker"]
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/NorthwestBlocker"]
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="EastLanePillar" type="StaticBody3D" parent="Arena"]
+position = Vector3(16.2, 1.1, -1.6)
+
+[node name="PillarMesh" type="MeshInstance3D" parent="Arena/EastLanePillar"]
+mesh = SubResource("CylinderMesh_pillar")
+surface_material_override/0 = ExtResource("6_accent_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastLanePillar"]
+shape = SubResource("CylinderShape3D_pillar")
+
+[node name="WestLanePillar" type="StaticBody3D" parent="Arena"]
+position = Vector3(-16.4, 1.1, 2.4)
+
+[node name="PillarMesh" type="MeshInstance3D" parent="Arena/WestLanePillar"]
+mesh = SubResource("CylinderMesh_pillar")
+surface_material_override/0 = ExtResource("6_accent_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestLanePillar"]
+shape = SubResource("CylinderShape3D_pillar")
+
+[node name="SouthPillar" type="StaticBody3D" parent="Arena"]
+position = Vector3(5.8, 1.1, 12.4)
+
+[node name="PillarMesh" type="MeshInstance3D" parent="Arena/SouthPillar"]
+mesh = SubResource("CylinderMesh_pillar")
+surface_material_override/0 = ExtResource("6_accent_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/SouthPillar"]
+shape = SubResource("CylinderShape3D_pillar")
+
+[node name="NorthPillar" type="StaticBody3D" parent="Arena"]
+position = Vector3(-4.6, 1.1, -14.0)
+
+[node name="PillarMesh" type="MeshInstance3D" parent="Arena/NorthPillar"]
+mesh = SubResource("CylinderMesh_pillar")
+surface_material_override/0 = ExtResource("6_accent_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/NorthPillar"]
+shape = SubResource("CylinderShape3D_pillar")
+
+[node name="WestStackRamp" type="StaticBody3D" parent="Arena"]
+position = Vector3(-19.2, 0.22, 7.2)
+rotation_degrees = Vector3(-12, 28, 0)
+
+[node name="RampMesh" type="MeshInstance3D" parent="Arena/WestStackRamp"]
+scale = Vector3(1, 1, 1.2)
+mesh = SubResource("BoxMesh_ramp")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestStackRamp"]
+scale = Vector3(1, 1, 1.2)
+shape = SubResource("BoxShape3D_ramp")
+
+[node name="WestStackLow" type="StaticBody3D" parent="Arena"]
+position = Vector3(-17.0, 0.42, 6.0)
+rotation_degrees = Vector3(0, 18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/WestStackLow"]
+scale = Vector3(1, 0.6, 1.55)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestStackLow"]
+scale = Vector3(1, 0.6, 1.55)
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="WestStackMid" type="StaticBody3D" parent="Arena"]
+position = Vector3(-15.1, 1.015, 4.45)
+rotation_degrees = Vector3(0, 18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/WestStackMid"]
+scale = Vector3(0.92, 0.85, 1.42)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestStackMid"]
+scale = Vector3(0.92, 0.85, 1.42)
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="WestStackHigh" type="StaticBody3D" parent="Arena"]
+position = Vector3(-13.2, 1.945, 2.9)
+rotation_degrees = Vector3(0, 18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/WestStackHigh"]
+scale = Vector3(0.85, 1.05, 1.28)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/WestStackHigh"]
+scale = Vector3(0.85, 1.05, 1.28)
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="EastStackRamp" type="StaticBody3D" parent="Arena"]
+position = Vector3(19.0, 0.22, -7.0)
+rotation_degrees = Vector3(-12, -28, 0)
+
+[node name="RampMesh" type="MeshInstance3D" parent="Arena/EastStackRamp"]
+scale = Vector3(1, 1, 1.2)
+mesh = SubResource("BoxMesh_ramp")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastStackRamp"]
+scale = Vector3(1, 1, 1.2)
+shape = SubResource("BoxShape3D_ramp")
+
+[node name="EastStackLow" type="StaticBody3D" parent="Arena"]
+position = Vector3(17.0, 0.42, -6.0)
+rotation_degrees = Vector3(0, -18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/EastStackLow"]
+scale = Vector3(1, 0.6, 1.55)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastStackLow"]
+scale = Vector3(1, 0.6, 1.55)
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="EastStackMid" type="StaticBody3D" parent="Arena"]
+position = Vector3(15.1, 1.015, -4.45)
+rotation_degrees = Vector3(0, -18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/EastStackMid"]
+scale = Vector3(0.92, 0.85, 1.42)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastStackMid"]
+scale = Vector3(0.92, 0.85, 1.42)
+shape = SubResource("BoxShape3D_blocker")
+
+[node name="EastStackHigh" type="StaticBody3D" parent="Arena"]
+position = Vector3(13.2, 1.945, -2.9)
+rotation_degrees = Vector3(0, -18, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Arena/EastStackHigh"]
+scale = Vector3(0.85, 1.05, 1.28)
+mesh = SubResource("BoxMesh_blocker")
+surface_material_override/0 = ExtResource("4_panel_mat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/EastStackHigh"]
+scale = Vector3(0.85, 1.05, 1.28)
+shape = SubResource("BoxShape3D_blocker")
+
 [node name="NorthwestTower" type="Node3D" parent="Arena"]
-position = Vector3(-15.0, 0.0, -10.8)
+position = Vector3(-20.6, 0.0, -14.6)
 
 [node name="LegLeft" type="MeshInstance3D" parent="Arena/NorthwestTower"]
 position = Vector3(-0.42, 1.2, 0)
@@ -313,7 +479,7 @@ mesh = SubResource("BoxMesh_tower_top")
 surface_material_override/0 = ExtResource("5_glow_mat")
 
 [node name="SoutheastTower" type="Node3D" parent="Arena"]
-position = Vector3(14.4, 0.0, 10.2)
+position = Vector3(20.0, 0.0, 14.0)
 
 [node name="LegLeft" type="MeshInstance3D" parent="Arena/SoutheastTower"]
 position = Vector3(-0.42, 1.2, 0)
@@ -331,7 +497,7 @@ mesh = SubResource("BoxMesh_tower_top")
 surface_material_override/0 = ExtResource("5_glow_mat")
 
 [node name="NortheastTower" type="Node3D" parent="Arena"]
-position = Vector3(15.0, 0.0, -10.8)
+position = Vector3(20.6, 0.0, -14.6)
 
 [node name="LegLeft" type="MeshInstance3D" parent="Arena/NortheastTower"]
 position = Vector3(-0.42, 1.2, 0)
@@ -349,7 +515,7 @@ mesh = SubResource("BoxMesh_tower_top")
 surface_material_override/0 = ExtResource("5_glow_mat")
 
 [node name="SouthwestTower" type="Node3D" parent="Arena"]
-position = Vector3(-14.4, 0.0, 10.2)
+position = Vector3(-20.0, 0.0, 14.0)
 
 [node name="LegLeft" type="MeshInstance3D" parent="Arena/SouthwestTower"]
 position = Vector3(-0.42, 1.2, 0)
@@ -367,7 +533,7 @@ mesh = SubResource("BoxMesh_tower_top")
 surface_material_override/0 = ExtResource("5_glow_mat")
 
 [node name="Player" parent="." instance=ExtResource("2_player_scene")]
-position = Vector3(0, 1.1, 9.6)
+position = Vector3(0, 1.1, 13.4)
 
 [node name="AudioRoot" type="Node" parent="."]
 script = ExtResource("7_audio_controller")
@@ -462,7 +628,7 @@ text = "BEACON RUNNER 3D ART"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
-text = "Run the route. Sync green beacons. Break line of sight from red patrols."
+text = "Run the route. Sync green beacons. Read patrols, hunters and blockade lanes."
 autowrap_mode = 3
 
 [node name="StatsRow" type="HFlowContainer" parent="CanvasLayer/TopContent/TopStack"]
@@ -576,7 +742,7 @@ color = Color(0.258824, 0.85098, 1, 0.62)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.823529, 0.901961, 0.964706, 1)
 theme_override_font_sizes/font_size = 18
-text = "Goal: Sync all 8 green beacons before the 90-second uplink window closes.\nThreat: Avoid 5 opening patrol drones; 3 reinforcements join after 4 and 6 beacons.\nControls: WASD / Arrows move, Space jumps, Q fires a scramble pulse on cooldown.\nSurvival: Break line of sight behind pillars, blockers, ramps and wall corners to shake hunter drones."
+text = "Goal: Sync all 8 green beacons before the 90-second uplink window closes.\nThreat: Face 7 opening drones and 5 reinforcements. Patrol drones hold routes with orange rings, hunters break formation with red arrow markers, blockade drones sweep chokepoints with gold lane rails.\nControls: WASD / Arrows move, Space jumps, Q fires a scramble pulse on cooldown.\nSurvival: Use stacked blockers, ramps and high ledges to climb above drone lanes, then break line of sight before hunters recover. Each drone class also carries a different nearby hum to help you read pressure off-screen."
 autowrap_mode = 3
 
 [node name="StartPromptLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]

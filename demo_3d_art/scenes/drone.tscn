@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/drone.gd" id="1_drone_script"]
 [ext_resource type="Material" path="res://materials/drone_body.tres" id="2_drone_body"]
@@ -28,6 +28,45 @@ rings = 28
 
 [sub_resource type="BoxMesh" id="BoxMesh_tail"]
 size = Vector3(0.14, 0.38, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_patrol_mast"]
+size = Vector3(0.06, 0.56, 0.06)
+
+[sub_resource type="SphereMesh" id="SphereMesh_patrol_tip"]
+radius = 0.08
+height = 0.16
+
+[sub_resource type="BoxMesh" id="BoxMesh_hunter_blade"]
+size = Vector3(0.1, 0.08, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_blockade_pod"]
+size = Vector3(0.34, 0.24, 0.82)
+
+[sub_resource type="BoxMesh" id="BoxMesh_blockade_fin"]
+size = Vector3(0.08, 0.54, 0.24)
+
+[sub_resource type="TorusMesh" id="TorusMesh_projection_ring"]
+inner_radius = 0.9
+outer_radius = 1.04
+ring_segments = 18
+rings = 32
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_projection_disc"]
+top_radius = 0.09
+bottom_radius = 0.09
+height = 0.01
+
+[sub_resource type="BoxMesh" id="BoxMesh_projection_arm"]
+size = Vector3(0.12, 0.01, 1.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_projection_stem"]
+size = Vector3(0.12, 0.01, 0.72)
+
+[sub_resource type="BoxMesh" id="BoxMesh_projection_rail"]
+size = Vector3(0.16, 0.01, 2.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_projection_cap"]
+size = Vector3(1.32, 0.01, 0.16)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_drone"]
 radius = 0.72
@@ -86,8 +125,128 @@ position = Vector3(0, 0.1, 0.28)
 mesh = SubResource("BoxMesh_tail")
 surface_material_override/0 = ExtResource("2_drone_body")
 
+[node name="PatrolRig" type="Node3D" parent="Visual"]
+
+[node name="Mast" type="MeshInstance3D" parent="Visual/PatrolRig"]
+position = Vector3(0, 0.44, 0.16)
+mesh = SubResource("BoxMesh_patrol_mast")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="Tip" type="MeshInstance3D" parent="Visual/PatrolRig"]
+position = Vector3(0, 0.78, 0.16)
+mesh = SubResource("SphereMesh_patrol_tip")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="HunterRig" type="Node3D" parent="Visual"]
+
+[node name="BladeLeft" type="MeshInstance3D" parent="Visual/HunterRig"]
+position = Vector3(-0.24, 0.04, -0.48)
+rotation_degrees = Vector3(0, -18, 24)
+mesh = SubResource("BoxMesh_hunter_blade")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="BladeRight" type="MeshInstance3D" parent="Visual/HunterRig"]
+position = Vector3(0.24, 0.04, -0.48)
+rotation_degrees = Vector3(0, 18, -24)
+mesh = SubResource("BoxMesh_hunter_blade")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="BlockadeRig" type="Node3D" parent="Visual"]
+
+[node name="PodLeft" type="MeshInstance3D" parent="Visual/BlockadeRig"]
+position = Vector3(-0.82, 0.02, 0.02)
+mesh = SubResource("BoxMesh_blockade_pod")
+surface_material_override/0 = ExtResource("2_drone_body")
+
+[node name="PodRight" type="MeshInstance3D" parent="Visual/BlockadeRig"]
+position = Vector3(0.82, 0.02, 0.02)
+mesh = SubResource("BoxMesh_blockade_pod")
+surface_material_override/0 = ExtResource("2_drone_body")
+
+[node name="FinLeft" type="MeshInstance3D" parent="Visual/BlockadeRig"]
+position = Vector3(-0.34, 0.26, 0.34)
+rotation_degrees = Vector3(0, 0, 10)
+mesh = SubResource("BoxMesh_blockade_fin")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="FinRight" type="MeshInstance3D" parent="Visual/BlockadeRig"]
+position = Vector3(0.34, 0.26, 0.34)
+rotation_degrees = Vector3(0, 0, -10)
+mesh = SubResource("BoxMesh_blockade_fin")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="ProjectionRoot" type="Node3D" parent="."]
+position = Vector3(0, -0.965, 0)
+
+[node name="PatrolProjection" type="Node3D" parent="ProjectionRoot"]
+
+[node name="Ring" type="MeshInstance3D" parent="ProjectionRoot/PatrolProjection"]
+cast_shadow = 0
+mesh = SubResource("TorusMesh_projection_ring")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="Disc" type="MeshInstance3D" parent="ProjectionRoot/PatrolProjection"]
+position = Vector3(0, 0.001, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_projection_disc")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="HunterProjection" type="Node3D" parent="ProjectionRoot"]
+
+[node name="LeftArm" type="MeshInstance3D" parent="ProjectionRoot/HunterProjection"]
+position = Vector3(-0.28, 0.0, -0.38)
+rotation_degrees = Vector3(0, -34, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_arm")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="RightArm" type="MeshInstance3D" parent="ProjectionRoot/HunterProjection"]
+position = Vector3(0.28, 0.0, -0.38)
+rotation_degrees = Vector3(0, 34, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_arm")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="Stem" type="MeshInstance3D" parent="ProjectionRoot/HunterProjection"]
+position = Vector3(0, 0.001, -0.18)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_stem")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="BlockadeProjection" type="Node3D" parent="ProjectionRoot"]
+
+[node name="LeftRail" type="MeshInstance3D" parent="ProjectionRoot/BlockadeProjection"]
+position = Vector3(-0.58, 0.0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_rail")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="RightRail" type="MeshInstance3D" parent="ProjectionRoot/BlockadeProjection"]
+position = Vector3(0.58, 0.0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_rail")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="FrontCap" type="MeshInstance3D" parent="ProjectionRoot/BlockadeProjection"]
+position = Vector3(0, 0.001, -1.05)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_cap")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
+[node name="RearCap" type="MeshInstance3D" parent="ProjectionRoot/BlockadeProjection"]
+position = Vector3(0, 0.001, 1.05)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_projection_cap")
+surface_material_override/0 = ExtResource("3_drone_trim")
+
 [node name="OmniLight3D" type="OmniLight3D" parent="Visual"]
 position = Vector3(0, 0.0, -0.15)
 light_color = Color(1, 0.290196, 0.360784, 1)
 light_energy = 0.55
 omni_range = 3.6
+
+[node name="TypeLoopPlayer" type="AudioStreamPlayer3D" parent="."]
+unit_size = 6.5
+max_distance = 18.0
+volume_db = -24.0
+bus = &"SFX"
