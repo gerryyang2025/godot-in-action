@@ -21,7 +21,7 @@ godot --headless --editor --quit --path demo_3d_art
 
 ## 命令说明
 
-- `godot --path demo_3d_art`：正常打开 `Beacon Runner 3D Art` 窗口，适合实际游玩、观察材质、灯光和 HUD 效果。
+- `godot --path demo_3d_art`：正常打开 `Beacon Runner 3D Art` 窗口，适合实际游玩、观察材质、灯光、HUD 以及开始/结算面板效果。
 - `godot --headless --path demo_3d_art --quit-after 1`：无窗口快速启动项目并在 `1` 次迭代后退出，适合提交前做启动级冒烟检查；这里的 `1` 不是 `1` 秒。
 - `godot --headless --editor --quit --path demo_3d_art`：让 Godot 以编辑器模式导入并加载项目后退出，适合补充检查脚本、资源导入和编辑器侧错误。
 
@@ -32,11 +32,13 @@ godot --headless --editor --quit --path demo_3d_art
 - `WASD` / 方向键：移动
 - `Space`：开始、跳跃，或在结束后重开
 - `Enter`：开始，或在结束后重开
+- `Q`：释放一次干扰脉冲，打出青色扩散环与能量壳，短暂打断附近猎杀型无人机的追击并进入冷却
 
 ## 玩法目标
 
-- 在倒计时结束前收集 `5` 个绿色信标。
-- 开局避开 `3` 个红色巡逻无人机；收集到第 `3` 个信标后，东侧还会加入 `1` 个增援巡逻机。
+- 在倒计时结束前收集 `8` 个绿色信标。
+- 开局避开 `5` 个红色巡逻无人机；其中部分猎杀型无人机会在你穿过它们的航线时短时追击你。收集到第 `4` 个信标后，东侧和北侧会加入 `2` 个增援巡逻机；收集到第 `6` 个信标后，还会再出现 `1` 架终局斜切巡逻机。
+- 甩开追击的方法有两种：利用立柱、阻挡块和墙角打断视线，或按 `Q` 释放干扰脉冲让附近猎杀机短暂丢失锁定。
 - 你有 `3` 点护盾；撞到无人机会扣除护盾，并获得短暂无敌。
 - 掉出平台、护盾归零或倒计时归零都会失败。
 
@@ -45,12 +47,12 @@ godot --headless --editor --quit --path demo_3d_art
 - `project.godot`：Godot 项目配置和 3D 输入映射。
 - `ART_DIRECTION.md`：本美术版的视觉目标、配色和轮廓规则。
 - `materials/`：主场景、玩家、信标、无人机使用的命名材质资源。
-- `scenes/main.tscn`：训练场、`WorldEnvironment`、灯光、相机、HUD。
+- `scenes/main.tscn`：训练场、`WorldEnvironment`、灯光、相机、HUD，以及开始/结算面板。
 - `scenes/player.tscn`：升级后的探索装玩家轮廓。
 - `scenes/drone.tscn`：带旋翼与危险环的巡逻无人机。
 - `scenes/beacon.tscn`：带底座、环轨和光柱的发光信标。
-- `scripts/main.gd`：游戏流程、HUD 更新、屏幕闪光反馈。
-- `scripts/player.gd`：移动、跳跃和推进器/头灯视觉反馈。
+- `scripts/main.gd`：游戏流程、开始页/HUD/结算面板更新、屏幕闪光和技能触发反馈。
+- `scripts/player.gd`：移动、跳跃、推进器/头灯和干扰脉冲视觉反馈。
 - `scripts/drone.gd`：巡逻、旋翼转动、危险环脉冲。
 - `scripts/beacon.gd`：信标旋转、悬浮、光柱和 halo 动画。
 - `DESIGN.md`：玩法范围和本次 art pass 的边界。
@@ -60,6 +62,6 @@ godot --headless --editor --quit --path demo_3d_art
 
 - 仍然只使用 Godot 内置 primitive mesh、材质、灯光和 Label，不依赖外部模型或贴图。
 - 当前是一个单房间训练场，没有关卡切换。
-- 当前玩法已升级为“3 架开局巡逻 + 1 架阶段性增援”，让后半程收集更紧张。
-- 当前重点是首轮视觉升级：命名材质、环境雾、受控边界高光、轮廓增强、HUD 气质统一。
+- 当前玩法已升级为“更大训练场 + 8 个信标 + 5 架开局巡逻 + 3 架分段增援 + 局部短时追击 + 更多障碍物”，让路线选择、逃生判断和后半程压力都明显增加。
+- 当前重点是首轮视觉升级：命名材质、环境雾、受控边界高光、轮廓增强、HUD 气质统一、更清楚的技能释放反馈，以及可读的开始/结算状态展示。
 - 音频、外部模型、贴图、粒子和后期 shader 仍留给下一轮 polish。

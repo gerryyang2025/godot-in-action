@@ -2,6 +2,14 @@ extends CharacterBody3D
 
 signal fell_out
 
+const SCRAMBLE_RING_DURATION := 0.52
+const SCRAMBLE_SHELL_DURATION := 0.34
+const SCRAMBLE_RING_START_SCALE := 0.18
+const SCRAMBLE_RING_END_SCALE := 18.0
+const SCRAMBLE_SHELL_START_SCALE := 0.45
+const SCRAMBLE_SHELL_END_SCALE := 2.6
+const SCRAMBLE_CORE_BOOST := 1.9
+
 @export var speed: float = 8.0
 @export var acceleration: float = 28.0
 @export var jump_velocity: float = 8.5
@@ -12,12 +20,16 @@ var _is_invulnerable := false
 var _invulnerable_time := 0.0
 var _gravity := 18.0
 var _visual_age := 0.0
+var _scramble_ring_age := SCRAMBLE_RING_DURATION
+var _scramble_shell_age := SCRAMBLE_SHELL_DURATION
 
 @onready var _visual: Node3D = $Visual
 @onready var _collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var _thruster_left: Node3D = $Visual/ThrusterLeft
 @onready var _thruster_right: Node3D = $Visual/ThrusterRight
 @onready var _core_light: OmniLight3D = $Visual/CoreLight
+@onready var _scramble_ring: MeshInstance3D = $Visual/ScrambleRing
+@onready var _scramble_shell: MeshInstance3D = $Visual/ScrambleShell
 
 
 func _ready() -> void:
@@ -71,6 +83,20 @@ func is_invulnerable() -> bool:
 	return _is_invulnerable
 
 
+func play_scramble_pulse() -> void:
+	if not _is_active:
+		return
+
+	_scramble_ring_age = 0.0
+	_scramble_shell_age = 0.0
+	_scramble_ring.visible = true
+	_scramble_shell.visible = true
+	_scramble_ring.scale = Vector3(SCRAMBLE_RING_START_SCALE, 1.0, SCRAMBLE_RING_START_SCALE)
+	_scramble_shell.scale = Vector3.ONE * SCRAMBLE_SHELL_START_SCALE
+	_scramble_ring.transparency = 0.0
+	_scramble_shell.transparency = 0.0
+
+
 func _apply_movement(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
@@ -116,7 +142,41 @@ func _update_visuals(delta: float) -> void:
 
 	_thruster_left.scale.z = thruster_scale
 	_thruster_right.scale.z = thruster_scale
-	_core_light.light_energy = 0.7 + move_ratio * 0.55 + (0.5 + 0.5 * sin(_visual_age * 11.0)) * 0.3
+	var base_core_light_energy := 0.7 + move_ratio * 0.55 + (0.5 + 0.5 * sin(_visual_age * 11.0)) * 0.3
+	_update_scramble_visuals(delta, base_core_light_energy)
+
+
+func _update_scramble_visuals(delta: float, base_core_light_energy: float) -> void:
+	var core_boost := 0.0
+
+	if _scramble_ring_age < SCRAMBLE_RING_DURATION:
+		_scramble_ring_age = minf(SCRAMBLE_RING_DURATION, _scramble_ring_age + delta)
+		var ring_t := _scramble_ring_age / SCRAMBLE_RING_DURATION
+		var ring_expansion := 1.0 - pow(1.0 - ring_t, 2.6)
+		var ring_scale := lerpf(SCRAMBLE_RING_START_SCALE, SCRAMBLE_RING_END_SCALE, ring_expansion)
+		_scramble_ring.visible = true
+		_scramble_ring.scale = Vector3(ring_scale, 1.0, ring_scale)
+		_scramble_ring.transparency = clampf(pow(ring_t, 0.75), 0.0, 1.0)
+		core_boost = maxf(core_boost, pow(1.0 - ring_t, 0.45) * SCRAMBLE_CORE_BOOST)
+	else:
+		_scramble_ring.visible = false
+		_scramble_ring.transparency = 1.0
+
+	if _scramble_shell_age < SCRAMBLE_SHELL_DURATION:
+		_scramble_shell_age = minf(SCRAMBLE_SHELL_DURATION, _scramble_shell_age + delta)
+		var shell_t := _scramble_shell_age / SCRAMBLE_SHELL_DURATION
+		var shell_expansion := 1.0 - pow(1.0 - shell_t, 2.0)
+		var shell_scale := lerpf(SCRAMBLE_SHELL_START_SCALE, SCRAMBLE_SHELL_END_SCALE, shell_expansion)
+		_scramble_shell.visible = true
+		_scramble_shell.scale = Vector3.ONE * shell_scale
+		_scramble_shell.transparency = clampf(pow(shell_t, 0.68), 0.0, 1.0)
+		_scramble_shell.rotate_y(delta * 6.0)
+		core_boost = maxf(core_boost, pow(1.0 - shell_t, 0.6) * SCRAMBLE_CORE_BOOST * 0.55)
+	else:
+		_scramble_shell.visible = false
+		_scramble_shell.transparency = 1.0
+
+	_core_light.light_energy = base_core_light_energy + core_boost
 
 
 func _reset_visuals() -> void:
@@ -124,4 +184,13 @@ func _reset_visuals() -> void:
 	_visual.rotation = Vector3.ZERO
 	_thruster_left.scale = Vector3.ONE
 	_thruster_right.scale = Vector3.ONE
+	_scramble_ring_age = SCRAMBLE_RING_DURATION
+	_scramble_shell_age = SCRAMBLE_SHELL_DURATION
+	_scramble_ring.visible = false
+	_scramble_shell.visible = false
+	_scramble_ring.scale = Vector3.ONE
+	_scramble_shell.scale = Vector3.ONE
+	_scramble_ring.transparency = 1.0
+	_scramble_shell.transparency = 1.0
+	_scramble_shell.rotation = Vector3.ZERO
 	_core_light.light_energy = 0.9

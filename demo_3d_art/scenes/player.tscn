@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player_script"]
 [ext_resource type="Material" path="res://materials/player_body.tres" id="2_player_body"]
 [ext_resource type="Material" path="res://materials/player_trim.tres" id="3_player_trim"]
+[ext_resource type="Material" path="res://materials/player_pulse.tres" id="4_player_pulse"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
 radius = 0.36
@@ -32,6 +33,16 @@ height = 0.42
 [sub_resource type="SphereMesh" id="SphereMesh_tip"]
 radius = 0.05
 height = 0.1
+
+[sub_resource type="TorusMesh" id="TorusMesh_scramble_ring"]
+inner_radius = 0.58
+outer_radius = 0.72
+ring_segments = 12
+rings = 28
+
+[sub_resource type="SphereMesh" id="SphereMesh_scramble_shell"]
+radius = 0.42
+height = 0.84
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.36
@@ -101,3 +112,19 @@ position = Vector3(0, 0.36, -0.12)
 light_color = Color(0.258824, 0.85098, 1, 1)
 light_energy = 0.9
 omni_range = 4.2
+
+[node name="ScrambleRing" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, -0.74, 0)
+cast_shadow = 0
+visible = false
+transparency = 1.0
+mesh = SubResource("TorusMesh_scramble_ring")
+surface_material_override/0 = ExtResource("4_player_pulse")
+
+[node name="ScrambleShell" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.18, -0.06)
+cast_shadow = 0
+visible = false
+transparency = 1.0
+mesh = SubResource("SphereMesh_scramble_shell")
+surface_material_override/0 = ExtResource("4_player_pulse")
