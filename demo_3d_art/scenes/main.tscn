@@ -119,33 +119,6 @@ surface_material_override/0 = ExtResource("3_floor_mat")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/Floor"]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="GuideStripNorth" type="MeshInstance3D" parent="Arena"]
-position = Vector3(0, 0.03, -4.7)
-mesh = SubResource("BoxMesh_guide_strip")
-surface_material_override/0 = ExtResource("5_glow_mat")
-
-[node name="GuideStripCenter" type="MeshInstance3D" parent="Arena"]
-position = Vector3(0, 0.03, -1.8)
-mesh = SubResource("BoxMesh_guide_strip")
-surface_material_override/0 = ExtResource("5_glow_mat")
-
-[node name="GuideStripSouth" type="MeshInstance3D" parent="Arena"]
-position = Vector3(0, 0.03, 1.2)
-mesh = SubResource("BoxMesh_guide_strip")
-surface_material_override/0 = ExtResource("5_glow_mat")
-
-[node name="GuideStripWest" type="MeshInstance3D" parent="Arena"]
-position = Vector3(-5.8, 0.03, 1.4)
-rotation_degrees = Vector3(0, 18, 0)
-mesh = SubResource("BoxMesh_guide_strip")
-surface_material_override/0 = ExtResource("5_glow_mat")
-
-[node name="GuideStripEast" type="MeshInstance3D" parent="Arena"]
-position = Vector3(6.2, 0.03, -0.8)
-rotation_degrees = Vector3(0, -18, 0)
-mesh = SubResource("BoxMesh_guide_strip")
-surface_material_override/0 = ExtResource("5_glow_mat")
-
 [node name="NorthWall" type="StaticBody3D" parent="Arena"]
 position = Vector3(0, 0.8, -9)
 
@@ -277,83 +250,104 @@ wait_time = 1.0
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="TopBar" type="ColorRect" parent="CanvasLayer"]
-offset_right = 1280.0
+anchor_right = 1.0
+offset_right = 0.0
 offset_bottom = 108.0
 color = Color(0.0196078, 0.0313726, 0.0509804, 0.86)
 
 [node name="TopBarAccent" type="ColorRect" parent="CanvasLayer"]
+anchor_right = 1.0
 offset_top = 106.0
-offset_right = 1280.0
+offset_right = 0.0
 offset_bottom = 110.0
 color = Color(0.258824, 0.85098, 1, 0.78)
 
 [node name="BottomBar" type="ColorRect" parent="CanvasLayer"]
-offset_top = 628.0
-offset_right = 1280.0
-offset_bottom = 720.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -92.0
+offset_right = 0.0
+offset_bottom = 0.0
 color = Color(0.0196078, 0.0313726, 0.0509804, 0.82)
 
 [node name="BottomBarAccent" type="ColorRect" parent="CanvasLayer"]
-offset_top = 626.0
-offset_right = 1280.0
-offset_bottom = 630.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -94.0
+offset_right = 0.0
+offset_bottom = -90.0
 color = Color(0.258824, 0.85098, 1, 0.62)
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer"]
+[node name="TopContent" type="MarginContainer" parent="CanvasLayer"]
+anchor_right = 1.0
 offset_left = 34.0
 offset_top = 20.0
-offset_right = 450.0
-offset_bottom = 54.0
+offset_right = -34.0
+offset_bottom = 102.0
+
+[node name="TopStack" type="VBoxContainer" parent="CanvasLayer/TopContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/TopContent/TopStack"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.862745, 0.968627, 1, 1)
 theme_override_font_sizes/font_size = 28
 text = "BEACON RUNNER 3D ART"
 
-[node name="HintLabel" type="Label" parent="CanvasLayer"]
-offset_left = 36.0
-offset_top = 54.0
-offset_right = 664.0
-offset_bottom = 78.0
+[node name="HintLabel" type="Label" parent="CanvasLayer/TopContent/TopStack"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 text = "Run the route. Sync green beacons. Break line of sight from red patrols."
+autowrap_mode = 3
 
-[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
-offset_left = 36.0
-offset_top = 76.0
-offset_right = 264.0
-offset_bottom = 102.0
+[node name="StatsRow" type="HFlowContainer" parent="CanvasLayer/TopContent/TopStack"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 28
+theme_override_constants/v_separation = 4
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/TopContent/TopStack/StatsRow"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.576471, 1, 0.847059, 1)
 theme_override_font_sizes/font_size = 18
 text = "Beacons: 0/5"
 
-[node name="ShieldLabel" type="Label" parent="CanvasLayer"]
-offset_left = 320.0
-offset_top = 76.0
-offset_right = 548.0
-offset_bottom = 102.0
+[node name="ShieldLabel" type="Label" parent="CanvasLayer/TopContent/TopStack/StatsRow"]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.760784, 0.486275, 1)
 theme_override_font_sizes/font_size = 18
 text = "Shields: 3"
 
-[node name="TimeLabel" type="Label" parent="CanvasLayer"]
-offset_left = 604.0
-offset_top = 76.0
-offset_right = 834.0
-offset_bottom = 102.0
+[node name="TimeLabel" type="Label" parent="CanvasLayer/TopContent/TopStack/StatsRow"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.862745, 0.929412, 1, 1)
 theme_override_font_sizes/font_size = 18
 text = "Time: 60"
 
 [node name="MessageLabel" type="Label" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = 660.0
-offset_right = 1240.0
-offset_bottom = 698.0
+offset_top = -60.0
+offset_right = -40.0
+offset_bottom = -22.0
 theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
 theme_override_font_sizes/font_size = 20
 text = "Press Space or Enter to start"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ScreenFlash" type="ColorRect" parent="CanvasLayer"]
-offset_right = 1280.0
-offset_bottom = 720.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
 color = Color(1, 1, 1, 0)

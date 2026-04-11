@@ -42,9 +42,9 @@ var _flash_alpha := 0.0
 @onready var _player = $Player
 @onready var _camera: Camera3D = $Camera3D
 @onready var _game_tick_timer: Timer = $GameTickTimer
-@onready var _score_label: Label = $CanvasLayer/ScoreLabel
-@onready var _shield_label: Label = $CanvasLayer/ShieldLabel
-@onready var _time_label: Label = $CanvasLayer/TimeLabel
+@onready var _score_label: Label = $CanvasLayer/TopContent/TopStack/StatsRow/ScoreLabel
+@onready var _shield_label: Label = $CanvasLayer/TopContent/TopStack/StatsRow/ShieldLabel
+@onready var _time_label: Label = $CanvasLayer/TopContent/TopStack/StatsRow/TimeLabel
 @onready var _message_label: Label = $CanvasLayer/MessageLabel
 @onready var _screen_flash: ColorRect = $CanvasLayer/ScreenFlash
 

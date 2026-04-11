@@ -1,6 +1,6 @@
 # Beacon Runner 3D Art
 
-`Beacon Runner 3D Art` 是一个独立的 Godot 3D 美术优化示例：在不改动原始 `demo_3d/` 基线的前提下，把同一套收集/躲避玩法放进一个更强调材质、光边、环境氛围和 HUD 质感的训练场。
+`Beacon Runner 3D Art` 是一个独立的 Godot 3D 美术优化示例：在不改动原始 `demo_3d/` 基线的前提下，把同一套收集/躲避玩法放进一个更强调材质、受控边界高光、环境氛围和 HUD 质感的训练场。
 
 ## 运行
 
@@ -60,5 +60,5 @@ godot --headless --editor --quit --path demo_3d_art
 
 - 仍然只使用 Godot 内置 primitive mesh、材质、灯光和 Label，不依赖外部模型或贴图。
 - 当前是一个单房间训练场，没有关卡切换。
-- 当前重点是首轮视觉升级：命名材质、环境雾、导视光边、轮廓增强、HUD 气质统一。
+- 当前重点是首轮视觉升级：命名材质、环境雾、受控边界高光、轮廓增强、HUD 气质统一。
 - 音频、外部模型、贴图、粒子和后期 shader 仍留给下一轮 polish。
