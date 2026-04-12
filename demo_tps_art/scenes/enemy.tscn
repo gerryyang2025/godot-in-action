@@ -1,0 +1,204 @@
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_enemy_script"]
+[ext_resource type="AudioStream" path="res://assets/audio/enemy/charge.wav" id="2_charge_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/enemy/shoot.wav" id="3_shoot_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/enemy/hit.wav" id="4_hit_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/enemy/explosion.wav" id="5_explosion_audio"]
+[ext_resource type="Script" path="res://scripts/hitbox.gd" id="6_hitbox_script"]
+[ext_resource type="PackedScene" path="res://assets/reference/player/model/player.glb" id="7_enemy_model"]
+[ext_resource type="PackedScene" path="res://scenes/rifle_prop.tscn" id="8_rifle_scene"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.74902, 0.160784, 0.141176, 1)
+emission_enabled = true
+emission = Color(0.341176, 0.0627451, 0.0470588, 1)
+emission_energy_multiplier = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_head"]
+albedo_color = Color(1, 0.686275, 0.454902, 1)
+emission_enabled = true
+emission = Color(0.423529, 0.231373, 0.0901961, 1)
+emission_energy_multiplier = 0.45
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.0784314, 0.0862745, 0.117647, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beam"]
+albedo_color = Color(1, 0.854902, 0.419608, 1)
+emission_enabled = true
+emission = Color(1, 0.854902, 0.419608, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_charge"]
+albedo_color = Color(1, 0.666667, 0.301961, 1)
+emission_enabled = true
+emission = Color(1, 0.666667, 0.301961, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flash"]
+albedo_color = Color(1, 0.882353, 0.545098, 1)
+emission_enabled = true
+emission = Color(1, 0.882353, 0.545098, 1)
+emission_energy_multiplier = 2.4
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
+radius = 0.38
+height = 1.15
+
+[sub_resource type="SphereMesh" id="SphereMesh_head"]
+radius = 0.24
+height = 0.48
+
+[sub_resource type="BoxMesh" id="BoxMesh_gun"]
+size = Vector3(0.16, 0.16, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_beam"]
+size = Vector3(0.12, 0.12, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flash"]
+radius = 0.11
+height = 0.22
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
+radius = 0.38
+height = 1.15
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_head_hitbox"]
+radius = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_torso_hitbox"]
+size = Vector3(0.82, 0.9, 0.62)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_legs_hitbox"]
+size = Vector3(0.8, 0.72, 0.56)
+
+[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_enemy_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.95, 0)
+shape = SubResource("CapsuleShape3D_enemy")
+
+[node name="Hitboxes" type="Node3D" parent="."]
+
+[node name="HeadHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("6_hitbox_script")
+position = Vector3(0, 1.67, 0)
+zone = &"head"
+damage = 100
+instant_kill = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/HeadHitbox"]
+shape = SubResource("SphereShape3D_head_hitbox")
+
+[node name="TorsoHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("6_hitbox_script")
+position = Vector3(0, 1.12, 0)
+zone = &"torso"
+damage = 40
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/TorsoHitbox"]
+shape = SubResource("BoxShape3D_torso_hitbox")
+
+[node name="LegHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("6_hitbox_script")
+position = Vector3(0, 0.54, 0)
+zone = &"legs"
+damage = 22
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/LegHitbox"]
+shape = SubResource("BoxShape3D_legs_hitbox")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0, 0.95, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Visual"]
+visible = false
+mesh = SubResource("CapsuleMesh_enemy")
+surface_material_override/0 = SubResource("StandardMaterial3D_body")
+
+[node name="Head" type="MeshInstance3D" parent="Visual"]
+visible = false
+position = Vector3(0, 0.83, 0)
+mesh = SubResource("SphereMesh_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_head")
+
+[node name="Model" parent="Visual" instance=ExtResource("7_enemy_model")]
+position = Vector3(0, -0.95, 0)
+
+[node name="Robot_Skeleton" parent="Visual/Model" index="0"]
+transform = Transform3D(0.803991, 0, 0, 0, 0.803991, 0, 0, 0, 0.803991, 0, 0, 0)
+
+[node name="RightHandGrip" type="BoneAttachment3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D"]
+bone_name = "hand.R"
+
+[node name="Gun" type="Node3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip"]
+position = Vector3(-0.091751, 0.229104, -0.010767)
+rotation_degrees = Vector3(-32.56613, -106.7063, -6.360324)
+
+[node name="Rifle" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun" instance=ExtResource("8_rifle_scene")]
+
+[node name="GunMesh" type="MeshInstance3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun"]
+visible = false
+position = Vector3(0, 0, -0.38)
+mesh = SubResource("BoxMesh_gun")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="Muzzle" type="Marker3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun"]
+position = Vector3(0.012, 0.018, -1.12)
+
+[node name="ChargeOrb" type="MeshInstance3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle"]
+visible = false
+mesh = SubResource("SphereMesh_flash")
+surface_material_override/0 = SubResource("StandardMaterial3D_charge")
+
+[node name="MuzzleFlash" type="MeshInstance3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle"]
+visible = false
+mesh = SubResource("SphereMesh_flash")
+surface_material_override/0 = SubResource("StandardMaterial3D_flash")
+
+[node name="StateLight" type="OmniLight3D" parent="Visual"]
+position = Vector3(0, 0.9, 0)
+light_color = Color(0.945098, 0.25098, 0.219608, 1)
+light_energy = 0.65
+omni_range = 3.0
+
+[node name="ChargeAudio" type="AudioStreamPlayer3D" parent="Visual"]
+stream = ExtResource("2_charge_audio")
+volume_db = -3.0
+bus = &"SFX"
+max_distance = 28.0
+
+[node name="ShootAudio" type="AudioStreamPlayer3D" parent="Visual"]
+stream = ExtResource("3_shoot_audio")
+volume_db = -2.0
+bus = &"SFX"
+max_distance = 30.0
+
+[node name="HitAudio" type="AudioStreamPlayer3D" parent="Visual"]
+stream = ExtResource("4_hit_audio")
+volume_db = -4.0
+bus = &"SFX"
+max_distance = 24.0
+
+[node name="ExplosionAudio" type="AudioStreamPlayer3D" parent="Visual"]
+stream = ExtResource("5_explosion_audio")
+volume_db = -2.0
+bus = &"SFX"
+max_distance = 32.0
+
+[node name="BeamPivot" type="Node3D" parent="."]
+visible = false
+
+[node name="Beam" type="MeshInstance3D" parent="BeamPivot"]
+mesh = SubResource("BoxMesh_beam")
+surface_material_override/0 = SubResource("StandardMaterial3D_beam")

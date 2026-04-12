@@ -14,6 +14,7 @@
 - `demo_2d_art/README.md`：已实现 2D art-pass demo 的运行方式、美术目标和实现说明。
 - `demo_3d_art/README.md`：已实现 3D art-pass demo 的运行方式、美术目标和实现说明。
 - `demo_tps/README.md`：已实现 TPS demo 的运行方式、交互和实现说明。
+- `demo_tps_art/README.md`：已实现 TPS art-pass demo 的运行方式、美术升级点和资源说明。
 
 ## 当前状态
 
@@ -27,8 +28,10 @@
 - 已完成 3D art-pass demo CLI 文档：`godot --path demo_3d_art`
 - 已完成独立 TPS demo 首轮：`demo_tps/`
 - 已完成 TPS demo CLI 文档：`godot --path demo_tps`
+- 已完成独立 TPS art-pass demo 首轮：`demo_tps_art/`
+- 已完成 TPS art-pass demo CLI 文档：`godot --path demo_tps_art`
 - `demo_2d/`、`demo_3d/`、`demo_tps/` 作为当前玩法基线版本保留
-- `demo_2d_art/`、`demo_3d_art/` 作为当前独立美术优化版本保留
+- `demo_2d_art/`、`demo_3d_art/`、`demo_tps_art/` 作为当前独立美术优化版本保留
 
 ## 通用约定
 
@@ -112,6 +115,19 @@ godot --headless --path demo_tps --quit-after 1
 godot --headless --editor --quit --path demo_tps
 ```
 
+运行 TPS art demo：
+
+```sh
+godot --path demo_tps_art
+```
+
+验证 TPS art demo：
+
+```sh
+godot --headless --path demo_tps_art --quit-after 1
+godot --headless --editor --quit --path demo_tps_art
+```
+
 ## 推荐下一步
 
 1. 继续打磨 `demo_2d/` 时，先看 `docs/PLAN_2D.md` 和 `demo_2d/README.md`。
@@ -119,4 +135,5 @@ godot --headless --editor --quit --path demo_tps
 3. 继续打磨 2D art-pass 时，先看 `docs/PLAN_2D_ART.md` 和 `demo_2d_art/README.md`。
 4. 继续打磨 3D art-pass 时，先看 `docs/PLAN_3D_ART.md` 和 `demo_3d_art/README.md`。
 5. 继续打磨 TPS demo 时，先看 `docs/PLAN_TPS.md` 和 `demo_tps/README.md`。
-6. 提交前分别跑目标 demo 的 headless 主场景和编辑器导入验证。
+6. 继续打磨 TPS art-pass 时，先看 `demo_tps_art/README.md`、`demo_tps_art/DESIGN.md` 和 `demo_tps_art/REFERENCES.md`。
+7. 提交前分别跑目标 demo 的 headless 主场景和编辑器导入验证。

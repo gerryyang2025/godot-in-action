@@ -1,11 +1,11 @@
 # godot-in-action
 
-这是一个 Godot 学习和 demo 开发工作台。仓库已经包含五个独立可运行项目：`demo_2d/` 的 `Signal Sweep`、`demo_3d/` 的 `Beacon Runner 3D`、`demo_2d_art/` 的 `Signal Sweep Art`、`demo_3d_art/` 的 `Beacon Runner 3D Art`，以及 `demo_tps/` 的 `Tactical Proxy Strike`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
+这是一个 Godot 学习和 demo 开发工作台。仓库已经包含六个独立可运行项目：`demo_2d/` 的 `Signal Sweep`、`demo_3d/` 的 `Beacon Runner 3D`、`demo_2d_art/` 的 `Signal Sweep Art`、`demo_3d_art/` 的 `Beacon Runner 3D Art`、`demo_tps/` 的 `Tactical Proxy Strike`，以及 `demo_tps_art/` 的 `Tactical Proxy Strike Art`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
 
 ## 仓库定位
 
 - 目标：为自定义 Godot demo 的设计、实现、验证提供本地参考资料和独立 demo 工程。
-- 当前状态：已包含独立 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/` 和 `demo_tps/`；根目录仍是工作台，不是 Godot 项目。
+- 当前状态：已包含独立 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/`、`demo_tps/` 和 `demo_tps_art/`；根目录仍是工作台，不是 Godot 项目。
 - 使用方式：把这里当作 Godot 本地知识库与样例库，而不是把根目录直接当成一个 Godot 工程打开。
 - GitHub 提交范围：提交本仓库原创文档、配置、独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
 
@@ -43,7 +43,13 @@ godot --path demo_3d_art
 godot --path demo_tps
 ```
 
-提交前快速验证五个 demo：
+运行当前 TPS art demo：
+
+```sh
+godot --path demo_tps_art
+```
+
+提交前快速验证六个 demo：
 
 ```sh
 godot --headless --path demo_2d --quit-after 1
@@ -56,6 +62,8 @@ godot --headless --path demo_3d_art --quit-after 1
 godot --headless --editor --quit --path demo_3d_art
 godot --headless --path demo_tps --quit-after 1
 godot --headless --editor --quit --path demo_tps
+godot --headless --path demo_tps_art --quit-after 1
+godot --headless --editor --quit --path demo_tps_art
 ```
 
 命令说明：
@@ -78,6 +86,7 @@ godot --headless --editor --quit --path demo_tps
 | `demo_2d_art/` | Signal Sweep Art | 独立 2D art-pass demo | 保留 `demo_2d/` 玩法基线，验证 HUD / shader / 视觉升级 |
 | `demo_3d_art/` | Beacon Runner 3D Art | 独立 3D art-pass demo | 保留 `demo_3d/` 玩法基线，验证材质 / 环境 / HUD 升级 |
 | `demo_tps/` | Tactical Proxy Strike | 独立 TPS demo | 参考 `godotengine/tps-demo` 的交互和模块划分，用内置几何体实现第三人称射击训练场 |
+| `demo_tps_art/` | Tactical Proxy Strike Art | 独立 TPS art-pass demo | 保留 `demo_tps/` 玩法基线，迁移参考机器人模型、工业材质和氛围光照以便直接对比 |
 
 其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/`、`awesome-godot-master/` 和 `reference/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开当前或后续 demo。
 
@@ -185,8 +194,9 @@ godot --headless --editor --quit --path demo_tps
 | `Beacon Runner 3D` | `demo_3d/project.godot` | 3D 胶囊角色移动/跳跃、收集 5 个发光信标、躲避 2 个线段巡逻无人机、3 点护盾、60 秒倒计时、胜负/重开 | 详见 `demo_3d/README.md`、`demo_3d/DESIGN.md`、`demo_3d/REFERENCES.md` |
 | `Beacon Runner 3D Art` | `demo_3d_art/project.godot` | 保留 3D 基线玩法，升级为带命名材质、雾、导视光边和控制台 HUD 的独立 art-pass 场景 | 详见 `demo_3d_art/README.md`、`demo_3d_art/ART_DIRECTION.md`、`demo_3d_art/REFERENCES.md` |
 | `Tactical Proxy Strike` | `demo_tps/project.godot` | 第三人称肩后相机、瞄准态、玩家投射物、巡逻哨兵、敌方激光、90 秒清场目标 | 详见 `demo_tps/README.md`、`demo_tps/DESIGN.md`、`demo_tps/REFERENCES.md` |
+| `Tactical Proxy Strike Art` | `demo_tps_art/project.godot` | 保留 TPS 基线玩法，升级为参考机器人模型、工业门体、PBR 面板材质和更强的 art-pass 氛围 | 详见 `demo_tps_art/README.md`、`demo_tps_art/DESIGN.md`、`demo_tps_art/REFERENCES.md` |
 
-五个 demo 当前都只使用 Godot 内置节点、primitive、材质、Label 或轻量 shader，不依赖外部美术、音频、字体或模型资产。
+其中 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/` 和 `demo_tps/` 仍以 Godot 内置节点、primitive、材质、Label 或轻量 shader 为主；`demo_tps_art/` 额外选择性复制了 `reference/tps-demo/` 的模型、贴图、音乐和音效资源，并在项目内记录来源与授权。
 
 ## 常用命令
 
@@ -253,6 +263,19 @@ godot --path demo_tps
 ```sh
 godot --headless --path demo_tps --quit-after 1
 godot --headless --editor --quit --path demo_tps
+```
+
+打开当前 TPS art demo：
+
+```sh
+godot --path demo_tps_art
+```
+
+提交前快速验证当前 TPS art demo：
+
+```sh
+godot --headless --path demo_tps_art --quit-after 1
+godot --headless --editor --quit --path demo_tps_art
 ```
 
 ## 适合后续 LLM/代理的理解方式
