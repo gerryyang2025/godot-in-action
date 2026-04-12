@@ -27,11 +27,19 @@
   - 社区资源导航清单。
   - 只用于发现资源，不作为 API 或仓库结构的事实依据。
   - 应纳入根仓库 Git 版本控制。
+- `reference/`
+  - 本地参考项目集合目录。
+  - 当前包含 `reference/tps-demo/`，用于参考第三人称射击 demo 的关卡组织、音频反馈、美术渲染和交互节奏。
+  - `reference/tps-demo/` 是 Godot `3.5.x` 参考项目，不能直接在当前 `4.6.2` 环境下运行。
+  - 默认视为只读参考，不作为 `demo_tps/` 的运行时资源根目录。
 - `demo_2d/`
   - 当前独立 2D demo：Signal Sweep。
   - 是我们自己的 Godot 项目，可以按用户需求修改。
 - `demo_3d/`
   - 当前独立 3D demo：Beacon Runner 3D。
+  - 是我们自己的 Godot 项目，可以按用户需求修改。
+- `demo_tps/`
+  - 当前独立 TPS demo：Tactical Proxy Strike。
   - 是我们自己的 Godot 项目，可以按用户需求修改。
 - `demo_2d_art/`
   - 当前独立 2D art-pass demo：Signal Sweep Art。
@@ -48,6 +56,7 @@
 - `godot-docs-stable/`
 - `godot-demo-projects-4.2-31d1c0c/`
 - `awesome-godot-master/`
+- `reference/`
 
 如果用户要求“开始做自己的 demo”，优先新建独立顶层目录承载新项目，而不是把代码混进这些上游目录中。
 
@@ -142,6 +151,19 @@ godot --headless --path demo_3d --quit-after 1
 godot --headless --editor --quit --path demo_3d
 ```
 
+运行当前 TPS demo：
+
+```sh
+godot --path demo_tps
+```
+
+快速验证当前 TPS demo：
+
+```sh
+godot --headless --path demo_tps --quit-after 1
+godot --headless --editor --quit --path demo_tps
+```
+
 运行当前 2D art demo：
 
 ```sh
@@ -211,6 +233,7 @@ godot --headless --editor --quit --path demo_3d_art
 - demo 路线图总入口维护在 `docs/PLAN.md`。
 - 2D demo 详细计划维护在 `docs/PLAN_2D.md`。
 - 3D demo 详细计划维护在 `docs/PLAN_3D.md`。
+- TPS demo 详细计划维护在 `docs/PLAN_TPS.md`。
 - 2D art-pass demo 详细计划维护在 `docs/PLAN_2D_ART.md`。
 - 3D art-pass demo 详细计划维护在 `docs/PLAN_3D_ART.md`。
 - 贡献流程维护在 `CONTRIBUTING.md`。

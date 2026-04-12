@@ -1,0 +1,205 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/crosshair.png" id="2_crosshair_texture"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/jump.wav" id="3_jump_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/land.wav" id="4_land_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/shoot.wav" id="5_shoot_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/step.wav" id="6_step_audio"]
+[ext_resource type="Script" path="res://scripts/camera_shake.gd" id="7_camera_shake_script"]
+[ext_resource type="Script" path="res://scripts/hitbox.gd" id="8_hitbox_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.164706, 0.705882, 0.941176, 1)
+emission_enabled = true
+emission = Color(0.054902, 0.192157, 0.298039, 1)
+emission_energy_multiplier = 0.55
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.0862745, 0.101961, 0.14902, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_head"]
+albedo_color = Color(0.980392, 0.94902, 0.74902, 1)
+emission_enabled = true
+emission = Color(0.364706, 0.337255, 0.14902, 1)
+emission_energy_multiplier = 0.35
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flash"]
+albedo_color = Color(1, 0.921569, 0.509804, 1)
+emission_enabled = true
+emission = Color(1, 0.921569, 0.509804, 1)
+emission_energy_multiplier = 1.7
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+radius = 0.38
+height = 1.15
+
+[sub_resource type="SphereMesh" id="SphereMesh_head"]
+radius = 0.24
+height = 0.48
+
+[sub_resource type="BoxMesh" id="BoxMesh_chest"]
+size = Vector3(0.6, 0.28, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gun"]
+size = Vector3(0.16, 0.16, 0.9)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flash"]
+radius = 0.08
+height = 0.16
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.38
+height = 1.15
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_head_hitbox"]
+radius = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_torso_hitbox"]
+size = Vector3(0.82, 0.9, 0.62)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_legs_hitbox"]
+size = Vector3(0.8, 0.72, 0.56)
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.95, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Hitboxes" type="Node3D" parent="."]
+
+[node name="HeadHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("8_hitbox_script")
+position = Vector3(0, 1.67, 0)
+zone = &"head"
+damage = 100
+instant_kill = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/HeadHitbox"]
+shape = SubResource("SphereShape3D_head_hitbox")
+
+[node name="TorsoHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("8_hitbox_script")
+position = Vector3(0, 1.12, 0)
+zone = &"torso"
+damage = 40
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/TorsoHitbox"]
+shape = SubResource("BoxShape3D_torso_hitbox")
+
+[node name="LegHitbox" type="Area3D" parent="Hitboxes"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("8_hitbox_script")
+position = Vector3(0, 0.54, 0)
+zone = &"legs"
+damage = 22
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitboxes/LegHitbox"]
+shape = SubResource("BoxShape3D_legs_hitbox")
+
+[node name="Visual" type="Node3D" parent="."]
+position = Vector3(0, 0.95, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("CapsuleMesh_player")
+surface_material_override/0 = SubResource("StandardMaterial3D_body")
+
+[node name="Chest" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.18, -0.02)
+mesh = SubResource("BoxMesh_chest")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="Head" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.72, 0)
+mesh = SubResource("SphereMesh_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_head")
+
+[node name="Gun" type="Node3D" parent="Visual"]
+position = Vector3(0.32, 0.42, -0.2)
+rotation_degrees = Vector3(6, -6, 0)
+
+[node name="GunMesh" type="MeshInstance3D" parent="Visual/Gun"]
+position = Vector3(0, 0, -0.42)
+mesh = SubResource("BoxMesh_gun")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="Muzzle" type="Marker3D" parent="Visual/Gun"]
+position = Vector3(0, 0, -0.86)
+
+[node name="MuzzleFlash" type="MeshInstance3D" parent="Visual/Gun/Muzzle"]
+visible = false
+mesh = SubResource("SphereMesh_flash")
+surface_material_override/0 = SubResource("StandardMaterial3D_flash")
+
+[node name="CameraYaw" type="Node3D" parent="."]
+position = Vector3(0, 1.45, 0)
+
+[node name="CameraPitch" type="Node3D" parent="CameraYaw"]
+rotation_degrees = Vector3(-14, 0, 0)
+
+[node name="ShakePivot" type="Node3D" parent="CameraYaw/CameraPitch"]
+script = ExtResource("7_camera_shake_script")
+
+[node name="Camera3D" type="Camera3D" parent="CameraYaw/CameraPitch/ShakePivot"]
+position = Vector3(0, 1.15, 5.8)
+near = 0.05
+fov = 72.0
+
+[node name="JumpAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_jump_audio")
+bus = &"SFX"
+max_distance = 18.0
+
+[node name="LandAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_land_audio")
+bus = &"SFX"
+max_distance = 18.0
+
+[node name="StepAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_step_audio")
+volume_db = -4.0
+bus = &"SFX"
+max_distance = 14.0
+
+[node name="ShootAudio" type="AudioStreamPlayer3D" parent="Visual/Gun/Muzzle"]
+stream = ExtResource("5_shoot_audio")
+volume_db = -2.0
+bus = &"SFX"
+max_distance = 28.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Crosshair" type="TextureRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_crosshair_texture")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="HitFlash" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.901961, 0.168627, 0.168627, 0)

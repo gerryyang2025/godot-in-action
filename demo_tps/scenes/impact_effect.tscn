@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/impact_effect.gd" id="1_impact_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flash"]
+albedo_color = Color(0.705882, 0.917647, 1, 1)
+emission_enabled = true
+emission = Color(0.705882, 0.917647, 1, 1)
+emission_energy_multiplier = 1.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_flash"]
+radius = 0.25
+height = 0.5
+
+[node name="ImpactEffect" type="Node3D"]
+script = ExtResource("1_impact_script")
+
+[node name="Flash" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_flash")
+material_override = SubResource("StandardMaterial3D_flash")
+
+[node name="Light" type="OmniLight3D" parent="."]
+light_color = Color(0.705882, 0.917647, 1, 1)
+light_energy = 2.0
+omni_range = 4.0
