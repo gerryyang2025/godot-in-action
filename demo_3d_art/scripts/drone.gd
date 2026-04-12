@@ -9,6 +9,15 @@ const PLAYER_LINE_OF_SIGHT_MASK := 3
 const PATH_TARGET_REFRESH_DISTANCE := 1.1
 const PATH_DEVIATION_DISTANCE := 2.4
 const DRONE_AUDIO_MIX_RATE := 22050
+const HUNTER_DETECTION_RADIUS_MULTIPLIER := 1.22
+const HUNTER_CHASE_LOCK_MULTIPLIER := 1.5
+const HUNTER_FORGET_DISTANCE_MULTIPLIER := 1.25
+const HUNTER_LINE_BREAK_DECAY := 1.05
+const HUNTER_REPATH_INTERVAL := 0.14
+const HUNTER_TARGET_REFRESH_DISTANCE := 0.7
+const HUNTER_SUPPORT_ALERT_RADIUS := 11.5
+const HUNTER_SUPPORT_ALERT_COOLDOWN := 1.15
+const HUNTER_SUPPORT_LOCK_TIME := 2.8
 
 @export var speed: float = 4.0
 @export var acceleration: float = 16.0
@@ -44,6 +53,7 @@ var _danger_ring_scale_multiplier := 1.0
 var _rotor_speed_multiplier := 1.0
 var _light_energy_multiplier := 1.0
 var _audio_enabled := false
+var _support_alert_cooldown := 0.0
 
 @onready var _visual: Node3D = $Visual
 @onready var _body: MeshInstance3D = $Visual/Body
@@ -136,6 +146,7 @@ func _physics_process(delta: float) -> void:
 
 func _update_chase_state(delta: float) -> void:
 	var was_chasing := _is_chasing
+	_support_alert_cooldown = maxf(0.0, _support_alert_cooldown - delta)
 
 	if not can_chase:
 		_alert_level = move_toward(_alert_level, 0.0, delta * 2.2)
@@ -161,13 +172,21 @@ func _update_chase_state(delta: float) -> void:
 	var player_position := _player.global_position
 	var planar_distance := Vector2(player_position.x - global_position.x, player_position.z - global_position.z).length()
 	var has_line_of_sight := _has_line_of_sight_to_player(player_position)
+	var effective_detection_radius := _get_effective_detection_radius()
+	var effective_chase_lock_time := _get_effective_chase_lock_time()
+	var effective_forget_distance := _get_effective_forget_distance()
 
-	if planar_distance <= detection_radius and has_line_of_sight:
+	if planar_distance <= effective_detection_radius and has_line_of_sight:
 		_is_chasing = true
-		_chase_timer = chase_lock_time
+		_chase_timer = effective_chase_lock_time
+		if _is_hunter_type() and (not was_chasing or _support_alert_cooldown <= 0.0):
+			_broadcast_hunter_alert(player_position)
 	elif _is_chasing:
-		_chase_timer -= delta * (2.1 if not has_line_of_sight else 1.0)
-		if _chase_timer <= 0.0 or planar_distance >= chase_forget_distance:
+		var chase_decay := 1.0
+		if not has_line_of_sight:
+			chase_decay = HUNTER_LINE_BREAK_DECAY if _is_hunter_type() else 2.1
+		_chase_timer -= delta * chase_decay
+		if _chase_timer <= 0.0 or planar_distance >= effective_forget_distance:
 			_is_chasing = false
 
 	_alert_level = move_toward(_alert_level, 1.0 if _is_chasing else 0.0, delta * 2.8)
@@ -200,8 +219,9 @@ func _update_navigation_path(active_target: Vector3, delta: float) -> void:
 		var deviation := Vector2(global_position.x - current_waypoint.x, global_position.z - current_waypoint.z).length()
 		should_refresh = deviation >= PATH_DEVIATION_DISTANCE
 
+	var target_refresh_distance := _get_target_refresh_distance()
 	var goal_changed := not _has_cached_path_target \
-			or Vector2(active_target.x - _last_path_target.x, active_target.z - _last_path_target.z).length() >= PATH_TARGET_REFRESH_DISTANCE
+			or Vector2(active_target.x - _last_path_target.x, active_target.z - _last_path_target.z).length() >= target_refresh_distance
 	if _path_refresh_remaining <= 0.0 and (_is_chasing or goal_changed):
 		should_refresh = true
 
@@ -212,7 +232,7 @@ func _update_navigation_path(active_target: Vector3, delta: float) -> void:
 
 
 func _refresh_navigation_path(active_target: Vector3) -> void:
-	_path_refresh_remaining = chase_repath_interval if _is_chasing else patrol_repath_interval
+	_path_refresh_remaining = _get_active_repath_interval()
 	_last_path_target = active_target
 	_has_cached_path_target = true
 	_path_points = _navigation_provider.get_drone_path(global_position, active_target, _hover_height)
@@ -253,6 +273,68 @@ func _get_direction_to(target_position: Vector3) -> Vector3:
 func _mark_path_dirty() -> void:
 	_path_refresh_remaining = 0.0
 	_has_cached_path_target = false
+
+
+func _is_hunter_type() -> bool:
+	return _drone_type == DRONE_TYPE_HUNTER
+
+
+func _get_effective_detection_radius() -> float:
+	return detection_radius * HUNTER_DETECTION_RADIUS_MULTIPLIER if _is_hunter_type() else detection_radius
+
+
+func _get_effective_chase_lock_time() -> float:
+	return chase_lock_time * HUNTER_CHASE_LOCK_MULTIPLIER if _is_hunter_type() else chase_lock_time
+
+
+func _get_effective_forget_distance() -> float:
+	return chase_forget_distance * HUNTER_FORGET_DISTANCE_MULTIPLIER if _is_hunter_type() else chase_forget_distance
+
+
+func _get_target_refresh_distance() -> float:
+	if _is_hunter_type() and _is_chasing:
+		return HUNTER_TARGET_REFRESH_DISTANCE
+
+	return PATH_TARGET_REFRESH_DISTANCE
+
+
+func _get_active_repath_interval() -> float:
+	if _is_hunter_type() and _is_chasing:
+		return minf(chase_repath_interval, HUNTER_REPATH_INTERVAL)
+
+	return chase_repath_interval if _is_chasing else patrol_repath_interval
+
+
+func _broadcast_hunter_alert(player_position: Vector3) -> void:
+	if not _is_hunter_type():
+		return
+	if _support_alert_cooldown > 0.0:
+		return
+
+	_support_alert_cooldown = HUNTER_SUPPORT_ALERT_COOLDOWN
+
+	for drone in get_tree().get_nodes_in_group(&"drones"):
+		if drone == self:
+			continue
+		if not drone.has_method("receive_hunter_alert"):
+			continue
+		if drone.global_position.distance_to(global_position) > HUNTER_SUPPORT_ALERT_RADIUS:
+			continue
+		drone.receive_hunter_alert(player_position, HUNTER_SUPPORT_LOCK_TIME)
+
+
+func receive_hunter_alert(player_position: Vector3, alert_lock_time: float) -> void:
+	if not can_chase or not _is_hunter_type():
+		return
+	if _chase_disabled_time > 0.0:
+		return
+
+	_is_chasing = true
+	_chase_timer = maxf(_chase_timer, alert_lock_time)
+	_alert_level = maxf(_alert_level, 0.45)
+	_last_path_target = player_position
+	_has_cached_path_target = true
+	_mark_path_dirty()
 
 
 func _sanitize_drone_type(configured_type: StringName) -> StringName:
@@ -633,6 +715,7 @@ func configure(point_a: Vector3, point_b: Vector3, new_speed: float, behavior: D
 	_path_refresh_remaining = 0.0
 	_has_cached_path_target = false
 	_hover_height = point_a.y
+	_support_alert_cooldown = 0.0
 	velocity = Vector3.ZERO
 	global_position = point_a
 	_apply_visual_profile()

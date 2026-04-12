@@ -41,10 +41,10 @@ const OPENING_DRONE_PATROLS = [
 		"behavior": {
 			"drone_type": "hunter",
 			"can_chase": true,
-			"detection_radius": 7.1,
-			"chase_speed_multiplier": 1.5,
-			"chase_lock_time": 2.0,
-			"chase_forget_distance": 12.0
+			"detection_radius": 8.0,
+			"chase_speed_multiplier": 1.86,
+			"chase_lock_time": 2.7,
+			"chase_forget_distance": 13.8
 		}
 	},
 	{
@@ -54,10 +54,10 @@ const OPENING_DRONE_PATROLS = [
 		"behavior": {
 			"drone_type": "hunter",
 			"can_chase": true,
-			"detection_radius": 6.2,
-			"chase_speed_multiplier": 1.48,
-			"chase_lock_time": 2.1,
-			"chase_forget_distance": 11.0
+			"detection_radius": 7.0,
+			"chase_speed_multiplier": 1.92,
+			"chase_lock_time": 2.9,
+			"chase_forget_distance": 13.2
 		}
 	},
 	{
@@ -115,10 +115,10 @@ const OPENING_DRONE_PATROLS = [
 		"behavior": {
 			"drone_type": "hunter",
 			"can_chase": true,
-			"detection_radius": 5.6,
-			"chase_speed_multiplier": 1.44,
-			"chase_lock_time": 1.8,
-			"chase_forget_distance": 10.2
+			"detection_radius": 6.5,
+			"chase_speed_multiplier": 2.0,
+			"chase_lock_time": 2.6,
+			"chase_forget_distance": 12.4
 		}
 	},
 ]
@@ -131,10 +131,10 @@ const FIRST_REINFORCEMENT_DRONE_PATROLS = [
 		"behavior": {
 			"drone_type": "hunter",
 			"can_chase": true,
-			"detection_radius": 5.9,
-			"chase_speed_multiplier": 1.45,
-			"chase_lock_time": 1.9,
-			"chase_forget_distance": 10.2
+			"detection_radius": 6.8,
+			"chase_speed_multiplier": 1.96,
+			"chase_lock_time": 2.8,
+			"chase_forget_distance": 12.6
 		}
 	},
 	{
@@ -169,10 +169,10 @@ const SECOND_REINFORCEMENT_DRONE_PATROLS = [
 		"behavior": {
 			"drone_type": "hunter",
 			"can_chase": true,
-			"detection_radius": 6.8,
-			"chase_speed_multiplier": 1.56,
-			"chase_lock_time": 2.2,
-			"chase_forget_distance": 12.4
+			"detection_radius": 7.6,
+			"chase_speed_multiplier": 2.08,
+			"chase_lock_time": 3.1,
+			"chase_forget_distance": 14.8
 		}
 	},
 	{
