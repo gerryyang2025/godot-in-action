@@ -52,7 +52,7 @@ var _pending_go_go_go_after_intro := false
 @onready var _music: AudioStreamPlayer = $Music
 @onready var _intro_cue: AudioStreamPlayer = $IntroCue
 @onready var _start_cue: AudioStreamPlayer = $StartCue
-@onready var _defeat_cue: AudioStreamPlayer = $DefeatCue
+@onready var _counter_terrorists_win_cue: AudioStreamPlayer = $CounterTerroristsWinCue
 @onready var _terrorists_win_cue: AudioStreamPlayer = $TerroristsWinCue
 @onready var _radio_cue: AudioStreamPlayer = $RadioCue
 @onready var _round_timer: Timer = $RoundTimer
@@ -93,9 +93,9 @@ func _exit_tree() -> void:
 	if is_instance_valid(_radio_cue):
 		_radio_cue.stop()
 		_radio_cue.stream = null
-	if is_instance_valid(_defeat_cue):
-		_defeat_cue.stop()
-		_defeat_cue.stream = null
+	if is_instance_valid(_counter_terrorists_win_cue):
+		_counter_terrorists_win_cue.stop()
+		_counter_terrorists_win_cue.stream = null
 	if is_instance_valid(_terrorists_win_cue):
 		_terrorists_win_cue.stop()
 		_terrorists_win_cue.stream = null
@@ -377,8 +377,8 @@ func _play_counter_terrorists_win() -> void:
 	_start_cue.stop()
 	_radio_cue.stop()
 	_terrorists_win_cue.stop()
-	_defeat_cue.stop()
-	_defeat_cue.play()
+	_counter_terrorists_win_cue.stop()
+	_counter_terrorists_win_cue.play()
 
 
 func _play_terrorists_win() -> void:
@@ -387,7 +387,7 @@ func _play_terrorists_win() -> void:
 	_intro_cue.stop()
 	_start_cue.stop()
 	_radio_cue.stop()
-	_defeat_cue.stop()
+	_counter_terrorists_win_cue.stop()
 	_terrorists_win_cue.stop()
 	_terrorists_win_cue.play()
 

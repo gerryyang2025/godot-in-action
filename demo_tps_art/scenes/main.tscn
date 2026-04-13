@@ -254,7 +254,7 @@ stream = ExtResource("18_start_cue")
 volume_db = -5.0
 bus = &"Music"
 
-[node name="DefeatCue" type="AudioStreamPlayer" parent="."]
+[node name="CounterTerroristsWinCue" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("19_defeat_cue")
 volume_db = -5.0
 bus = &"Music"
