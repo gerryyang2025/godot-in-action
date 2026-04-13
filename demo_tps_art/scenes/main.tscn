@@ -1,8 +1,12 @@
-[gd_scene load_steps=39 format=3]
+[gd_scene load_steps=43 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player_scene"]
 [ext_resource type="AudioStream" path="res://assets/music/level_music.ogg" id="3_level_music"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/weapon_pickup_intro.mp3" id="20_intro_cue"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/terrorists_win.mp3" id="21_terrorists_win_cue"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/go_go_go.mp3" id="18_start_cue"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/counter_terrorists_win.mp3" id="19_defeat_cue"]
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_scifi_floor_panel_albedo.png" id="4_floor_albedo"]
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_scifi_floor_panel_normal.png" id="5_floor_normal"]
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_scifi_floor_panel_orm.png" id="6_floor_orm"]
@@ -238,6 +242,30 @@ omni_range = 26.0
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_level_music")
 volume_db = -14.0
+bus = &"Music"
+
+[node name="IntroCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_intro_cue")
+volume_db = -4.0
+bus = &"Music"
+
+[node name="StartCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_start_cue")
+volume_db = -5.0
+bus = &"Music"
+
+[node name="DefeatCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_defeat_cue")
+volume_db = -5.0
+bus = &"Music"
+
+[node name="TerroristsWinCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("21_terrorists_win_cue")
+volume_db = -5.0
+bus = &"Music"
+
+[node name="RadioCue" type="AudioStreamPlayer" parent="."]
+volume_db = -7.0
 bus = &"Music"
 
 [node name="Arena" type="Node3D" parent="."]
@@ -623,21 +651,21 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 theme_override_font_sizes/font_size = 16
-text = "ART PASS BRIEF"
+text = "COUNTER-TERRORIST BRIEFING"
 horizontal_alignment = 1
 
 [node name="StartTitleLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.823529, 1, 0.901961, 1)
 theme_override_font_sizes/font_size = 34
-text = "TACTICAL PROXY STRIKE ART"
+text = "COUNTER-TERRORISTS VS TERRORISTS"
 horizontal_alignment = 1
 
 [node name="StartSummaryLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
 theme_override_font_sizes/font_size = 19
-text = "Deploy into a more grounded industrial training arena, read the patrol lanes, and clear every sentry before the timer runs dry."
+text = "You enter the round as the Counter-Terrorist operator. Hold the site, break the Terrorist push, and finish the fight before the round timer expires."
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -650,14 +678,14 @@ color = Color(0.258824, 0.85098, 1, 0.62)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.823529, 0.901961, 0.964706, 1)
 theme_override_font_sizes/font_size = 18
-text = "Goal: Eliminate all 4 sentry bots within the 90-second deployment window.\nControls: WASD / Arrows move, Space jumps, RMB or Q aims, LMB or F fires, Esc releases the cursor.\nCombat model: You start with 100 health; headshots are instantly lethal, torso hits hurt more, and leg hits hurt less.\nArt pass: The arena now borrows industrial robot models, panel materials, access-door set dressing, visible rifles, and more grounded lighting from the local reference project.\nTactics: Use the central tower, long barriers and rear pillars to break enemy sightlines while your opening 3-second shield buys time to reposition."
+text = "Side: You are the Counter-Terrorists. The robots are the Terrorists.\nRound goal: Eliminate all 4 Terrorists within the 90-second round timer.\nControls: WASD / Arrows move, Space jumps, RMB or Q aims, LMB or F fires, Z opens the radio, 1 reports enemy spotted, and 2 reports enemy down.\nCombat model: You start with 100 health; headshots are instantly lethal, torso hits hurt more, and leg hits hurt less.\nTactics: Use the central tower, long barriers and rear pillars to break enemy sightlines while your opening 3-second shield buys time to reposition."
 autowrap_mode = 3
 
 [node name="StartPromptLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 theme_override_font_sizes/font_size = 18
-text = "Press Space or Enter to deploy."
+text = "Press Space or Enter to join the Counter-Terrorists."
 horizontal_alignment = 1
 
 [node name="AuthorLabel" type="Label" parent="CanvasLayer/StartScreen"]
@@ -715,21 +743,21 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 theme_override_font_sizes/font_size = 16
-text = "MISSION REPORT"
+text = "Counter-Terrorists Win"
 horizontal_alignment = 1
 
 [node name="ResultTitleLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.823529, 1, 0.901961, 1)
 theme_override_font_sizes/font_size = 34
-text = "RANGE SECURED"
+text = "SITE SECURED"
 horizontal_alignment = 1
 
 [node name="ResultSummaryLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
 theme_override_font_sizes/font_size = 19
-text = "All sentry bots were neutralized before the countdown closed."
+text = "The Counter-Terrorists eliminated every Terrorist before the round timer expired."
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -742,12 +770,12 @@ color = Color(0.258824, 0.85098, 1, 0.62)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.823529, 0.901961, 0.964706, 1)
 theme_override_font_sizes/font_size = 18
-text = "Bots neutralized: 0/4\nHealth remaining: 100/100\nTime remaining: 90s"
+text = "Terrorists eliminated: 0/4\nHealth remaining: 100/100\nRound time remaining: 90s"
 autowrap_mode = 3
 
 [node name="ResultPromptLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.490196, 0.768627, 0.901961, 1)
 theme_override_font_sizes/font_size = 18
-text = "Press Space or Enter to redeploy."
+text = "Press Space or Enter to start the next round."
 horizontal_alignment = 1

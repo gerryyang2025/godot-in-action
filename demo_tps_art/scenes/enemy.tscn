@@ -1,8 +1,7 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_enemy_script"]
-[ext_resource type="AudioStream" path="res://assets/audio/enemy/charge.wav" id="2_charge_audio"]
-[ext_resource type="AudioStream" path="res://assets/audio/enemy/shoot.wav" id="3_shoot_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/weapons/shotgun_shot.mp3" id="3_shoot_audio"]
 [ext_resource type="AudioStream" path="res://assets/audio/enemy/hit.wav" id="4_hit_audio"]
 [ext_resource type="AudioStream" path="res://assets/audio/enemy/explosion.wav" id="5_explosion_audio"]
 [ext_resource type="Script" path="res://scripts/hitbox.gd" id="6_hitbox_script"]
@@ -154,7 +153,7 @@ mesh = SubResource("BoxMesh_gun")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="Muzzle" type="Marker3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun"]
-position = Vector3(0.012, 0.018, -1.12)
+position = Vector3(0.008, 0.016, -1.42)
 
 [node name="ChargeOrb" type="MeshInstance3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle"]
 visible = false
@@ -172,17 +171,11 @@ light_color = Color(0.945098, 0.25098, 0.219608, 1)
 light_energy = 0.65
 omni_range = 3.0
 
-[node name="ChargeAudio" type="AudioStreamPlayer3D" parent="Visual"]
-stream = ExtResource("2_charge_audio")
-volume_db = -3.0
-bus = &"SFX"
-max_distance = 28.0
-
-[node name="ShootAudio" type="AudioStreamPlayer3D" parent="Visual"]
+[node name="ShootAudio" type="AudioStreamPlayer3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle"]
 stream = ExtResource("3_shoot_audio")
 volume_db = -2.0
 bus = &"SFX"
-max_distance = 30.0
+max_distance = 28.0
 
 [node name="HitAudio" type="AudioStreamPlayer3D" parent="Visual"]
 stream = ExtResource("4_hit_audio")

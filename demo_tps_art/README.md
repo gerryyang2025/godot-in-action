@@ -28,6 +28,9 @@ godot --headless --editor --quit --path demo_tps_art
 - `Space`：开始、跳跃，或在结束后重开
 - `Right Mouse Button` 或 `Q`：短按切换瞄准，长按保持瞄准
 - `Left Mouse Button` 或 `F`：开火，仅在瞄准状态下有效
+- `Z`：打开或关闭电台指令
+- `1`：在电台打开时播报 “Enemy spotted”
+- `2`：在电台打开时播报 “Enemy down”
 - `Esc`：释放或重新捕获鼠标
 - `Enter`：开始，或在结束后重开
 

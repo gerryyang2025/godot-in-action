@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/crosshair.png" id="2_crosshair_texture"]
 [ext_resource type="AudioStream" path="res://assets/audio/player/jump.wav" id="3_jump_audio"]
 [ext_resource type="AudioStream" path="res://assets/audio/player/land.wav" id="4_land_audio"]
-[ext_resource type="AudioStream" path="res://assets/audio/player/shoot.wav" id="5_shoot_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/weapons/shotgun_shot.mp3" id="5_shoot_audio"]
 [ext_resource type="AudioStream" path="res://assets/audio/player/step.wav" id="6_step_audio"]
 [ext_resource type="Script" path="res://scripts/camera_shake.gd" id="7_camera_shake_script"]
 [ext_resource type="Script" path="res://scripts/hitbox.gd" id="8_hitbox_script"]
@@ -150,7 +150,7 @@ mesh = SubResource("BoxMesh_gun")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="Muzzle" type="Marker3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun"]
-position = Vector3(0.012, 0.018, -1.12)
+position = Vector3(0.008, 0.016, -1.42)
 
 [node name="MuzzleFlash" type="MeshInstance3D" parent="Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle"]
 visible = false

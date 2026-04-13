@@ -1,70 +1,160 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_painted_gun_metal_albedo.png" id="1_gun_albedo"]
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_painted_gun_metal_normal.png" id="2_gun_normal"]
 [ext_resource type="Texture2D" path="res://assets/reference/level/textures/structure/tile_painted_gun_metal_orm.png" id="3_gun_orm"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gun_body"]
-albedo_color = Color(0.729412, 0.72549, 0.709804, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rifle_body"]
+albedo_color = Color(0.258824, 0.32549, 0.25098, 1)
 albedo_texture = ExtResource("1_gun_albedo")
 orm_texture = ExtResource("3_gun_orm")
 normal_enabled = true
 normal_texture = ExtResource("2_gun_normal")
-metallic = 0.42
+metallic = 0.28
 roughness = 1.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gun_trim"]
-albedo_color = Color(0.164706, 0.168627, 0.176471, 1)
-metallic = 0.2
-roughness = 0.92
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rifle_trim"]
+albedo_color = Color(0.105882, 0.113725, 0.129412, 1)
+metallic = 0.32
+roughness = 0.84
 
-[sub_resource type="BoxMesh" id="BoxMesh_receiver"]
-size = Vector3(0.16, 0.16, 0.52)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_scope_lens"]
+albedo_color = Color(0.137255, 0.172549, 0.211765, 1)
+metallic = 0.08
+roughness = 0.18
 
-[sub_resource type="BoxMesh" id="BoxMesh_handguard"]
-size = Vector3(0.12, 0.12, 0.42)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_butt_pad"]
+albedo_color = Color(0.0705882, 0.0745098, 0.0823529, 1)
+metallic = 0.0
+roughness = 1.0
 
-[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
-size = Vector3(0.05, 0.05, 0.32)
+[sub_resource type="BoxMesh" id="BoxMesh_main_body"]
+size = Vector3(0.16, 0.17, 0.74)
 
 [sub_resource type="BoxMesh" id="BoxMesh_stock"]
-size = Vector3(0.08, 0.15, 0.28)
+size = Vector3(0.11, 0.18, 0.48)
+
+[sub_resource type="BoxMesh" id="BoxMesh_forearm"]
+size = Vector3(0.12, 0.13, 0.46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cheek_rest"]
+size = Vector3(0.06, 0.04, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_butt_pad"]
+size = Vector3(0.03, 0.16, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_grip"]
-size = Vector3(0.08, 0.18, 0.1)
+size = Vector3(0.075, 0.19, 0.105)
 
-[sub_resource type="BoxMesh" id="BoxMesh_sight"]
-size = Vector3(0.04, 0.05, 0.14)
+[sub_resource type="BoxMesh" id="BoxMesh_magazine"]
+size = Vector3(0.065, 0.16, 0.11)
+
+[sub_resource type="BoxMesh" id="BoxMesh_trigger_guard"]
+size = Vector3(0.1, 0.05, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_barrel_base"]
+size = Vector3(0.055, 0.055, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
+size = Vector3(0.032, 0.032, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_muzzle_brake"]
+size = Vector3(0.05, 0.055, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_scope_mount"]
+size = Vector3(0.05, 0.05, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_scope_body"]
+size = Vector3(0.07, 0.07, 0.58)
+
+[sub_resource type="BoxMesh" id="BoxMesh_scope_front"]
+size = Vector3(0.09, 0.09, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_scope_rear"]
+size = Vector3(0.055, 0.055, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bolt_handle"]
+size = Vector3(0.08, 0.025, 0.025)
 
 [node name="Rifle" type="Node3D"]
 
-[node name="Receiver" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0, -0.22)
-mesh = SubResource("BoxMesh_receiver")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_body")
+[node name="MainBody" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.005, -0.2)
+mesh = SubResource("BoxMesh_main_body")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_body")
 
-[node name="Handguard" type="MeshInstance3D" parent="."]
-position = Vector3(0.005, -0.005, -0.62)
-mesh = SubResource("BoxMesh_handguard")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_body")
-
-[node name="Barrel" type="MeshInstance3D" parent="."]
-position = Vector3(0.012, 0.018, -0.95)
-mesh = SubResource("BoxMesh_barrel")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_trim")
+[node name="Forearm" type="MeshInstance3D" parent="."]
+position = Vector3(0.005, -0.02, -0.62)
+mesh = SubResource("BoxMesh_forearm")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_body")
 
 [node name="Stock" type="MeshInstance3D" parent="."]
-position = Vector3(-0.02, -0.015, 0.18)
+position = Vector3(-0.025, -0.005, 0.23)
 mesh = SubResource("BoxMesh_stock")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_trim")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_body")
+
+[node name="CheekRest" type="MeshInstance3D" parent="."]
+position = Vector3(-0.018, 0.092, 0.14)
+mesh = SubResource("BoxMesh_cheek_rest")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="ButtPad" type="MeshInstance3D" parent="."]
+position = Vector3(-0.043, -0.005, 0.5)
+mesh = SubResource("BoxMesh_butt_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_butt_pad")
 
 [node name="Grip" type="MeshInstance3D" parent="."]
-position = Vector3(0, -0.145, -0.2)
-rotation_degrees = Vector3(18, 0, 0)
+position = Vector3(0, -0.13, -0.03)
+rotation_degrees = Vector3(17, 0, 0)
 mesh = SubResource("BoxMesh_grip")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_trim")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
 
-[node name="Sight" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0.11, -0.42)
-mesh = SubResource("BoxMesh_sight")
-surface_material_override/0 = SubResource("StandardMaterial3D_gun_trim")
+[node name="Magazine" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.125, -0.18)
+mesh = SubResource("BoxMesh_magazine")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="TriggerGuard" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.078, -0.095)
+mesh = SubResource("BoxMesh_trigger_guard")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="BarrelBase" type="MeshInstance3D" parent="."]
+position = Vector3(0.008, 0.014, -0.88)
+mesh = SubResource("BoxMesh_barrel_base")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="Barrel" type="MeshInstance3D" parent="."]
+position = Vector3(0.008, 0.016, -1.16)
+mesh = SubResource("BoxMesh_barrel")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="MuzzleBrake" type="MeshInstance3D" parent="."]
+position = Vector3(0.008, 0.016, -1.39)
+mesh = SubResource("BoxMesh_muzzle_brake")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="ScopeMount" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.085, -0.17)
+mesh = SubResource("BoxMesh_scope_mount")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="ScopeBody" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.152, -0.2)
+mesh = SubResource("BoxMesh_scope_body")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")
+
+[node name="ScopeFrontLens" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.152, -0.53)
+mesh = SubResource("BoxMesh_scope_front")
+surface_material_override/0 = SubResource("StandardMaterial3D_scope_lens")
+
+[node name="ScopeRearLens" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.152, 0.12)
+mesh = SubResource("BoxMesh_scope_rear")
+surface_material_override/0 = SubResource("StandardMaterial3D_scope_lens")
+
+[node name="BoltHandle" type="MeshInstance3D" parent="."]
+position = Vector3(0.086, 0.038, -0.02)
+mesh = SubResource("BoxMesh_bolt_handle")
+surface_material_override/0 = SubResource("StandardMaterial3D_rifle_trim")

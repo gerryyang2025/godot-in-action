@@ -67,8 +67,7 @@ var _fade_materials: Array[StandardMaterial3D] = []
 @onready var _charge_orb: MeshInstance3D = $Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle/ChargeOrb
 @onready var _muzzle_flash: MeshInstance3D = $Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle/MuzzleFlash
 @onready var _state_light: OmniLight3D = $Visual/StateLight
-@onready var _charge_audio: AudioStreamPlayer3D = $Visual/ChargeAudio
-@onready var _shoot_audio: AudioStreamPlayer3D = $Visual/ShootAudio
+@onready var _shoot_audio: AudioStreamPlayer3D = $Visual/Model/Robot_Skeleton/Skeleton3D/RightHandGrip/Gun/Muzzle/ShootAudio
 @onready var _hit_audio: AudioStreamPlayer3D = $Visual/HitAudio
 @onready var _explosion_audio: AudioStreamPlayer3D = $Visual/ExplosionAudio
 @onready var _beam_pivot: Node3D = $BeamPivot
@@ -382,7 +381,6 @@ func _update_charge_state() -> void:
 	var ratio := 1.0 - clampf(_aim_timer / maxf(telegraph_time, 0.01), 0.0, 1.0)
 	if not _charge_started:
 		_charge_started = true
-		_charge_audio.play()
 
 	_charge_ratio = ratio
 	_charge_orb.visible = true
@@ -433,7 +431,6 @@ func _start_death_sequence(hit_direction: Vector3) -> void:
 	_beam_pivot.visible = false
 	_charge_orb.visible = false
 	_muzzle_flash.visible = false
-	_charge_audio.stop()
 	_shoot_audio.stop()
 	_collision_shape.set_deferred(&"disabled", true)
 	_set_hitboxes_enabled(false)
