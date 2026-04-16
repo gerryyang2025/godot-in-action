@@ -312,6 +312,30 @@ def generate_hijack() -> None:
     _write_mono_wav(AUDIO_ROOT / "gameplay" / "hijack.wav", buffer)
 
 
+def generate_stealth_pickup() -> None:
+    duration = 0.52
+    buffer = _make_mono_buffer(duration)
+    shimmer_notes = [
+        (0.00, 0.10, 560.0, 0.22),
+        (0.07, 0.12, 740.0, 0.24),
+        (0.15, 0.16, 980.0, 0.28),
+        (0.26, 0.20, 1320.0, 0.24),
+    ]
+    for start_time, note_duration, frequency, amplitude in shimmer_notes:
+        _add_mono_tone(buffer, start_time, note_duration, frequency, amplitude, waveform="triangle", attack=0.002, release=0.08)
+        _add_mono_tone(buffer, start_time + 0.01, note_duration * 0.9, frequency * 0.5, amplitude * 0.42, waveform="sine", attack=0.002, release=0.07)
+
+    rng = random.Random(512)
+    for index in range(len(buffer)):
+        t = index / SAMPLE_RATE
+        sparkle = rng.uniform(-1.0, 1.0) * math.exp(-11.0 * t) * 0.045
+        sweep = math.sin(TAU * (420.0 * t + 0.5 * (1120.0 - 420.0) * (t * t) / duration)) * _env(t, duration, 0.01, 0.12)
+        buffer[index] += sparkle + sweep * 0.08
+
+    _normalize_mono(buffer, target_peak=0.9)
+    _write_mono_wav(AUDIO_ROOT / "gameplay" / "stealth_pickup.wav", buffer)
+
+
 def generate_start_run() -> None:
     duration = 0.62
     buffer = _make_mono_buffer(duration)
@@ -387,6 +411,7 @@ def main() -> None:
     generate_jump()
     generate_near_miss()
     generate_hijack()
+    generate_stealth_pickup()
     generate_start_run()
     generate_upgrade()
     generate_promote()

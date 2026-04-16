@@ -71,11 +71,27 @@
 - `assets/audio/gameplay/jump.wav`
 - `assets/audio/gameplay/near_miss.wav`
 - `assets/audio/gameplay/hijack.wav`
+- `assets/audio/gameplay/stealth_pickup.wav`
 - `assets/audio/ui/start_run.wav`
 - `assets/audio/ui/upgrade.wav`
 - `assets/audio/ui/promote.wav`
 - `assets/audio/ui/crash.wav`
 - `assets/audio/ui/fuel_empty.wav`
+
+## 本地语音提示
+
+以下 Combo 语音提示由开发机上的系统语音本地合成，用于玩法反馈验证：
+
+- `assets/audio/voice/go_go_go.wav`
+- `assets/audio/voice/good.wav`
+- `assets/audio/voice/cool.wav`
+- `assets/audio/voice/great.wav`
+- `assets/audio/voice/perfect.wav`
+- `assets/audio/voice/well_done.wav`
+- `assets/audio/voice/wonderful.wav`
+- `assets/audio/voice/excellent.wav`
+- `assets/audio/voice/amazing.wav`
+- `assets/audio/voice/unbelievable.wav`
 
 ## 修改方式
 

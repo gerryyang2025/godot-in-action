@@ -13,9 +13,12 @@ var _speed_ratio := 0.0
 var _jump_timer := 0.0
 var _hijack_timer := 0.0
 var _grace_timer := 0.0
+var _stealth_visual := false
 var _pulse_time := 0.0
 var _wheel_spin := 0.0
 var _hijack_proxy_position := Vector3.ZERO
+var _body_color := Color(0.227451, 0.788235, 0.917647, 1)
+var _accent_color := Color(1, 0.67451, 0.184314, 1)
 
 var _hero_overlay := StandardMaterial3D.new()
 var _kit_material := StandardMaterial3D.new()
@@ -95,7 +98,10 @@ func _process(delta: float) -> void:
 	_glow_material.emission_energy_multiplier = 0.55 + _speed_ratio * 1.35
 	_accent_material.emission_energy_multiplier = 0.35 + _speed_ratio * 0.8
 
-	_roof_light.visible = _hijack_timer > 0.0 or _grace_timer > 0.0
+	if _stealth_visual:
+		_refresh_material_palette()
+
+	_roof_light.visible = _hijack_timer > 0.0 or _grace_timer > 0.0 or _stealth_visual
 	var hijack_scale := pulse * (1.0 + _speed_ratio * 0.08)
 	_roof_light.scale = Vector3(hijack_scale, 1.0, hijack_scale)
 	_side_blade_l.scale.y = 1.0 + _speed_ratio * 0.28
@@ -112,11 +118,13 @@ func _configure_materials() -> void:
 
 	_kit_material.roughness = 0.18
 	_kit_material.metallic = 0.45
+	_kit_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_kit_material.emission_enabled = true
 	_kit_material.emission_energy_multiplier = 0.25
 
 	_accent_material.roughness = 0.14
 	_accent_material.metallic = 0.1
+	_accent_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_accent_material.emission_enabled = true
 	_accent_material.emission_energy_multiplier = 0.35
 
@@ -149,6 +157,7 @@ func reset_for_run(body_color: Color, accent_color: Color) -> void:
 	_jump_timer = 0.0
 	_hijack_timer = 0.0
 	_grace_timer = 0.0
+	_stealth_visual = false
 	_wheel_spin = 0.0
 	_hijack_proxy_position = Vector3(float(_lane_positions[_lane_index]), 0.0, 0.0)
 	position = Vector3(float(_lane_positions[_lane_index]), BASE_HEIGHT, 0.0)
@@ -162,14 +171,37 @@ func _default_lane_index() -> int:
 
 
 func apply_palette(body_color: Color, accent_color: Color) -> void:
+	_body_color = body_color
+	_accent_color = accent_color
+	_refresh_material_palette()
+
+
+func _refresh_material_palette() -> void:
+	var body_color := _body_color
+	var accent_color := _accent_color
+	if _stealth_visual:
+		var cloak_pulse := 0.12 + 0.05 * (0.5 + 0.5 * sin(_pulse_time * 11.0))
+		var cloak_highlight := Color(0.447059, 0.968627, 1.0, 1.0)
+		_hero_overlay.albedo_color = Color(cloak_highlight.r, cloak_highlight.g, cloak_highlight.b, cloak_pulse)
+		_hero_overlay.emission = cloak_highlight.lightened(0.12)
+		var kit_color := body_color.lerp(Color(0.168627, 0.360784, 0.505882, 1.0), 0.72)
+		_kit_material.albedo_color = Color(kit_color.r, kit_color.g, kit_color.b, 0.2 + cloak_pulse * 0.35)
+		_kit_material.emission = cloak_highlight.darkened(0.18)
+		var stealth_accent := accent_color.lerp(cloak_highlight, 0.78)
+		_accent_material.albedo_color = Color(stealth_accent.r, stealth_accent.g, stealth_accent.b, 0.36 + cloak_pulse * 0.32)
+		_accent_material.emission = stealth_accent.lightened(0.14)
+		_glow_material.albedo_color = Color(cloak_highlight.r, cloak_highlight.g, cloak_highlight.b, 0.56 + cloak_pulse * 0.28)
+		_glow_material.emission = cloak_highlight.lightened(0.18)
+		return
+
 	_hero_overlay.albedo_color = Color(body_color.r, body_color.g, body_color.b, 0.22)
 	_hero_overlay.emission = body_color.darkened(0.32)
 
 	var kit_color := body_color.darkened(0.35)
-	_kit_material.albedo_color = kit_color
+	_kit_material.albedo_color = Color(kit_color.r, kit_color.g, kit_color.b, 1.0)
 	_kit_material.emission = kit_color.darkened(0.55)
 
-	_accent_material.albedo_color = accent_color
+	_accent_material.albedo_color = Color(accent_color.r, accent_color.g, accent_color.b, 1.0)
 	_accent_material.emission = accent_color
 
 	_glow_material.albedo_color = Color(accent_color.r, accent_color.g, accent_color.b, 0.82)
@@ -229,6 +261,14 @@ func has_recovery_invulnerability() -> bool:
 
 func set_speed_ratio(value: float) -> void:
 	_speed_ratio = clampf(value, 0.0, 1.4)
+
+
+func set_stealth_visual(active: bool) -> void:
+	if _stealth_visual == active:
+		return
+
+	_stealth_visual = active
+	_refresh_material_palette()
 
 
 func get_lane_index() -> int:

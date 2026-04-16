@@ -1,6 +1,7 @@
 extends Node3D
 
 const TRAFFIC_SCENE = preload("res://scenes/traffic_vehicle.tscn")
+const PICKUP_SCENE = preload("res://scenes/powerup_pickup.tscn")
 const STREETLIGHT_MESH = preload("res://assets/third_party/quaternius/modular_streets/Streetlight_Double.obj")
 const TRAFFIC_LIGHT_MESH = preload("res://assets/third_party/quaternius/modular_streets/TrafficLight.obj")
 const STOP_SIGN_MESH = preload("res://assets/third_party/quaternius/modular_streets/Sign_Stop.obj")
@@ -15,6 +16,14 @@ const MAX_FUEL := 100.0
 const START_FUEL := 88.0
 const COMBO_WINDOW := 1.85
 const HIJACK_DURATION := 4.4
+const STEALTH_DURATION := 5.4
+const STEALTH_PICKUP_SCORE := 220
+const PICKUP_DESPAWN_Z := 20.0
+const PICKUP_START_DELAY := 7.2
+const PICKUP_RESPAWN_MIN := 10.0
+const PICKUP_RESPAWN_MAX := 16.0
+const COMBO_OVERDRIVE_THRESHOLD := 5
+const COMBO_OVERDRIVE_STEP := 0.34
 const COLLISION_RECOVERY_DURATION := 1.15
 const COLLISION_RECOVERY_ENTRY_SPEED := 4.6
 const COLLISION_RECOVERY_VISUAL_GRACE := 0.72
@@ -27,6 +36,83 @@ const VEHICLE_VARIANTS := {
 	&"car": [&"normal_1", &"normal_2", &"taxi", &"cop"],
 	&"van": [&"suv", &"ambulance"],
 	&"truck": [&"bus", &"school_bus"],
+}
+const COMBO_CALLOUTS := [
+	{
+		"min_combo": 1,
+		"text": "GOOD",
+		"voice": "good",
+		"color": Color(0.556863, 0.929412, 1.0, 1.0),
+		"detail": "贴尾切线已接上",
+	},
+	{
+		"min_combo": 2,
+		"text": "COOL",
+		"voice": "cool",
+		"color": Color(0.392157, 0.976471, 0.733333, 1.0),
+		"detail": "节奏正在抬起来",
+	},
+	{
+		"min_combo": 3,
+		"text": "GREAT",
+		"voice": "great",
+		"color": Color(0.980392, 0.760784, 0.298039, 1.0),
+		"detail": "别松，继续把线走满",
+	},
+	{
+		"min_combo": 4,
+		"text": "PERFECT",
+		"voice": "perfect",
+		"color": Color(1.0, 0.584314, 0.278431, 1.0),
+		"detail": "窗口咬得很准",
+	},
+	{
+		"min_combo": 5,
+		"text": "WELL DONE",
+		"voice": "well_done",
+		"color": Color(1.0, 0.466667, 0.364706, 1.0),
+		"detail": "高连击开始节油",
+	},
+	{
+		"min_combo": 6,
+		"text": "WONDERFUL",
+		"voice": "wonderful",
+		"color": Color(0.968627, 0.458824, 0.843137, 1.0),
+		"detail": "续航和分数都在飙升",
+	},
+	{
+		"min_combo": 7,
+		"text": "EXCELLENT",
+		"voice": "excellent",
+		"color": Color(0.764706, 0.482353, 1.0, 1.0),
+		"detail": "这波可以直接冲榜",
+	},
+	{
+		"min_combo": 8,
+		"text": "AMAZING",
+		"voice": "amazing",
+		"color": Color(0.447059, 0.780392, 1.0, 1.0),
+		"detail": "车流已经压不住你了",
+	},
+	{
+		"min_combo": 9,
+		"text": "UNBELIEVABLE",
+		"voice": "unbelievable",
+		"color": Color(1.0, 0.909804, 0.505882, 1.0),
+		"detail": "神走线，继续拉满",
+	},
+]
+const VOICE_STREAM_PATHS := {
+	"go_go_go": "res://assets/audio/voice/go_go_go.wav",
+	"good": "res://assets/audio/voice/good.wav",
+	"cool": "res://assets/audio/voice/cool.wav",
+	"great": "res://assets/audio/voice/great.wav",
+	"perfect": "res://assets/audio/voice/perfect.wav",
+	"well_done": "res://assets/audio/voice/well_done.wav",
+	"wonderful": "res://assets/audio/voice/wonderful.wav",
+	"excellent": "res://assets/audio/voice/excellent.wav",
+	"amazing": "res://assets/audio/voice/amazing.wav",
+	"unbelievable": "res://assets/audio/voice/unbelievable.wav",
 }
 
 const RANKS := [
@@ -93,6 +179,8 @@ var _rng := RandomNumberGenerator.new()
 var _save_data: Dictionary = {}
 var _road_segments: Array[Node3D] = []
 var _traffic: Array = []
+var _pickups: Array = []
+var _voice_streams := {}
 
 var _speed := 0.0
 var _distance_m := 0.0
@@ -102,10 +190,18 @@ var _fuel := START_FUEL
 var _combo := 0
 var _combo_timer := 0.0
 var _best_combo := 0
+var _combo_feedback_timer := 0.0
+var _combo_feedback_duration := 0.0
+var _combo_feedback_text := ""
+var _combo_feedback_detail := ""
+var _combo_feedback_color := Color(1, 1, 1, 1)
 var _ram_hits := 0
+var _stealth_timer := 0.0
+var _combo_overdrive_timer := 0.0
 var _collision_recovery_timer := 0.0
 var _post_hijack_invulnerability_timer := 0.0
 var _spawn_timer := 0.0
+var _pickup_spawn_timer := PICKUP_START_DELAY
 var _message_time := 0.0
 var _message_text := ""
 var _active_hijack_vehicle = null
@@ -118,6 +214,7 @@ var _shutdown_started := false
 @onready var _camera: Camera3D = $Camera3D
 @onready var _track_root: Node3D = $TrackRoot
 @onready var _traffic_root: Node3D = $TrafficRoot
+@onready var _pickup_root: Node3D = $PickupRoot
 @onready var _player = $PlayerCar
 @onready var _music: AudioStreamPlayer = $Music
 @onready var _engine_loop: AudioStreamPlayer = $EngineLoop
@@ -129,11 +226,16 @@ var _shutdown_started := false
 @onready var _promote_cue: AudioStreamPlayer = $PromoteCue
 @onready var _crash_cue: AudioStreamPlayer = $CrashCue
 @onready var _fuel_empty_cue: AudioStreamPlayer = $FuelEmptyCue
+@onready var _stealth_cue: AudioStreamPlayer = $StealthCue
+@onready var _voice_cue: AudioStreamPlayer = $VoiceCue
 @onready var _metrics_label: Label = $CanvasLayer/MetricsLabel
 @onready var _fuel_label: Label = $CanvasLayer/FuelLabel
 @onready var _combo_label: Label = $CanvasLayer/ComboLabel
 @onready var _rank_label: Label = $CanvasLayer/RankLabel
 @onready var _message_label: Label = $CanvasLayer/MessageLabel
+@onready var _combo_flash: ColorRect = $CanvasLayer/ComboFlash
+@onready var _combo_burst_label: Label = $CanvasLayer/ComboBurstLabel
+@onready var _combo_detail_label: Label = $CanvasLayer/ComboDetailLabel
 @onready var _start_screen: Control = $CanvasLayer/StartScreen
 @onready var _start_screen_shade: ColorRect = $CanvasLayer/StartScreen/Shade
 @onready var _start_padding: MarginContainer = $CanvasLayer/StartScreen/Padding
@@ -172,9 +274,11 @@ func _ready() -> void:
 	if not get_viewport().size_changed.is_connected(_on_viewport_size_changed):
 		get_viewport().size_changed.connect(_on_viewport_size_changed)
 	_apply_rank_palette_to_player()
+	_load_voice_streams()
 	_configure_audio()
 	_set_message("贴近前车尾流后再切线，就能拿到险超连击和燃油回补。", 2.8)
 	_apply_front_screen_layout()
+	_reset_combo_feedback_visuals()
 	_refresh_front_screens()
 	_show_start_screen()
 	_update_hud()
@@ -241,6 +345,14 @@ func _set_font_size(label: Control, size: int) -> void:
 	label.add_theme_font_size_override("font_size", size)
 
 
+func _load_voice_streams() -> void:
+	_voice_streams.clear()
+	for key in VOICE_STREAM_PATHS.keys():
+		var stream = load(String(VOICE_STREAM_PATHS[key]))
+		if stream != null:
+			_voice_streams[key] = stream
+
+
 func _configure_audio() -> void:
 	if not _audio_available():
 		return
@@ -252,6 +364,62 @@ func _configure_audio() -> void:
 	_music.play()
 	_engine_loop.pitch_scale = 0.72
 	_engine_loop.play()
+
+
+func _play_voice(key: String, pitch_scale: float = 1.0) -> void:
+	if not _audio_available() or not is_instance_valid(_voice_cue):
+		return
+	if not _voice_streams.has(key):
+		return
+
+	_voice_cue.stream = _voice_streams[key]
+	_voice_cue.pitch_scale = pitch_scale
+	_voice_cue.stop()
+	_voice_cue.play()
+
+
+func _reset_combo_feedback_visuals() -> void:
+	_combo_feedback_timer = 0.0
+	_combo_feedback_duration = 0.0
+	_combo_feedback_text = ""
+	_combo_feedback_detail = ""
+	_combo_flash.visible = false
+	_combo_burst_label.visible = false
+	_combo_detail_label.visible = false
+
+
+func _show_combo_feedback(text: String, detail: String, color: Color, combo_count: int) -> void:
+	_combo_feedback_text = text
+	_combo_feedback_detail = detail
+	_combo_feedback_color = color
+	_combo_feedback_duration = 0.6 + minf(0.45, float(combo_count) * 0.04)
+	_combo_feedback_timer = _combo_feedback_duration
+	_combo_burst_label.text = text
+	_combo_detail_label.text = "Combo x%d   %s" % [combo_count, detail]
+	_combo_burst_label.modulate = color
+	_combo_detail_label.modulate = Color(color.r, color.g, color.b, 0.94)
+	_combo_burst_label.visible = true
+	_combo_detail_label.visible = true
+	_combo_flash.visible = true
+
+
+func _update_combo_feedback(delta: float) -> void:
+	if _combo_feedback_timer <= 0.0:
+		if _combo_flash.visible:
+			_reset_combo_feedback_visuals()
+		return
+
+	_combo_feedback_timer = maxf(0.0, _combo_feedback_timer - delta)
+	var life_ratio := _combo_feedback_timer / maxf(0.01, _combo_feedback_duration)
+	var ease_out := 1.0 - pow(1.0 - life_ratio, 2.0)
+	_combo_flash.color = Color(_combo_feedback_color.r, _combo_feedback_color.g, _combo_feedback_color.b, 0.12 * ease_out)
+	_combo_flash.visible = true
+	_combo_burst_label.visible = true
+	_combo_detail_label.visible = true
+	_combo_burst_label.scale = Vector2.ONE * lerpf(1.05, 1.52, ease_out)
+	_combo_detail_label.scale = Vector2.ONE * lerpf(1.0, 1.18, ease_out)
+	_combo_burst_label.modulate = Color(_combo_feedback_color.r, _combo_feedback_color.g, _combo_feedback_color.b, ease_out)
+	_combo_detail_label.modulate = Color(_combo_feedback_color.r, _combo_feedback_color.g, _combo_feedback_color.b, minf(0.98, ease_out * 1.1))
 
 
 func _audio_available() -> bool:
@@ -315,10 +483,13 @@ func _shutdown_runtime_state() -> void:
 	_active_hijack_vehicle = null
 	_message_time = 0.0
 	_combo_timer = 0.0
+	_combo_overdrive_timer = 0.0
+	_stealth_timer = 0.0
 	_post_hijack_invulnerability_timer = 0.0
 	_disconnect_audio_signals()
 	_stop_and_release_audio_players()
 	_clear_traffic(true)
+	_clear_pickups(true)
 	_clear_track_segments()
 
 
@@ -328,7 +499,7 @@ func _disconnect_audio_signals() -> void:
 
 
 func _stop_and_release_audio_players() -> void:
-	for player in [_music, _engine_loop, _start_cue, _jump_cue, _near_miss_cue, _hijack_cue, _upgrade_cue, _promote_cue, _crash_cue, _fuel_empty_cue]:
+	for player in [_music, _engine_loop, _start_cue, _jump_cue, _near_miss_cue, _hijack_cue, _upgrade_cue, _promote_cue, _crash_cue, _fuel_empty_cue, _stealth_cue, _voice_cue]:
 		if is_instance_valid(player):
 			player.stop()
 			player.stream = null
@@ -345,10 +516,12 @@ func _process(delta: float) -> void:
 	_update_track(delta)
 	_update_camera(delta)
 	_update_engine_audio(delta)
+	_update_combo_feedback(delta)
 
 	if _state == GameState.PLAYING:
 		_update_run(delta)
 	else:
+		_player.set_stealth_visual(false)
 		_message_time = maxf(0.0, _message_time - delta)
 		_player.set_speed_ratio(0.32)
 		_update_hud()
@@ -392,6 +565,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _start_run() -> void:
 	_clear_traffic()
+	_clear_pickups()
 	_state = GameState.PLAYING
 	_speed = 15.0
 	_distance_m = 0.0
@@ -401,6 +575,9 @@ func _start_run() -> void:
 	_combo = 0
 	_combo_timer = 0.0
 	_best_combo = 0
+	_combo_overdrive_timer = 0.0
+	_stealth_timer = 0.0
+	_pickup_spawn_timer = PICKUP_START_DELAY
 	_ram_hits = 0
 	_collision_recovery_timer = 0.0
 	_post_hijack_invulnerability_timer = 0.0
@@ -410,8 +587,10 @@ func _start_run() -> void:
 	_last_finish_reason = ""
 	_last_credits_earned = 0
 	_player.reset_for_run(_current_rank()["body"], _current_rank()["accent"])
+	_reset_combo_feedback_visuals()
 	_hide_front_screens()
 	_play_cue(_start_cue, 1.0 + _rng.randf_range(-0.02, 0.02))
+	_play_voice("go_go_go", 1.02)
 	_set_message("高速模式启动。先贴尾补油，接上大车后就能变线冲开整列车流。", 2.0)
 	_update_hud()
 
@@ -419,6 +598,10 @@ func _start_run() -> void:
 func _update_run(delta: float) -> void:
 	_collision_recovery_timer = maxf(0.0, _collision_recovery_timer - delta)
 	_post_hijack_invulnerability_timer = maxf(0.0, _post_hijack_invulnerability_timer - delta)
+	_stealth_timer = maxf(0.0, _stealth_timer - delta)
+	_combo_overdrive_timer = maxf(0.0, _combo_overdrive_timer - delta)
+	_pickup_spawn_timer = maxf(0.0, _pickup_spawn_timer - delta)
+	_player.set_stealth_visual(_stealth_timer > 0.0)
 
 	if _active_hijack_vehicle != null and not _player.is_hijacked():
 		_remove_vehicle(_active_hijack_vehicle)
@@ -439,11 +622,12 @@ func _update_run(delta: float) -> void:
 		else:
 			_speed = minf(target_speed, _speed + _acceleration_stat() * delta)
 
-		var burn_rate := _fuel_drain_stat() * (0.42 + _speed / maxf(1.0, target_speed + 11.0))
-		_fuel = maxf(0.0, _fuel - burn_rate * delta)
-		if _fuel <= 0.0:
-			_finish_run("燃油耗尽。大车没接上时，要靠连击补油。")
-			return
+		if _stealth_timer <= 0.0 and _combo_overdrive_timer <= 0.0:
+			var burn_rate := _fuel_drain_stat() * (0.42 + _speed / maxf(1.0, target_speed + 11.0))
+			_fuel = maxf(0.0, _fuel - burn_rate * delta)
+			if _fuel <= 0.0:
+				_finish_run("燃油耗尽。大车没接上时，要靠连击补油。")
+				return
 
 	_distance_m += _speed * delta * 1.9
 	_score_accumulator += _speed * delta * (28.0 + float(_combo) * 10.0)
@@ -454,6 +638,7 @@ func _update_run(delta: float) -> void:
 		_spawn_wave()
 		_spawn_timer += lerpf(1.28, 0.7, _difficulty_ratio()) * _rng.randf_range(0.92, 1.18)
 
+	_update_pickups(delta)
 	_update_traffic(delta)
 	if _state != GameState.PLAYING:
 		return
@@ -462,6 +647,10 @@ func _update_run(delta: float) -> void:
 		_combo_timer = maxf(0.0, _combo_timer - delta)
 		if _combo_timer == 0.0:
 			_combo = 0
+
+	if _stealth_timer <= 0.0 and _pickup_spawn_timer <= 0.0:
+		_spawn_stealth_pickup()
+		_pickup_spawn_timer = _rng.randf_range(PICKUP_RESPAWN_MIN, PICKUP_RESPAWN_MAX)
 
 	_message_time = maxf(0.0, _message_time - delta)
 	_player.set_speed_ratio(_speed / maxf(1.0, target_speed + 3.5))
@@ -489,6 +678,59 @@ func _update_camera(delta: float) -> void:
 	_camera.look_at(focus_origin + Vector3(0.0, 1.45 + ride_lift, -22.0), Vector3.UP)
 
 
+func _update_pickups(delta: float) -> void:
+	for index in range(_pickups.size() - 1, -1, -1):
+		var pickup = _pickups[index]
+		if not is_instance_valid(pickup):
+			_pickups.remove_at(index)
+			continue
+
+		pickup.advance(delta, _speed)
+		if not _player.is_hijacked() and pickup.can_be_collected(_player.get_lane_index(), PLAYER_Z):
+			_collect_pickup(pickup)
+
+		if pickup.should_despawn(PICKUP_DESPAWN_Z):
+			pickup.queue_free()
+			_pickups.remove_at(index)
+
+
+func _spawn_stealth_pickup() -> void:
+	if _state != GameState.PLAYING:
+		return
+	if _pickups.size() > 0:
+		return
+
+	var lane := _rng.randi_range(0, LANE_X.size() - 1)
+	var start_z := -_rng.randf_range(64.0, 92.0)
+	for vehicle in _traffic:
+		if not is_instance_valid(vehicle):
+			continue
+		if vehicle.get_lane_index() == lane and vehicle.position.z < start_z + 12.0:
+			start_z = minf(start_z, vehicle.position.z - 12.0)
+
+	var pickup = PICKUP_SCENE.instantiate()
+	_pickup_root.add_child(pickup)
+	pickup.configure(&"stealth", lane, float(LANE_X[lane]), start_z)
+	_pickups.append(pickup)
+
+
+func _collect_pickup(pickup) -> void:
+	if pickup == null or not is_instance_valid(pickup):
+		return
+
+	pickup.collect()
+	_stealth_timer = maxf(_stealth_timer, STEALTH_DURATION)
+	_combo_overdrive_timer = maxf(_combo_overdrive_timer, 1.6)
+	_fuel = minf(MAX_FUEL, _fuel + 10.0)
+	_score += STEALTH_PICKUP_SCORE + _combo * 40
+	_score_accumulator = float(_score)
+	_pickup_spawn_timer = _rng.randf_range(PICKUP_RESPAWN_MIN, PICKUP_RESPAWN_MAX)
+	_player.set_stealth_visual(true)
+	_play_cue(_stealth_cue, 1.0 + _rng.randf_range(-0.04, 0.05))
+	_show_combo_feedback("INVISIBLE", "穿车连击窗口开启   燃油 +10", Color(0.427451, 0.956863, 1.0, 1.0), max(1, _combo))
+	_set_message("吃到隐身道具。现在可以直接穿过车流，用 Combo 把分数和续航一起抬高。", 1.6)
+
+
 func _update_traffic(delta: float) -> void:
 	for index in range(_traffic.size() - 1, -1, -1):
 		var vehicle = _traffic[index]
@@ -507,12 +749,17 @@ func _update_traffic(delta: float) -> void:
 				_ram_vehicle(vehicle)
 				continue
 
+		if vehicle != _active_hijack_vehicle and _stealth_timer > 0.0 and not _player.is_hijacked():
+			if vehicle.can_be_stealth_combo(_player.get_lane_index(), PLAYER_Z):
+				_award_phase_combo(vehicle)
+				continue
+
 		if vehicle != _active_hijack_vehicle and _player.is_airborne() and not _player.is_hijacked():
 			if vehicle.can_be_hijacked(_player.get_lane_index(), PLAYER_Z):
 				_complete_hijack(vehicle)
 				return
 
-		if vehicle != _active_hijack_vehicle and not _player.is_hijacked() and _post_hijack_invulnerability_timer <= 0.0 and _collision_recovery_timer <= 0.0:
+		if vehicle != _active_hijack_vehicle and not _player.is_hijacked() and _stealth_timer <= 0.0 and _post_hijack_invulnerability_timer <= 0.0 and _collision_recovery_timer <= 0.0:
 			if vehicle.get_lane_index() == _player.get_lane_index() and vehicle.is_collision_threat(PLAYER_Z):
 				_handle_player_collision(vehicle)
 				continue
@@ -612,23 +859,69 @@ func _find_hijack_truck():
 	return candidate
 
 
-func _award_near_miss(vehicle) -> void:
-	vehicle.mark_near_miss_awarded()
+func _combo_callout_for_count(combo_count: int) -> Dictionary:
+	var selected: Dictionary = COMBO_CALLOUTS[0]
+	for callout in COMBO_CALLOUTS:
+		if combo_count >= int(callout["min_combo"]):
+			selected = callout
+		else:
+			break
+	return selected
+
+
+func _award_combo(vehicle, source: StringName) -> void:
+	if vehicle == null or not is_instance_valid(vehicle):
+		return
+
+	if source == &"phase":
+		vehicle.mark_stealth_combo_awarded()
+	else:
+		vehicle.mark_near_miss_awarded()
 
 	if _combo_timer > 0.0:
 		_combo += 1
 	else:
 		_combo = 1
 
-	_combo_timer = COMBO_WINDOW
+	_combo_timer = COMBO_WINDOW + minf(0.7, float(_combo) * 0.04)
 	_best_combo = max(_best_combo, _combo)
 
+	var score_gain := 140 * _combo
 	var fuel_gain := minf(30.0, 11.0 + float(_combo) * 2.4)
+	if source == &"phase":
+		score_gain = int(round(score_gain * 1.4))
+		fuel_gain = minf(36.0, fuel_gain + 4.5 + float(_combo) * 0.5)
+		_stealth_timer = minf(STEALTH_DURATION + 1.6, _stealth_timer + 0.18)
+
+	if _combo >= COMBO_OVERDRIVE_THRESHOLD:
+		_combo_overdrive_timer = maxf(_combo_overdrive_timer, 0.8 + float(_combo - COMBO_OVERDRIVE_THRESHOLD) * COMBO_OVERDRIVE_STEP)
+
 	_fuel = minf(MAX_FUEL, _fuel + fuel_gain)
-	_score += 140 * _combo
+	_score += score_gain
 	_score_accumulator = float(_score)
+
+	var callout := _combo_callout_for_count(_combo)
+	var detail := String(callout["detail"])
+	if source == &"phase":
+		detail = "隐身穿车 x%d   燃油 +%d" % [_combo, int(round(fuel_gain))]
+	else:
+		detail = "%s   燃油 +%d" % [detail, int(round(fuel_gain))]
+
+	_show_combo_feedback(String(callout["text"]), detail, callout["color"], _combo)
 	_play_cue(_near_miss_cue, 1.0 + minf(0.22, float(_combo - 1) * 0.04), false)
-	_set_message("险超连击 x%d  燃油 +%d" % [_combo, int(round(fuel_gain))], 1.2)
+	_play_voice(String(callout["voice"]), 1.0 + minf(0.06, float(_combo - 1) * 0.01))
+	if source == &"phase":
+		_set_message("隐身穿车 x%d  得分 +%d  燃油 +%d" % [_combo, score_gain, int(round(fuel_gain))], 1.15)
+	else:
+		_set_message("险超连击 x%d  得分 +%d  燃油 +%d" % [_combo, score_gain, int(round(fuel_gain))], 1.2)
+
+
+func _award_near_miss(vehicle) -> void:
+	_award_combo(vehicle, &"near_miss")
+
+
+func _award_phase_combo(vehicle) -> void:
+	_award_combo(vehicle, &"phase")
 
 
 func _handle_player_collision(vehicle) -> void:
@@ -657,6 +950,10 @@ func _finish_run(reason: String) -> void:
 	if _active_hijack_vehicle != null:
 		_remove_vehicle(_active_hijack_vehicle)
 		_active_hijack_vehicle = null
+	_clear_pickups()
+	_player.set_stealth_visual(false)
+	_stealth_timer = 0.0
+	_combo_overdrive_timer = 0.0
 
 	var credits := _calculate_run_credits()
 	_save_data["credits"] = int(_save_data["credits"]) + credits
@@ -890,8 +1187,10 @@ func _refresh_start_screen() -> void:
 		"险超：贴近前车尾流后再切线，成功可回补燃油并抬高分数倍率。",
 		"碰撞：撞上前车只会重刹减速并清空当前连击，真正结束条件只有燃油见底。",
 		"劫持：与大型车辆同车道接近时按 Space 起跳，接上后可直接控制它左右变线。",
+		"隐身：吃到蓝色隐身道具后可直接穿车，期间不判定碰撞，穿车本身也会继续堆 Combo。",
 		"缓冲：劫持结束落地时会触发短暂护盾，给你一点重新找线的时间。",
 		"冲撞：劫持期间撞上同车道车辆会把它们甩飞，还会补一点劫持持续时间。",
+		"高连击：Combo 越高，语音鼓励越强；5 连击后还会触发短暂节油窗口。",
 		"操作：A / D 或方向键变线，Space 跳跃 / 劫持，Enter 发车，1 / 2 / 3 升级，P 晋升。",
 	])
 
@@ -1014,6 +1313,10 @@ func _update_hud() -> void:
 	]
 
 	_fuel_label.text = "Fuel %s %d%%" % [_make_meter(_fuel / MAX_FUEL, 20), int(round(_fuel))]
+	if _stealth_timer > 0.0:
+		_fuel_label.text += "   Stealth %.1fs" % _stealth_timer
+	elif _combo_overdrive_timer > 0.0:
+		_fuel_label.text += "   Fuel Save %.1fs" % _combo_overdrive_timer
 
 	var hijack_state := "SEARCH"
 	if _player.is_hijacked():
@@ -1025,7 +1328,10 @@ func _update_hud() -> void:
 	elif _state == GameState.PLAYING and _find_hijack_truck() != null:
 		hijack_state = "READY"
 
-	_combo_label.text = "Combo x%d   Best x%d   Ram x%d   Hijack %s" % [_combo, _best_combo, _ram_hits, hijack_state]
+	var combo_title := "IDLE"
+	if _combo > 0:
+		combo_title = String(_combo_callout_for_count(_combo)["text"])
+	_combo_label.text = "Combo x%d %s   Best x%d   Ram x%d   Hijack %s" % [_combo, combo_title, _best_combo, _ram_hits, hijack_state]
 
 	var rank := _current_rank()
 	_rank_label.text = "Rank %s %s   Accel %d   Speed %d   Eco %d" % [
@@ -1040,6 +1346,10 @@ func _update_hud() -> void:
 		if _state == GameState.PLAYING:
 			if _collision_recovery_timer > 0.0:
 				_message_label.text = "碰撞恢复中，先稳住当前车道，等车速重新爬起来再继续贴尾。"
+			elif _stealth_timer > 0.0:
+				_message_label.text = "隐身穿车中，直接走同车道吃车流，把 Combo 一路往上堆。"
+			elif _combo_overdrive_timer > 0.0:
+				_message_label.text = "高连击节油生效中，趁这段窗口继续贴尾抬分。"
 			elif _post_hijack_invulnerability_timer > 0.0:
 				_message_label.text = "落地护盾生效中，先调整车道和节奏，再继续贴尾补油。"
 			else:
@@ -1143,6 +1453,16 @@ func _clear_traffic(immediate: bool = false) -> void:
 			else:
 				vehicle.queue_free()
 	_traffic.clear()
+
+
+func _clear_pickups(immediate: bool = false) -> void:
+	for pickup in _pickups:
+		if is_instance_valid(pickup):
+			if immediate:
+				pickup.free()
+			else:
+				pickup.queue_free()
+	_pickups.clear()
 
 
 func _remove_vehicle(vehicle) -> void:

@@ -14,6 +14,7 @@ var speed_factor := 0.3
 var near_miss_pending := false
 var near_miss_awarded := false
 var hijack_available := false
+var _stealth_pass_awarded := false
 
 var _ride_mode := false
 var _rammed := false
@@ -137,6 +138,7 @@ func configure(kind: StringName, lane: int, lane_x: float, start_z: float, relat
 	near_miss_pending = false
 	near_miss_awarded = false
 	hijack_available = vehicle_kind == &"truck"
+	_stealth_pass_awarded = false
 	_ride_mode = false
 	_rammed = false
 	_pulse_time = 0.0
@@ -471,6 +473,26 @@ func can_be_ram_hit(attacker_lane: int, attacker_z: float) -> bool:
 func can_be_hijacked(player_lane: int, player_z: float) -> bool:
 	var hijack_anchor_z := position.z + TRUCK_HIJACK_ANCHOR_Z
 	return vehicle_kind == &"truck" and not _rammed and hijack_available and lane_index == player_lane and hijack_anchor_z > player_z - TRUCK_HIJACK_BACK_BUFFER and hijack_anchor_z < player_z + TRUCK_HIJACK_FRONT_BUFFER
+
+
+func can_be_stealth_combo(player_lane: int, player_z: float) -> bool:
+	if _ride_mode or _rammed or _stealth_pass_awarded or lane_index != player_lane:
+		return false
+
+	var depth := 2.0
+	if vehicle_kind == &"truck":
+		depth = 3.0
+	elif vehicle_kind == &"van":
+		depth = 2.35
+
+	return abs(position.z - player_z) < depth
+
+
+func mark_stealth_combo_awarded() -> void:
+	_stealth_pass_awarded = true
+	near_miss_pending = false
+	near_miss_awarded = true
+	hijack_available = false
 
 
 func should_despawn(limit_z: float) -> bool:

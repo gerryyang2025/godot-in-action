@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" path="res://scenes/player_car.tscn" id="2_player_scene"]
@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/ui/promote.wav" id="10_promote"]
 [ext_resource type="AudioStream" path="res://assets/audio/ui/crash.wav" id="11_crash"]
 [ext_resource type="AudioStream" path="res://assets/audio/ui/fuel_empty.wav" id="12_fuel_empty"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay/stealth_pickup.wav" id="13_stealth_pickup"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_screen_panel"]
 bg_color = Color(0.0196078, 0.0352941, 0.0627451, 0.95)
@@ -59,6 +60,8 @@ fov = 68.0
 
 [node name="TrafficRoot" type="Node3D" parent="."]
 
+[node name="PickupRoot" type="Node3D" parent="."]
+
 [node name="PlayerCar" parent="." instance=ExtResource("2_player_scene")]
 position = Vector3(0, 0.55, 0)
 
@@ -104,7 +107,23 @@ max_polyphony = 3
 stream = ExtResource("12_fuel_empty")
 volume_db = -8.0
 
+[node name="StealthCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_stealth_pickup")
+volume_db = -8.0
+
+[node name="VoiceCue" type="AudioStreamPlayer" parent="."]
+volume_db = -5.0
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ComboFlash" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+color = Color(0.427451, 0.956863, 1, 0.08)
 
 [node name="TitleLabel" type="Label" parent="CanvasLayer"]
 offset_left = 28.0
@@ -149,6 +168,42 @@ offset_top = 676.0
 offset_right = 1256.0
 offset_bottom = 708.0
 text = "Cut late for near misses, then hijack trucks when traffic closes in."
+horizontal_alignment = 1
+
+[node name="ComboBurstLabel" type="Label" parent="CanvasLayer"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -88.0
+offset_right = 320.0
+offset_bottom = -16.0
+pivot_offset = Vector2(320, 36)
+theme_override_colors/font_color = Color(0.556863, 0.929412, 1, 1)
+theme_override_colors/font_outline_color = Color(0.0352941, 0.0431373, 0.0823529, 0.92)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 54
+text = "GOOD"
+horizontal_alignment = 1
+
+[node name="ComboDetailLabel" type="Label" parent="CanvasLayer"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -14.0
+offset_right = 360.0
+offset_bottom = 26.0
+pivot_offset = Vector2(360, 20)
+theme_override_colors/font_color = Color(0.713726, 0.92549, 1, 0.96)
+theme_override_colors/font_outline_color = Color(0.0352941, 0.0431373, 0.0823529, 0.9)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "Combo x1"
 horizontal_alignment = 1
 
 [node name="StartScreen" type="Control" parent="CanvasLayer"]

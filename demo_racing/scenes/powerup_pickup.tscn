@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/powerup_pickup.gd" id="1_pickup_script"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_core"]
+radius = 0.32
+height = 0.64
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+inner_radius = 0.38
+outer_radius = 0.52
+ring_sides = 10
+ring_segments = 18
+
+[sub_resource type="QuadMesh" id="QuadMesh_halo"]
+size = Vector2(1.9, 1.9)
+
+[node name="PowerupPickup" type="Node3D"]
+script = ExtResource("1_pickup_script")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="Core" type="MeshInstance3D" parent="VisualRoot"]
+mesh = SubResource("SphereMesh_core")
+
+[node name="RingOuter" type="MeshInstance3D" parent="VisualRoot"]
+mesh = SubResource("TorusMesh_ring")
+rotation_degrees = Vector3(90, 0, 0)
+
+[node name="RingInner" type="MeshInstance3D" parent="VisualRoot"]
+mesh = SubResource("TorusMesh_ring")
+scale = Vector3(0.76, 0.76, 0.76)
+
+[node name="Halo" type="MeshInstance3D" parent="VisualRoot"]
+mesh = SubResource("QuadMesh_halo")
+rotation_degrees = Vector3(-90, 0, 0)
+position = Vector3(0, -0.1, 0)
