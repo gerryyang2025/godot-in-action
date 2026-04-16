@@ -10,16 +10,68 @@
 godot --path demo_tps_art
 ```
 
-如果你的 Godot 不在 PATH 中，请用本机 Godot `4.6.2` 编辑器打开 `demo_tps_art/project.godot`。
+如果出现 `zsh: command not found: godot`，说明你本机还没安装 Godot CLI，或 Godot 不在 `PATH` 里。你有三种方式：
+
+- **方式 A（推荐，Homebrew）**：
+
+```sh
+brew install --cask godot
+godot --version
+godot --path demo_tps_art
+```
+
+- **方式 B（不改 PATH，直接用脚本启动）**：
+
+```sh
+./demo_tps_art/run.sh
+```
+
+- **方式 C（手动打开编辑器）**：用本机 Godot `4.6.2` 编辑器打开 `demo_tps_art/project.godot`。
 
 ## 测试
 
 ```sh
-godot --headless --path demo_tps_art --quit-after 1
 godot --headless --editor --quit --path demo_tps_art
+godot --headless --path demo_tps_art --quit-after 1
 ```
 
 当前版本已在 Godot `4.6.2.stable.official.71f334935` 通过上述两条 headless 检查。
+
+## 常见问题与规避
+
+### 1) 运行时报 “Unable to open file: res://.godot/imported/...”
+
+这通常不是 `assets/` 资源真的缺失，而是**首次导入还没生成项目内的导入缓存**（`demo_tps_art/.godot/imported/`）。
+在运行项目之前，先触发一次 editor 导入即可：
+
+```sh
+godot --headless --editor --quit --path demo_tps_art
+godot --path demo_tps_art
+```
+
+如果你怀疑导入缓存损坏，直接删除项目内缓存后重导入：
+
+```sh
+rm -rf demo_tps_art/.godot
+godot --headless --editor --quit --path demo_tps_art
+godot --path demo_tps_art
+```
+
+注意：`.godot/` 是**本机导入缓存**，不应提交到 Git；换机器/换平台需要重新导入一次是正常现象。
+
+### 2) headless 导入时报 “Could not create directory …/Library/Caches/Godot” 或写 user:// 失败
+
+这表示 Godot 在当前运行环境下**无法写入用户目录**（例如 `~/Library/Caches/Godot`、`~/Library/Application Support/Godot`、`user://` 日志等）。
+规避建议：
+
+- 优先在“正常本机终端环境”运行 headless 命令（不要在受限/沙盒环境中运行）。
+- 确保这些目录存在且可写：
+
+```sh
+mkdir -p "$HOME/Library/Caches/Godot" \
+         "$HOME/Library/Application Support/Godot" \
+         "$HOME/Library/Application Support/Godot/logs"
+```
 
 ## 操作
 
