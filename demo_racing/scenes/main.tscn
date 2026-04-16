@@ -1,0 +1,335 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
+[ext_resource type="PackedScene" path="res://scenes/player_car.tscn" id="2_player_scene"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/nfs_mw_9_0.mp3" id="3_music"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay/engine_loop.wav" id="4_engine_loop"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/start_run.wav" id="5_start_run"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay/jump.wav" id="6_jump"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay/near_miss.wav" id="7_near_miss"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay/hijack.wav" id="8_hijack"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/upgrade.wav" id="9_upgrade"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/promote.wav" id="10_promote"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/crash.wav" id="11_crash"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/fuel_empty.wav" id="12_fuel_empty"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_screen_panel"]
+bg_color = Color(0.0196078, 0.0352941, 0.0627451, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.27451, 0.847059, 1, 0.42)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.36)
+shadow_size = 14
+content_margin_left = 28.0
+content_margin_top = 24.0
+content_margin_right = 28.0
+content_margin_bottom = 24.0
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main_script")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, 26, 0)
+light_energy = 1.9
+shadow_enabled = true
+
+[node name="FillLightLeft" type="OmniLight3D" parent="."]
+position = Vector3(-9.5, 4.6, 6.5)
+light_color = Color(0.278431, 0.827451, 0.968627, 1)
+light_energy = 1.15
+omni_range = 28.0
+
+[node name="FillLightRight" type="OmniLight3D" parent="."]
+position = Vector3(9.5, 4.6, 6.5)
+light_color = Color(1, 0.631373, 0.192157, 1)
+light_energy = 1.05
+omni_range = 28.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 9.15, 15.2)
+fov = 68.0
+
+[node name="TrackRoot" type="Node3D" parent="."]
+
+[node name="TrafficRoot" type="Node3D" parent="."]
+
+[node name="PlayerCar" parent="." instance=ExtResource("2_player_scene")]
+position = Vector3(0, 0.55, 0)
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_music")
+volume_db = -10.0
+
+[node name="EngineLoop" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_engine_loop")
+volume_db = -26.0
+
+[node name="StartCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_start_run")
+volume_db = -7.0
+
+[node name="JumpCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_jump")
+volume_db = -10.0
+
+[node name="NearMissCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_near_miss")
+volume_db = -8.0
+max_polyphony = 3
+
+[node name="HijackCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_hijack")
+volume_db = -6.0
+
+[node name="UpgradeCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_upgrade")
+volume_db = -9.0
+
+[node name="PromoteCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_promote")
+volume_db = -7.0
+
+[node name="CrashCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_crash")
+volume_db = -4.0
+max_polyphony = 3
+
+[node name="FuelEmptyCue" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_fuel_empty")
+volume_db = -8.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 18.0
+offset_right = 360.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 28
+text = "Infinite Racer"
+
+[node name="MetricsLabel" type="Label" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 62.0
+offset_right = 760.0
+offset_bottom = 88.0
+text = "Speed 000 km/h   Distance 0 m   Score 0   Credits 0"
+
+[node name="FuelLabel" type="Label" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 92.0
+offset_right = 620.0
+offset_bottom = 118.0
+text = "Fuel ##########---------- 50%"
+
+[node name="ComboLabel" type="Label" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 122.0
+offset_right = 620.0
+offset_bottom = 148.0
+text = "Combo x0   Best x0   Hijack SEARCH"
+
+[node name="RankLabel" type="Label" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 152.0
+offset_right = 780.0
+offset_bottom = 178.0
+text = "Rank C City Sprinter   Accel 0   Speed 0   Eco 0"
+
+[node name="MessageLabel" type="Label" parent="CanvasLayer"]
+visible = false
+offset_left = 24.0
+offset_top = 676.0
+offset_right = 1256.0
+offset_bottom = 708.0
+text = "Cut late for near misses, then hijack trucks when traffic closes in."
+horizontal_alignment = 1
+
+[node name="StartScreen" type="Control" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+
+[node name="Shade" type="ColorRect" parent="CanvasLayer/StartScreen"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.0156863, 0.0235294, 0.0431373, 0.56)
+
+[node name="Padding" type="MarginContainer" parent="CanvasLayer/StartScreen"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+
+[node name="Center" type="CenterContainer" parent="CanvasLayer/StartScreen/Padding"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/StartScreen/Padding/Center"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_screen_panel")
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/StartScreen/Padding/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StartTagLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.513726, 0.784314, 0.92549, 1)
+theme_override_font_sizes/font_size = 16
+text = "高速简报"
+horizontal_alignment = 1
+
+[node name="StartTitleLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.843137, 0.972549, 1, 1)
+theme_override_font_sizes/font_size = 34
+text = "Infinite Racer"
+horizontal_alignment = 1
+
+[node name="StartSummaryLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.921569, 0.956863, 1, 1)
+theme_override_font_sizes/font_size = 19
+text = "在五车道高速里贴尾切线、连击补油，并用大型车辆劫持冲过密集封锁。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StartDivider" type="ColorRect" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.258824, 0.85098, 1, 0.62)
+
+[node name="StartInfoLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.827451, 0.901961, 0.964706, 1)
+theme_override_font_sizes/font_size = 18
+text = "目标：尽量跑得更远，用险超连击把燃油续住。"
+autowrap_mode = 3
+
+[node name="StartGarageLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.984314, 0.894118, 0.721569, 1)
+theme_override_font_sizes/font_size = 17
+text = "车库状态"
+autowrap_mode = 3
+
+[node name="StartPromptLabel" type="Label" parent="CanvasLayer/StartScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.513726, 0.784314, 0.92549, 1)
+theme_override_font_sizes/font_size = 18
+text = "按 Enter 发车。Space 只负责跳跃 / 劫持。"
+horizontal_alignment = 1
+
+[node name="AuthorLabel" type="Label" parent="CanvasLayer/StartScreen"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -38.0
+offset_right = -24.0
+offset_bottom = -14.0
+theme_override_colors/font_color = Color(0.721569, 0.831373, 0.917647, 0.72)
+theme_override_font_sizes/font_size = 14
+text = "Created by Gerry"
+horizontal_alignment = 2
+
+[node name="EndScreen" type="Control" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+
+[node name="Shade" type="ColorRect" parent="CanvasLayer/EndScreen"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.0156863, 0.0235294, 0.0431373, 0.62)
+
+[node name="Padding" type="MarginContainer" parent="CanvasLayer/EndScreen"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+
+[node name="Center" type="CenterContainer" parent="CanvasLayer/EndScreen/Padding"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/EndScreen/Padding/Center"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_screen_panel")
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/EndScreen/Padding/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResultTagLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.513726, 0.784314, 0.92549, 1)
+theme_override_font_sizes/font_size = 16
+text = "本局结算"
+horizontal_alignment = 1
+
+[node name="ResultTitleLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.843137, 0.972549, 1, 1)
+theme_override_font_sizes/font_size = 34
+text = "本局结束"
+horizontal_alignment = 1
+
+[node name="ResultSummaryLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.921569, 0.956863, 1, 1)
+theme_override_font_sizes/font_size = 19
+text = "继续把 credits 投进车库，再试着把这段高速跑得更远。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ResultDivider" type="ColorRect" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.258824, 0.85098, 1, 0.62)
+
+[node name="ResultStatsLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.827451, 0.901961, 0.964706, 1)
+theme_override_font_sizes/font_size = 18
+text = "结束原因：\n本局里程：0m"
+autowrap_mode = 3
+
+[node name="ResultGarageLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.984314, 0.894118, 0.721569, 1)
+theme_override_font_sizes/font_size = 17
+text = "下一趟出发前"
+autowrap_mode = 3
+
+[node name="ResultPromptLabel" type="Label" parent="CanvasLayer/EndScreen/Padding/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.513726, 0.784314, 0.92549, 1)
+theme_override_font_sizes/font_size = 18
+text = "按 Enter 再跑一局，或先按 1 / 2 / 3 / P 调整车库。"
+horizontal_alignment = 1

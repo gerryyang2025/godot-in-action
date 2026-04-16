@@ -1,11 +1,11 @@
 # godot-in-action
 
-这是一个 Godot 学习和 demo 开发工作台。仓库已经包含六个独立可运行项目：`demo_2d/` 的 `Signal Sweep`、`demo_3d/` 的 `Beacon Runner 3D`、`demo_2d_art/` 的 `Signal Sweep Art`、`demo_3d_art/` 的 `Beacon Runner 3D Art`、`demo_tps/` 的 `Tactical Proxy Strike`，以及 `demo_tps_art/` 的 `Tactical Proxy Strike Art`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
+这是一个 Godot 学习和 demo 开发工作台。仓库已经包含七个独立可运行项目：`demo_2d/` 的 `Signal Sweep`、`demo_3d/` 的 `Beacon Runner 3D`、`demo_2d_art/` 的 `Signal Sweep Art`、`demo_3d_art/` 的 `Beacon Runner 3D Art`、`demo_tps/` 的 `Tactical Proxy Strike`、`demo_tps_art/` 的 `Tactical Proxy Strike Art`，以及 `demo_racing/` 的 `Infinite Racer`；同时也把 Godot 引擎源码、官方文档源码、官方 demo 项目集和社区资源清单放在同一个目录中，方便离线检索、对照学习和快速取样。
 
 ## 仓库定位
 
 - 目标：为自定义 Godot demo 的设计、实现、验证提供本地参考资料和独立 demo 工程。
-- 当前状态：已包含独立 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/`、`demo_tps/` 和 `demo_tps_art/`；根目录仍是工作台，不是 Godot 项目。
+- 当前状态：已包含独立 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/`、`demo_tps/`、`demo_tps_art/` 和 `demo_racing/`；根目录仍是工作台，不是 Godot 项目。
 - 使用方式：把这里当作 Godot 本地知识库与样例库，而不是把根目录直接当成一个 Godot 工程打开。
 - GitHub 提交范围：提交本仓库原创文档、配置、独立 demo 和本地 Godot 参考资料目录；本地 macOS Godot 编辑器 app 暂不进普通 Git。
 
@@ -49,7 +49,13 @@ godot --path demo_tps
 godot --path demo_tps_art
 ```
 
-提交前快速验证六个 demo：
+运行当前 racing demo：
+
+```sh
+godot --path demo_racing
+```
+
+提交前快速验证七个 demo：
 
 ```sh
 godot --headless --path demo_2d --quit-after 1
@@ -64,6 +70,8 @@ godot --headless --path demo_tps --quit-after 1
 godot --headless --editor --quit --path demo_tps
 godot --headless --path demo_tps_art --quit-after 1
 godot --headless --editor --quit --path demo_tps_art
+godot --headless --path demo_racing --quit-after 1
+godot --headless --editor --quit --path demo_racing
 ```
 
 命令说明：
@@ -87,6 +95,7 @@ godot --headless --editor --quit --path demo_tps_art
 | `demo_3d_art/` | Beacon Runner 3D Art | 独立 3D art-pass demo | 保留 `demo_3d/` 玩法基线，验证材质 / 环境 / HUD 升级 |
 | `demo_tps/` | Tactical Proxy Strike | 独立 TPS demo | 参考 `godotengine/tps-demo` 的交互和模块划分，用内置几何体实现第三人称射击训练场 |
 | `demo_tps_art/` | Tactical Proxy Strike Art | 独立 TPS art-pass demo | 保留 `demo_tps/` 玩法基线，迁移参考机器人模型、工业材质和氛围光照以便直接对比 |
+| `demo_racing/` | Infinite Racer | 独立 racing demo | 以“高速闪避、险超补油、卡车劫持、车辆成长”为核心循环的 3D 街机竞速原型 |
 
 其中 `godot-4.6.2-stable/`、`godot-docs-stable/`、`godot-demo-projects-4.2-31d1c0c/`、`awesome-godot-master/` 和 `reference/` 是需要纳入 Git 的本地参考资料。Godot macOS 编辑器二进制不是 LLM 参考资料；请在本机另行安装 Godot 4.6.2，或用系统 PATH 中的 `godot` 命令打开当前或后续 demo。
 
@@ -195,8 +204,9 @@ godot --headless --editor --quit --path demo_tps_art
 | `Beacon Runner 3D Art` | `demo_3d_art/project.godot` | 保留 3D 基线玩法，升级为带命名材质、雾、导视光边和控制台 HUD 的独立 art-pass 场景 | 详见 `demo_3d_art/README.md`、`demo_3d_art/ART_DIRECTION.md`、`demo_3d_art/REFERENCES.md` |
 | `Tactical Proxy Strike` | `demo_tps/project.godot` | 第三人称肩后相机、瞄准态、玩家投射物、巡逻哨兵、敌方激光、90 秒清场目标 | 详见 `demo_tps/README.md`、`demo_tps/DESIGN.md`、`demo_tps/REFERENCES.md` |
 | `Tactical Proxy Strike Art` | `demo_tps_art/project.godot` | 保留 TPS 基线玩法，升级为参考机器人模型、工业门体、PBR 面板材质和更强的 art-pass 氛围 | 详见 `demo_tps_art/README.md`、`demo_tps_art/DESIGN.md`、`demo_tps_art/REFERENCES.md` |
+| `Infinite Racer` | `demo_racing/project.godot` | 三车道高速闪避、险超连击补油、卡车劫持无敌、credits 升级与 `C -> T` 晋升 | 详见 `demo_racing/README.md`、`demo_racing/DESIGN.md`、`demo_racing/REFERENCES.md` |
 
-其中 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/` 和 `demo_tps/` 仍以 Godot 内置节点、primitive、材质、Label 或轻量 shader 为主；`demo_tps_art/` 额外选择性复制了 `reference/tps-demo/` 的模型、贴图、音乐和音效资源，并在项目内记录来源与授权。
+其中 `demo_2d/`、`demo_3d/`、`demo_2d_art/`、`demo_3d_art/` 和 `demo_tps/` 仍以 Godot 内置节点、primitive、材质、Label 或轻量 shader 为主；`demo_tps_art/` 额外选择性复制了 `reference/tps-demo/` 的模型、贴图、音乐和音效资源，`demo_racing/` 则额外选择性复制了官方 `truck_town` demo 的车辆网格与贴图资源，并都在各自项目内记录来源与授权。
 
 ## 常用命令
 
@@ -278,6 +288,19 @@ godot --headless --path demo_tps_art --quit-after 1
 godot --headless --editor --quit --path demo_tps_art
 ```
 
+打开当前 racing demo：
+
+```sh
+godot --path demo_racing
+```
+
+提交前快速验证当前 racing demo：
+
+```sh
+godot --headless --path demo_racing --quit-after 1
+godot --headless --editor --quit --path demo_racing
+```
+
 ## 适合后续 LLM/代理的理解方式
 
 - 把本仓库理解成“Godot 本地参考仓库”，不是单一应用项目。
@@ -298,6 +321,7 @@ godot --headless --editor --quit --path demo_tps_art
 - `docs/PLAN_2D_ART.md`：2D demo 的美术、VFX、UI 和渲染优化计划。
 - `docs/PLAN_3D_ART.md`：3D demo 的模型、材质、灯光、相机、VFX 和渲染优化计划。
 - `docs/PLAN_TPS.md`：TPS demo 的相机、敌人状态机、战斗节奏和后续迭代计划。
+- `docs/PLAN_RACING.md`：racing demo 的险超、卡车劫持、成长和后续迭代计划。
 - `CONTRIBUTING.md`：人类和 AI 协作者的贡献流程。
 - `SECURITY.md`：安全问题报告范围和方式。
 - `SUPPORT.md`：求助入口和上游问题分流。

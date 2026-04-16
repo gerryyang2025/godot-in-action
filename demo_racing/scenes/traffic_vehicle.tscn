@@ -1,0 +1,111 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/traffic_vehicle.gd" id="1_vehicle_script"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/NormalCar1.obj" id="2_normal_car_1_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/NormalCar2.obj" id="3_normal_car_2_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/Taxi.obj" id="4_taxi_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/Cop.obj" id="5_cop_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/SUV.obj" id="6_suv_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/Ambulance.obj" id="7_ambulance_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/Bus.obj" id="8_bus_mesh"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/SchoolBus.obj" id="9_school_bus_mesh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_marker"]
+size = Vector3(2.05, 0.12, 2.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_light_strip"]
+size = Vector3(1.18, 0.08, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_roof_tag"]
+size = Vector3(0.92, 0.14, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_beacon"]
+size = Vector3(0.92, 0.12, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_top_marker"]
+size = Vector3(1.3, 0.12, 0.28)
+
+[node name="TrafficVehicle" type="Node3D"]
+script = ExtResource("1_vehicle_script")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="SedanRig" type="Node3D" parent="VisualRoot"]
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot/SedanRig"]
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="NormalCar1" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+mesh = ExtResource("2_normal_car_1_mesh")
+
+[node name="NormalCar2" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+visible = false
+mesh = ExtResource("3_normal_car_2_mesh")
+
+[node name="Taxi" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+visible = false
+mesh = ExtResource("4_taxi_mesh")
+
+[node name="Cop" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+visible = false
+mesh = ExtResource("5_cop_mesh")
+
+[node name="RoofTag" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+mesh = SubResource("BoxMesh_roof_tag")
+position = Vector3(0, 1.18, -0.04)
+
+[node name="FrontGlow" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+mesh = SubResource("BoxMesh_light_strip")
+position = Vector3(0, 0.48, 1.96)
+
+[node name="RearGlow" type="MeshInstance3D" parent="VisualRoot/SedanRig/ModelRoot"]
+mesh = SubResource("BoxMesh_light_strip")
+position = Vector3(0, 0.54, -1.96)
+
+[node name="UtilityRig" type="Node3D" parent="VisualRoot"]
+visible = false
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot/UtilityRig"]
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="SUV" type="MeshInstance3D" parent="VisualRoot/UtilityRig/ModelRoot"]
+mesh = ExtResource("6_suv_mesh")
+position = Vector3(0, 0.02, 0)
+
+[node name="Ambulance" type="MeshInstance3D" parent="VisualRoot/UtilityRig/ModelRoot"]
+visible = false
+mesh = ExtResource("7_ambulance_mesh")
+position = Vector3(0, 0.41, -0.77)
+
+[node name="RoofBeacon" type="MeshInstance3D" parent="VisualRoot/UtilityRig/ModelRoot"]
+mesh = SubResource("BoxMesh_beacon")
+position = Vector3(0, 1.42, 0.12)
+
+[node name="SafetyStrip" type="MeshInstance3D" parent="VisualRoot/UtilityRig/ModelRoot"]
+mesh = SubResource("BoxMesh_light_strip")
+position = Vector3(0, 0.86, -1.54)
+
+[node name="TrailerRig" type="Node3D" parent="VisualRoot"]
+visible = false
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot/TrailerRig"]
+
+[node name="Bus" type="MeshInstance3D" parent="VisualRoot/TrailerRig/ModelRoot"]
+mesh = ExtResource("8_bus_mesh")
+position = Vector3(0, 1.122, 1.765)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="SchoolBus" type="MeshInstance3D" parent="VisualRoot/TrailerRig/ModelRoot"]
+visible = false
+mesh = ExtResource("9_school_bus_mesh")
+position = Vector3(0, 1.122, 1.504)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="TopMarker" type="MeshInstance3D" parent="VisualRoot/TrailerRig/ModelRoot"]
+mesh = SubResource("BoxMesh_top_marker")
+position = Vector3(0, 1.92, 0.3)
+
+[node name="HijackMarker" type="MeshInstance3D" parent="VisualRoot"]
+mesh = SubResource("BoxMesh_marker")
+position = Vector3(0, 2.14, 1)
+visible = false

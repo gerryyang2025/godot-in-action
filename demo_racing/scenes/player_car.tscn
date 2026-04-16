@@ -1,0 +1,65 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/player_car.gd" id="1_player_script"]
+[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/SportsCar.obj" id="2_sports_car_mesh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_front_lip"]
+size = Vector3(1.44, 0.14, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wing"]
+size = Vector3(1.66, 0.08, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_side_blade"]
+size = Vector3(0.16, 0.12, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_glow_bar"]
+size = Vector3(1.18, 0.08, 0.2)
+
+[node name="PlayerCar" type="Node3D"]
+script = ExtResource("1_player_script")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot"]
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="HeroBody" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = ExtResource("2_sports_car_mesh")
+
+[node name="FrontLip" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_front_lip")
+position = Vector3(0, 0.12, 2.02)
+
+[node name="RearWing" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_wing")
+position = Vector3(0, 0.92, -1.78)
+
+[node name="RearWingFinL" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_front_lip")
+position = Vector3(0.68, 0.74, -1.78)
+rotation_degrees = Vector3(0, 90, 90)
+
+[node name="RearWingFinR" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_front_lip")
+position = Vector3(-0.68, 0.74, -1.78)
+rotation_degrees = Vector3(0, 90, 90)
+
+[node name="SideBladeL" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_side_blade")
+position = Vector3(0.9, 0.08, 0.05)
+
+[node name="SideBladeR" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_side_blade")
+position = Vector3(-0.9, 0.08, 0.05)
+
+[node name="HeadlightBar" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_glow_bar")
+position = Vector3(0, 0.46, 1.88)
+
+[node name="EngineGlow" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_glow_bar")
+position = Vector3(0, 0.26, -1.7)
+
+[node name="RoofLight" type="MeshInstance3D" parent="VisualRoot/ModelRoot"]
+mesh = SubResource("BoxMesh_glow_bar")
+position = Vector3(0, 1.04, -0.18)

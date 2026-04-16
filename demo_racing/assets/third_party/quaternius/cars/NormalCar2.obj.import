@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://d2ajajsvh42iy"
+path="res://.godot/imported/NormalCar2.obj-0137bb667362275c5088a3fcb9ed0434.mesh"
+
+[deps]
+
+files=["res://.godot/imported/NormalCar2.obj-0137bb667362275c5088a3fcb9ed0434.mesh"]
+
+source_file="res://assets/third_party/quaternius/cars/NormalCar2.obj"
+dest_files=["res://.godot/imported/NormalCar2.obj-0137bb667362275c5088a3fcb9ed0434.mesh", "res://.godot/imported/NormalCar2.obj-0137bb667362275c5088a3fcb9ed0434.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

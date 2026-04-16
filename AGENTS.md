@@ -41,6 +41,9 @@
 - `demo_tps/`
   - 当前独立 TPS demo：Tactical Proxy Strike。
   - 是我们自己的 Godot 项目，可以按用户需求修改。
+- `demo_racing/`
+  - 当前独立 racing demo：Slipstream Hijack。
+  - 是我们自己的 Godot 项目，可以按用户需求修改。
 - `demo_2d_art/`
   - 当前独立 2D art-pass demo：Signal Sweep Art。
   - 保留 `demo_2d/` 玩法基线，在独立目录中验证美术、HUD、shader 和反馈升级。
@@ -164,6 +167,19 @@ godot --headless --path demo_tps --quit-after 1
 godot --headless --editor --quit --path demo_tps
 ```
 
+运行当前 racing demo：
+
+```sh
+godot --path demo_racing
+```
+
+快速验证当前 racing demo：
+
+```sh
+godot --headless --path demo_racing --quit-after 1
+godot --headless --editor --quit --path demo_racing
+```
+
 运行当前 2D art demo：
 
 ```sh
@@ -234,6 +250,7 @@ godot --headless --editor --quit --path demo_3d_art
 - 2D demo 详细计划维护在 `docs/PLAN_2D.md`。
 - 3D demo 详细计划维护在 `docs/PLAN_3D.md`。
 - TPS demo 详细计划维护在 `docs/PLAN_TPS.md`。
+- Racing demo 详细计划维护在 `docs/PLAN_RACING.md`。
 - 2D art-pass demo 详细计划维护在 `docs/PLAN_2D_ART.md`。
 - 3D art-pass demo 详细计划维护在 `docs/PLAN_3D_ART.md`。
 - 贡献流程维护在 `CONTRIBUTING.md`。
