@@ -3,9 +3,12 @@ extends Node3D
 signal lane_changed(from_lane: int, to_lane: int)
 
 const BASE_HEIGHT := 0.55
-const LANE_CHANGE_SPEED := 18.0
+const LANE_CHANGE_SPEED := 22.0
 const JUMP_DURATION := 0.86
 const JUMP_HEIGHT := 1.32
+const STEALTH_BODY_OPACITY := 0.08
+const STEALTH_ACCENT_OPACITY := 0.11
+const STEALTH_GLOW_OPACITY := 0.06
 
 var _lane_positions: Array = [-4.8, -2.4, 0.0, 2.4, 4.8]
 var _lane_index := 2
@@ -20,7 +23,7 @@ var _hijack_proxy_position := Vector3.ZERO
 var _body_color := Color(0.227451, 0.788235, 0.917647, 1)
 var _accent_color := Color(1, 0.67451, 0.184314, 1)
 
-var _hero_overlay := StandardMaterial3D.new()
+var _body_material := StandardMaterial3D.new()
 var _kit_material := StandardMaterial3D.new()
 var _accent_material := StandardMaterial3D.new()
 var _glow_material := StandardMaterial3D.new()
@@ -109,12 +112,11 @@ func _process(delta: float) -> void:
 
 
 func _configure_materials() -> void:
-	_hero_overlay.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_hero_overlay.albedo_color = Color(1, 1, 1, 0.18)
-	_hero_overlay.metallic = 0.35
-	_hero_overlay.roughness = 0.24
-	_hero_overlay.emission_enabled = true
-	_hero_overlay.emission_energy_multiplier = 0.15
+	_body_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_body_material.metallic = 0.42
+	_body_material.roughness = 0.2
+	_body_material.emission_enabled = true
+	_body_material.emission_energy_multiplier = 0.18
 
 	_kit_material.roughness = 0.18
 	_kit_material.metallic = 0.45
@@ -137,7 +139,7 @@ func _configure_materials() -> void:
 
 
 func _assign_materials() -> void:
-	_hero_body.material_overlay = _hero_overlay
+	_hero_body.material_override = _body_material
 	for node in [_front_lip, _rear_wing, _rear_wing_fin_l, _rear_wing_fin_r]:
 		node.material_override = _kit_material
 	for node in [_side_blade_l, _side_blade_r]:
@@ -180,22 +182,23 @@ func _refresh_material_palette() -> void:
 	var body_color := _body_color
 	var accent_color := _accent_color
 	if _stealth_visual:
-		var cloak_pulse := 0.12 + 0.05 * (0.5 + 0.5 * sin(_pulse_time * 11.0))
+		var cloak_pulse := 0.02 * (0.5 + 0.5 * sin(_pulse_time * 11.0))
 		var cloak_highlight := Color(0.447059, 0.968627, 1.0, 1.0)
-		_hero_overlay.albedo_color = Color(cloak_highlight.r, cloak_highlight.g, cloak_highlight.b, cloak_pulse)
-		_hero_overlay.emission = cloak_highlight.lightened(0.12)
+		var cloaked_body := body_color.lerp(Color(0.168627, 0.360784, 0.505882, 1.0), 0.78)
+		_body_material.albedo_color = Color(cloaked_body.r, cloaked_body.g, cloaked_body.b, STEALTH_BODY_OPACITY + cloak_pulse)
+		_body_material.emission = cloak_highlight.darkened(0.04)
 		var kit_color := body_color.lerp(Color(0.168627, 0.360784, 0.505882, 1.0), 0.72)
-		_kit_material.albedo_color = Color(kit_color.r, kit_color.g, kit_color.b, 0.2 + cloak_pulse * 0.35)
+		_kit_material.albedo_color = Color(kit_color.r, kit_color.g, kit_color.b, STEALTH_BODY_OPACITY + cloak_pulse)
 		_kit_material.emission = cloak_highlight.darkened(0.18)
 		var stealth_accent := accent_color.lerp(cloak_highlight, 0.78)
-		_accent_material.albedo_color = Color(stealth_accent.r, stealth_accent.g, stealth_accent.b, 0.36 + cloak_pulse * 0.32)
+		_accent_material.albedo_color = Color(stealth_accent.r, stealth_accent.g, stealth_accent.b, STEALTH_ACCENT_OPACITY + cloak_pulse)
 		_accent_material.emission = stealth_accent.lightened(0.14)
-		_glow_material.albedo_color = Color(cloak_highlight.r, cloak_highlight.g, cloak_highlight.b, 0.56 + cloak_pulse * 0.28)
+		_glow_material.albedo_color = Color(cloak_highlight.r, cloak_highlight.g, cloak_highlight.b, STEALTH_GLOW_OPACITY + cloak_pulse * 0.7)
 		_glow_material.emission = cloak_highlight.lightened(0.18)
 		return
 
-	_hero_overlay.albedo_color = Color(body_color.r, body_color.g, body_color.b, 0.22)
-	_hero_overlay.emission = body_color.darkened(0.32)
+	_body_material.albedo_color = Color(body_color.r, body_color.g, body_color.b, 1.0)
+	_body_material.emission = body_color.darkened(0.42)
 
 	var kit_color := body_color.darkened(0.35)
 	_kit_material.albedo_color = Color(kit_color.r, kit_color.g, kit_color.b, 1.0)

@@ -14,7 +14,7 @@ const ROAD_WIDTH := 12.8
 const PLAYER_Z := 0.0
 const MAX_FUEL := 100.0
 const START_FUEL := 88.0
-const COMBO_WINDOW := 1.85
+const COMBO_WINDOW := 2.3
 const HIJACK_DURATION := 4.4
 const STEALTH_DURATION := 5.4
 const STEALTH_PICKUP_SCORE := 220
@@ -30,6 +30,13 @@ const COLLISION_RECOVERY_VISUAL_GRACE := 0.72
 const POST_HIJACK_INVULNERABILITY_DURATION := 0.95
 const DESPAWN_Z := 24.0
 const MAX_UPGRADE_LEVEL := 5
+const TRAFFIC_ACTIVE_CAP_EASY := 8
+const TRAFFIC_ACTIVE_CAP_HARD := 11
+const TRAFFIC_SPAWN_INTERVAL_EASY := 1.34
+const TRAFFIC_SPAWN_INTERVAL_HARD := 0.9
+const TRAFFIC_SECONDARY_WAVE_MAX_CHANCE := 0.08
+const TRAFFIC_LANE_SPACING_EASY := 26.0
+const TRAFFIC_LANE_SPACING_HARD := 22.0
 const LANE_X := [-4.8, -2.4, 0.0, 2.4, 4.8]
 const DIVIDER_X := [-3.6, -1.2, 1.2, 3.6]
 const VEHICLE_VARIANTS := {
@@ -101,6 +108,13 @@ const COMBO_CALLOUTS := [
 		"color": Color(1.0, 0.909804, 0.505882, 1.0),
 		"detail": "神走线，继续拉满",
 	},
+	{
+		"min_combo": 10,
+		"text": "I LOVE YOU",
+		"voice": "i_love_you",
+		"color": Color(1.0, 0.552941, 0.72549, 1.0),
+		"detail": "最高档喝彩已点亮",
+	},
 ]
 const VOICE_STREAM_PATHS := {
 	"go_go_go": "res://assets/audio/voice/go_go_go.wav",
@@ -113,6 +127,7 @@ const VOICE_STREAM_PATHS := {
 	"excellent": "res://assets/audio/voice/excellent.wav",
 	"amazing": "res://assets/audio/voice/amazing.wav",
 	"unbelievable": "res://assets/audio/voice/unbelievable.wav",
+	"i_love_you": "res://assets/audio/voice/i_love_you.wav",
 }
 
 const RANKS := [
@@ -366,14 +381,14 @@ func _configure_audio() -> void:
 	_engine_loop.play()
 
 
-func _play_voice(key: String, pitch_scale: float = 1.0) -> void:
+func _play_voice(key: String) -> void:
 	if not _audio_available() or not is_instance_valid(_voice_cue):
 		return
 	if not _voice_streams.has(key):
 		return
 
 	_voice_cue.stream = _voice_streams[key]
-	_voice_cue.pitch_scale = pitch_scale
+	_voice_cue.pitch_scale = 1.0
 	_voice_cue.stop()
 	_voice_cue.play()
 
@@ -590,7 +605,7 @@ func _start_run() -> void:
 	_reset_combo_feedback_visuals()
 	_hide_front_screens()
 	_play_cue(_start_cue, 1.0 + _rng.randf_range(-0.02, 0.02))
-	_play_voice("go_go_go", 1.02)
+	_play_voice("go_go_go")
 	_set_message("高速模式启动。先贴尾补油，接上大车后就能变线冲开整列车流。", 2.0)
 	_update_hud()
 
@@ -636,7 +651,7 @@ func _update_run(delta: float) -> void:
 	_spawn_timer -= delta
 	while _spawn_timer <= 0.0:
 		_spawn_wave()
-		_spawn_timer += lerpf(1.28, 0.7, _difficulty_ratio()) * _rng.randf_range(0.92, 1.18)
+		_spawn_timer += _next_spawn_interval()
 
 	_update_pickups(delta)
 	_update_traffic(delta)
@@ -909,7 +924,7 @@ func _award_combo(vehicle, source: StringName) -> void:
 
 	_show_combo_feedback(String(callout["text"]), detail, callout["color"], _combo)
 	_play_cue(_near_miss_cue, 1.0 + minf(0.22, float(_combo - 1) * 0.04), false)
-	_play_voice(String(callout["voice"]), 1.0 + minf(0.06, float(_combo - 1) * 0.01))
+	_play_voice(String(callout["voice"]))
 	if source == &"phase":
 		_set_message("隐身穿车 x%d  得分 +%d  燃油 +%d" % [_combo, score_gain, int(round(fuel_gain))], 1.15)
 	else:
@@ -1059,8 +1074,26 @@ func _difficulty_ratio() -> float:
 	return clampf(_distance_m / 2400.0, 0.0, 1.0)
 
 
+func _next_spawn_interval() -> float:
+	var difficulty := _difficulty_ratio()
+	return lerpf(TRAFFIC_SPAWN_INTERVAL_EASY, TRAFFIC_SPAWN_INTERVAL_HARD, difficulty) * _rng.randf_range(0.96, 1.18)
+
+
+func _active_traffic_count() -> int:
+	var count := 0
+	for vehicle in _traffic:
+		if is_instance_valid(vehicle) and vehicle != _active_hijack_vehicle:
+			count += 1
+	return count
+
+
 func _spawn_wave() -> void:
 	var difficulty := _difficulty_ratio()
+	var active_traffic := _active_traffic_count()
+	var traffic_cap := int(round(lerpf(TRAFFIC_ACTIVE_CAP_EASY, TRAFFIC_ACTIVE_CAP_HARD, difficulty)))
+	if active_traffic >= traffic_cap:
+		return
+
 	var patterns := [
 		[0],
 		[1],
@@ -1083,12 +1116,22 @@ func _spawn_wave() -> void:
 		patterns.append([0, 2, 3])
 		patterns.append([1, 2, 4])
 		patterns.append([0, 1, 4])
-		patterns.append([0, 2, 4])
-		patterns.append([0, 1, 3, 4])
-	var pattern: Array = patterns[_rng.randi_range(0, patterns.size() - 1)]
+
+	var max_lanes_per_wave := 2 if difficulty < 0.38 else 3
+	if traffic_cap - active_traffic <= 2:
+		max_lanes_per_wave = min(max_lanes_per_wave, 2)
+
+	var eligible_patterns: Array = []
+	for candidate in patterns:
+		if candidate.size() <= max_lanes_per_wave:
+			eligible_patterns.append(candidate)
+	if eligible_patterns.is_empty():
+		eligible_patterns = [[1], [2], [3]]
+
+	var pattern: Array = eligible_patterns[_rng.randi_range(0, eligible_patterns.size() - 1)]
 	var signature := str(pattern)
 	if signature == _last_wave_signature and _rng.randf() < 0.5:
-		pattern = patterns[_rng.randi_range(0, patterns.size() - 1)]
+		pattern = eligible_patterns[_rng.randi_range(0, eligible_patterns.size() - 1)]
 		signature = str(pattern)
 	_last_wave_signature = signature
 
@@ -1096,10 +1139,18 @@ func _spawn_wave() -> void:
 	for lane in pattern:
 		_spawn_vehicle_for_lane(int(lane), base_z - _rng.randf_range(0.0, 6.0), difficulty)
 
-	if difficulty > 0.42 and _rng.randf() < 0.18:
-		var secondary_pattern: Array = patterns[_rng.randi_range(0, patterns.size() - 1)]
+	var secondary_chance := lerpf(0.0, TRAFFIC_SECONDARY_WAVE_MAX_CHANCE, difficulty)
+	if difficulty > 0.5 and active_traffic <= traffic_cap - 3 and _rng.randf() < secondary_chance:
+		var secondary_candidates: Array = []
+		for candidate in eligible_patterns:
+			if candidate.size() <= 2:
+				secondary_candidates.append(candidate)
+		if secondary_candidates.is_empty():
+			secondary_candidates = [[1], [3]]
+
+		var secondary_pattern: Array = secondary_candidates[_rng.randi_range(0, secondary_candidates.size() - 1)]
 		if str(secondary_pattern) != signature:
-			var secondary_z := base_z - _rng.randf_range(20.0, 30.0)
+			var secondary_z := base_z - _rng.randf_range(26.0, 38.0)
 			for lane in secondary_pattern:
 				_spawn_vehicle_for_lane(int(lane), secondary_z - _rng.randf_range(0.0, 5.0), difficulty * 0.9)
 
@@ -1107,12 +1158,14 @@ func _spawn_wave() -> void:
 func _spawn_vehicle_for_lane(lane: int, desired_z: float, difficulty: float) -> void:
 	var kind := _pick_vehicle_kind(difficulty)
 	var start_z := desired_z
+	var lane_spacing := lerpf(TRAFFIC_LANE_SPACING_EASY, TRAFFIC_LANE_SPACING_HARD, difficulty)
+	var lane_backstep := maxf(18.0, lane_spacing - 2.0)
 
 	for vehicle in _traffic:
 		if not is_instance_valid(vehicle):
 			continue
-		if vehicle.get_lane_index() == lane and vehicle.position.z < start_z + 20.0:
-			start_z = minf(start_z, vehicle.position.z - 18.0)
+		if vehicle.get_lane_index() == lane and vehicle.position.z < start_z + lane_spacing:
+			start_z = minf(start_z, vehicle.position.z - lane_backstep)
 
 	var relative_speed := _rng.randf_range(0.72, 0.96 + difficulty * 0.12)
 	if kind == &"truck":
@@ -1372,15 +1425,40 @@ func _make_meter(ratio: float, length: int) -> String:
 
 
 func _build_track() -> void:
-	var road_material := _make_material(Color(0.0784314, 0.0862745, 0.109804, 1), 0.04)
-	var shoulder_material := _make_material(Color(0.0431373, 0.0705882, 0.0862745, 1), 0.18)
-	var divider_material := _make_material(Color(0.980392, 0.780392, 0.286275, 1), 0.38)
-	var skyline_material := _make_material(Color(0.121569, 0.192157, 0.329412, 1), 0.12)
+	var road_material := _make_material(Color(0.372549, 0.403922, 0.45098, 1), 0.08)
+	var shoulder_material := _make_material(Color(0.686275, 0.764706, 0.741176, 1), 0.14)
+	var divider_material := _make_material(Color(0.996078, 0.92549, 0.639216, 1), 0.22)
+	var skyline_materials := [
+		_make_material(Color(0.541176, 0.709804, 0.894118, 1), 0.1),
+		_make_material(Color(0.921569, 0.760784, 0.631373, 1), 0.08),
+		_make_material(Color(0.623529, 0.901961, 0.811765, 1), 0.09),
+		_make_material(Color(0.960784, 0.592157, 0.654902, 1), 0.1),
+	]
+	var skyline_trim_materials := [
+		_make_material(Color(0.992157, 0.94902, 0.803922, 1), 0.16),
+		_make_material(Color(0.368627, 0.87451, 0.984314, 1), 0.18),
+		_make_material(Color(1.0, 0.780392, 0.337255, 1), 0.15),
+	]
+	var skyline_window_materials := [
+		_make_glow_material(Color(0.964706, 0.964706, 0.862745, 1), 0.34),
+		_make_glow_material(Color(0.505882, 0.937255, 1.0, 1), 0.42),
+		_make_glow_material(Color(1.0, 0.654902, 0.827451, 1), 0.36),
+	]
+	var roadside_panel_materials := [
+		_make_glow_material(Color(1.0, 0.694118, 0.356863, 1), 0.34),
+		_make_glow_material(Color(0.411765, 0.882353, 0.976471, 1), 0.38),
+		_make_glow_material(Color(0.996078, 0.529412, 0.662745, 1), 0.34),
+	]
+	var roadside_trim_materials := [
+		_make_glow_material(Color(0.992157, 0.964706, 0.768627, 1), 0.28),
+		_make_glow_material(Color(0.686275, 0.94902, 0.894118, 1), 0.26),
+	]
 	var half_road := ROAD_WIDTH * 0.5
 	var shoulder_width := 0.55
 	var roadside_x := half_road + 1.15
 	var signal_x := half_road + 1.9
 	var skyline_x := half_road + 3.35
+	var billboard_x := half_road + 2.75
 
 	for segment_index in range(ROAD_SEGMENT_COUNT):
 		var segment := Node3D.new()
@@ -1402,6 +1480,13 @@ func _build_track() -> void:
 			_add_mesh_prop(segment, STREETLIGHT_MESH, Vector3(-roadside_x, 0.0, prop_z - 0.25), Vector3(0, 0, 0), Vector3(2.25, 2.25, 2.25))
 			_add_mesh_prop(segment, STREETLIGHT_MESH, Vector3(roadside_x, 0.0, prop_z + 0.25), Vector3(0, 180, 0), Vector3(2.25, 2.25, 2.25))
 
+			var roadside_left_material: StandardMaterial3D = roadside_panel_materials[(segment_index + prop_index) % roadside_panel_materials.size()]
+			var roadside_right_material: StandardMaterial3D = roadside_panel_materials[(segment_index + prop_index + 1) % roadside_panel_materials.size()]
+			_add_box(segment, Vector3(0.34, 0.03, 2.45), Vector3(-half_road - 0.9, 0.045, prop_z + 0.1), roadside_left_material)
+			_add_box(segment, Vector3(0.34, 0.03, 2.45), Vector3(half_road + 0.9, 0.045, prop_z - 0.1), roadside_right_material)
+			_add_box(segment, Vector3(0.16, 0.08, 2.55), Vector3(-half_road - 0.62, 0.08, prop_z + 0.1), roadside_trim_materials[prop_index % roadside_trim_materials.size()])
+			_add_box(segment, Vector3(0.16, 0.08, 2.55), Vector3(half_road + 0.62, 0.08, prop_z - 0.1), roadside_trim_materials[(prop_index + 1) % roadside_trim_materials.size()])
+
 			if prop_index % 2 == 0:
 				_add_mesh_prop(segment, TRAFFIC_LIGHT_MESH, Vector3(-signal_x, 0.0, prop_z + 1.2), Vector3(0, 90, 0), Vector3(4.4, 4.4, 4.4))
 				_add_mesh_prop(segment, STOP_SIGN_MESH, Vector3(signal_x - 0.24, 0.0, prop_z - 1.1), Vector3(0, -90, 0), Vector3(4.8, 4.8, 4.8))
@@ -1409,11 +1494,32 @@ func _build_track() -> void:
 				_add_mesh_prop(segment, WARNING_SIGN_MESH, Vector3(-signal_x + 0.28, 0.0, prop_z + 1.0), Vector3(0, 90, 0), Vector3(5.0, 5.0, 5.0))
 				_add_mesh_prop(segment, TRAFFIC_LIGHT_MESH, Vector3(signal_x, 0.0, prop_z - 1.35), Vector3(0, -90, 0), Vector3(4.4, 4.4, 4.4))
 
-		for block_index in range(3):
-			var skyline_z := -ROAD_SEGMENT_LENGTH * 0.5 + 5.0 + float(block_index) * 10.0
-			var skyline_height := 2.4 + float((segment_index + block_index) % 3) * 1.4
-			_add_box(segment, Vector3(2.4, skyline_height, 2.6), Vector3(-skyline_x, skyline_height * 0.5, skyline_z), skyline_material)
-			_add_box(segment, Vector3(2.1, skyline_height + 0.8, 2.2), Vector3(skyline_x - 0.2, (skyline_height + 0.8) * 0.5, skyline_z - 3.2), skyline_material)
+			var billboard_material: StandardMaterial3D = roadside_panel_materials[(segment_index + prop_index + 2) % roadside_panel_materials.size()]
+			var billboard_trim: StandardMaterial3D = roadside_trim_materials[(segment_index + prop_index) % roadside_trim_materials.size()]
+			if prop_index % 2 == 0:
+				_add_roadside_billboard(segment, Vector3(-billboard_x, 0.0, prop_z + 0.55), billboard_material, billboard_trim)
+			else:
+				_add_roadside_billboard(segment, Vector3(billboard_x, 0.0, prop_z - 0.55), billboard_material, billboard_trim)
+
+			for block_index in range(3):
+				var skyline_z := -ROAD_SEGMENT_LENGTH * 0.5 + 5.0 + float(block_index) * 10.0
+				var skyline_height := 2.4 + float((segment_index + block_index) % 3) * 1.4
+				var right_height := skyline_height + 0.8
+				var left_size := Vector3(2.4, skyline_height, 2.6)
+				var right_size := Vector3(2.1, right_height, 2.2)
+				var left_position := Vector3(-skyline_x, skyline_height * 0.5, skyline_z)
+				var right_position := Vector3(skyline_x - 0.2, right_height * 0.5, skyline_z - 3.2)
+				var left_material: StandardMaterial3D = skyline_materials[(segment_index + block_index) % skyline_materials.size()]
+				var right_material: StandardMaterial3D = skyline_materials[(segment_index + block_index + 2) % skyline_materials.size()]
+				var left_trim: StandardMaterial3D = skyline_trim_materials[(segment_index + block_index) % skyline_trim_materials.size()]
+				var right_trim: StandardMaterial3D = skyline_trim_materials[(segment_index + block_index + 1) % skyline_trim_materials.size()]
+				var left_window: StandardMaterial3D = skyline_window_materials[(segment_index + block_index) % skyline_window_materials.size()]
+				var right_window: StandardMaterial3D = skyline_window_materials[(segment_index + block_index + 1) % skyline_window_materials.size()]
+				var left_neon: StandardMaterial3D = skyline_window_materials[(segment_index + block_index + 2) % skyline_window_materials.size()]
+				var right_neon: StandardMaterial3D = skyline_window_materials[(segment_index + block_index) % skyline_window_materials.size()]
+
+				_add_arcade_building(segment, left_size, left_position, left_material, left_trim, left_window, left_neon, -1.0)
+				_add_arcade_building(segment, right_size, right_position, right_material, right_trim, right_window, right_neon, 1.0)
 
 
 func _make_material(albedo_color: Color, emission_energy: float) -> StandardMaterial3D:
@@ -1424,6 +1530,46 @@ func _make_material(albedo_color: Color, emission_energy: float) -> StandardMate
 	material.emission = albedo_color
 	material.emission_energy_multiplier = emission_energy
 	return material
+
+
+func _make_glow_material(albedo_color: Color, emission_energy: float, alpha: float = 1.0) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(albedo_color.r, albedo_color.g, albedo_color.b, alpha)
+	material.roughness = 0.08
+	material.metallic = 0.02
+	material.emission_enabled = true
+	material.emission = albedo_color
+	material.emission_energy_multiplier = emission_energy
+	if alpha < 0.999:
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	return material
+
+
+func _add_arcade_building(parent: Node3D, size: Vector3, position: Vector3, body_material: StandardMaterial3D, trim_material: StandardMaterial3D, window_material: StandardMaterial3D, neon_material: StandardMaterial3D, edge_sign: float) -> void:
+	_add_box(parent, size, position, body_material)
+	_add_box(parent, Vector3(size.x + 0.08, 0.18, size.z + 0.08), Vector3(position.x, position.y + size.y * 0.5 + 0.09, position.z), trim_material)
+	_add_box(parent, Vector3(size.x * 0.88, 0.16, 0.14), Vector3(position.x, position.y + size.y * 0.08, position.z + size.z * 0.5 + 0.05), trim_material)
+
+	var front_z := position.z + size.z * 0.5 + 0.06
+	var window_rows := clampi(int(floor(size.y / 1.45)), 2, 4)
+	var bottom_y := position.y - size.y * 0.5
+	var top_padding := 0.8
+	var bottom_padding := 0.7
+	var usable_height := maxf(0.8, size.y - top_padding - bottom_padding)
+	var row_step := usable_height / float(window_rows)
+	for row_index in range(window_rows):
+		var window_y := bottom_y + bottom_padding + row_step * float(row_index) + 0.18
+		_add_box(parent, Vector3(size.x * 0.72, 0.12, 0.08), Vector3(position.x, window_y, front_z), window_material)
+
+	_add_box(parent, Vector3(0.14, size.y * 0.74, 0.08), Vector3(position.x + edge_sign * size.x * 0.34, bottom_y + size.y * 0.48, front_z), neon_material)
+	_add_box(parent, Vector3(size.x * 0.34, 0.14, 0.08), Vector3(position.x, position.y + size.y * 0.18, front_z), neon_material)
+
+
+func _add_roadside_billboard(parent: Node3D, base_position: Vector3, panel_material: StandardMaterial3D, trim_material: StandardMaterial3D) -> void:
+	_add_box(parent, Vector3(0.12, 2.0, 0.12), Vector3(base_position.x, 1.0, base_position.z), trim_material)
+	_add_box(parent, Vector3(0.12, 1.0, 1.72), Vector3(base_position.x, 2.15, base_position.z), panel_material)
+	_add_box(parent, Vector3(0.12, 0.14, 1.84), Vector3(base_position.x, 2.62, base_position.z), trim_material)
+	_add_box(parent, Vector3(0.12, 0.12, 1.56), Vector3(base_position.x, 1.85, base_position.z), trim_material)
 
 
 func _add_box(parent: Node3D, size: Vector3, position: Vector3, material: StandardMaterial3D) -> void:

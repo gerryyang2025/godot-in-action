@@ -92,6 +92,7 @@
 - `assets/audio/voice/excellent.wav`
 - `assets/audio/voice/amazing.wav`
 - `assets/audio/voice/unbelievable.wav`
+- `assets/audio/voice/i_love_you.wav`
 
 ## 修改方式
 

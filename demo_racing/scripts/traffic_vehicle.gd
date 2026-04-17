@@ -6,6 +6,12 @@ const TRUCK_HIJACK_FRONT_BUFFER := 3.0
 const RAM_DURATION := 0.95
 const RAM_GRAVITY := 16.5
 const RAM_DESPAWN_X := 14.0
+const NEAR_MISS_ARM_BACK_BUFFER := 13.5
+const NEAR_MISS_ARM_FRONT_BUFFER := 0.8
+const NEAR_MISS_CLEAR_BUFFER := 1.4
+const CAR_COLLISION_DEPTH := 1.45
+const VAN_COLLISION_DEPTH := 1.95
+const TRUCK_COLLISION_DEPTH := 2.85
 
 var lane_index := 1
 var vehicle_kind: StringName = &"car"
@@ -425,7 +431,14 @@ func begin_ram_knockback(source_x: float, run_speed: float) -> void:
 
 
 func can_arm_near_miss(player_z: float) -> bool:
-	return vehicle_kind != &"truck" and not _rammed and not near_miss_pending and not near_miss_awarded and position.z > player_z - 10.0 and position.z < player_z - 1.0
+	return (
+		vehicle_kind != &"truck"
+		and not _rammed
+		and not near_miss_pending
+		and not near_miss_awarded
+		and position.z > player_z - NEAR_MISS_ARM_BACK_BUFFER
+		and position.z < player_z + NEAR_MISS_ARM_FRONT_BUFFER
+	)
 
 
 func arm_near_miss() -> void:
@@ -433,7 +446,7 @@ func arm_near_miss() -> void:
 
 
 func has_cleared_player(player_z: float) -> bool:
-	return not _rammed and near_miss_pending and position.z > player_z + 2.2
+	return not _rammed and near_miss_pending and position.z > player_z + NEAR_MISS_CLEAR_BUFFER
 
 
 func mark_near_miss_awarded() -> void:
@@ -447,9 +460,11 @@ func is_collision_threat(player_z: float) -> bool:
 
 	var depth := 1.8
 	if vehicle_kind == &"truck":
-		depth = 3.2
+		depth = TRUCK_COLLISION_DEPTH
 	elif vehicle_kind == &"van":
-		depth = 2.35
+		depth = VAN_COLLISION_DEPTH
+	else:
+		depth = CAR_COLLISION_DEPTH
 
 	return abs(position.z - player_z) < depth
 
