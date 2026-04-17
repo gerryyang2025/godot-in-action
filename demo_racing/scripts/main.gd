@@ -2,10 +2,10 @@ extends Node3D
 
 const TRAFFIC_SCENE = preload("res://scenes/traffic_vehicle.tscn")
 const PICKUP_SCENE = preload("res://scenes/powerup_pickup.tscn")
-const STREETLIGHT_MESH = preload("res://assets/third_party/quaternius/modular_streets/Streetlight_Double.obj")
-const TRAFFIC_LIGHT_MESH = preload("res://assets/third_party/quaternius/modular_streets/TrafficLight.obj")
-const STOP_SIGN_MESH = preload("res://assets/third_party/quaternius/modular_streets/Sign_Stop.obj")
-const WARNING_SIGN_MESH = preload("res://assets/third_party/quaternius/modular_streets/Sign_Triangle.obj")
+const STREETLIGHT_MESH = preload("res://assets/runtime/meshes/props/streetlight_double.res")
+const TRAFFIC_LIGHT_MESH = preload("res://assets/runtime/meshes/props/traffic_light.res")
+const STOP_SIGN_MESH = preload("res://assets/runtime/meshes/props/sign_stop.res")
+const WARNING_SIGN_MESH = preload("res://assets/runtime/meshes/props/sign_triangle.res")
 
 const SAVE_PATH := "user://demo_racing_save.cfg"
 const ROAD_SEGMENT_LENGTH := 32.0
@@ -117,17 +117,17 @@ const COMBO_CALLOUTS := [
 	},
 ]
 const VOICE_STREAM_PATHS := {
-	"go_go_go": "res://assets/audio/voice/go_go_go.wav",
-	"good": "res://assets/audio/voice/good.wav",
-	"cool": "res://assets/audio/voice/cool.wav",
-	"great": "res://assets/audio/voice/great.wav",
-	"perfect": "res://assets/audio/voice/perfect.wav",
-	"well_done": "res://assets/audio/voice/well_done.wav",
-	"wonderful": "res://assets/audio/voice/wonderful.wav",
-	"excellent": "res://assets/audio/voice/excellent.wav",
-	"amazing": "res://assets/audio/voice/amazing.wav",
-	"unbelievable": "res://assets/audio/voice/unbelievable.wav",
-	"i_love_you": "res://assets/audio/voice/i_love_you.wav",
+	"go_go_go": "res://assets/runtime/audio/voice/go_go_go.res",
+	"good": "res://assets/runtime/audio/voice/good.res",
+	"cool": "res://assets/runtime/audio/voice/cool.res",
+	"great": "res://assets/runtime/audio/voice/great.res",
+	"perfect": "res://assets/runtime/audio/voice/perfect.res",
+	"well_done": "res://assets/runtime/audio/voice/well_done.res",
+	"wonderful": "res://assets/runtime/audio/voice/wonderful.res",
+	"excellent": "res://assets/runtime/audio/voice/excellent.res",
+	"amazing": "res://assets/runtime/audio/voice/amazing.res",
+	"unbelievable": "res://assets/runtime/audio/voice/unbelievable.res",
+	"i_love_you": "res://assets/runtime/audio/voice/i_love_you.res",
 }
 
 const RANKS := [

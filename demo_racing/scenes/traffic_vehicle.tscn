@@ -1,14 +1,14 @@
 [gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/traffic_vehicle.gd" id="1_vehicle_script"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/NormalCar1.obj" id="2_normal_car_1_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/NormalCar2.obj" id="3_normal_car_2_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/Taxi.obj" id="4_taxi_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/Cop.obj" id="5_cop_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/SUV.obj" id="6_suv_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/Ambulance.obj" id="7_ambulance_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/Bus.obj" id="8_bus_mesh"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/public_transport/SchoolBus.obj" id="9_school_bus_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/normal_car_1.res" id="2_normal_car_1_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/normal_car_2.res" id="3_normal_car_2_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/taxi.res" id="4_taxi_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/cop.res" id="5_cop_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/suv.res" id="6_suv_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/ambulance.res" id="7_ambulance_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/bus.res" id="8_bus_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/school_bus.res" id="9_school_bus_mesh"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_marker"]
 size = Vector3(2.05, 0.12, 2.9)

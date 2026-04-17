@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/player_car.gd" id="1_player_script"]
-[ext_resource type="Mesh" path="res://assets/third_party/quaternius/cars/SportsCar.obj" id="2_sports_car_mesh"]
+[ext_resource type="Mesh" path="res://assets/runtime/meshes/vehicles/sports_car.res" id="2_sports_car_mesh"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_front_lip"]
 size = Vector3(1.44, 0.14, 0.4)

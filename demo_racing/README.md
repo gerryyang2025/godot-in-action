@@ -17,7 +17,10 @@ godot --path demo_racing
 ```sh
 godot --headless --path demo_racing --quit-after 1
 godot --headless --editor --quit --path demo_racing
+./demo_racing/tools/verify_fresh_checkout.sh
 ```
+
+其中 `verify_fresh_checkout.sh` 会把 `demo_racing/` 复制到一个不带项目级 `.godot/` 缓存的临时目录里，再执行启动和编辑器导入检查；它用于保证新环境 `git clone` 后也能直接运行，而不是只在当前机器导入过一次后才正常。
 
 ## 操作
 
@@ -48,7 +51,10 @@ godot --headless --editor --quit --path demo_racing
 - `scripts/player_car.gd`：变线、跳跃、劫持状态下的玩家车辆表现。
 - `scripts/traffic_vehicle.gd`：车流车型变体切换、近身判定和大车劫持状态。
 - `assets/third_party/quaternius/`：当前接入的 Quaternius CC0 车辆与道路装饰资源。
+- `assets/runtime/`：从 OBJ 和音频源文件导出的正式 `.res` 运行时资源，保证 fresh clone 也能直接 `godot --path demo_racing`，不依赖项目级 `.godot/imported/` 缓存。
 - `tools/generate_audio.py`：本地生成背景音乐、发动机循环和玩法提示音的脚本。
+- `tools/export_runtime_assets.gd`：当第三方模型或音频源文件更新后，重新导出 `assets/runtime/` 的 Godot 运行时资源。
+- `tools/verify_fresh_checkout.sh`：在临时目录中模拟一个没有 `.godot/` 缓存的新环境，并执行启动级验证。
 - `DESIGN.md`：首版范围和设计取舍。
 - `REFERENCES.md`：使用过的本地参考资料和外部素材入口。
 - `CREDITS.md`：第三方资源来源与授权说明。
