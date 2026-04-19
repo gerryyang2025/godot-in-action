@@ -432,8 +432,7 @@ func begin_ram_knockback(source_x: float, run_speed: float) -> void:
 
 func can_arm_near_miss(player_z: float) -> bool:
 	return (
-		vehicle_kind != &"truck"
-		and not _rammed
+		not _rammed
 		and not near_miss_pending
 		and not near_miss_awarded
 		and position.z > player_z - NEAR_MISS_ARM_BACK_BUFFER
