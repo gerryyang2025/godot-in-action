@@ -68,6 +68,10 @@ promote_rank={
 ]
 }
 
+[gui]
+
+theme/custom_font="res://assets/fonts/DroidSansFallback.ttf"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

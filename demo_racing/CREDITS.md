@@ -78,6 +78,23 @@
 - `assets/audio/ui/crash.wav`
 - `assets/audio/ui/fuel_empty.wav`
 
+## 字体资源
+
+### Droid Sans Fallback
+
+来源：
+
+- `godot-demo-projects-4.2-31d1c0c/gui/translation/font/DroidSansFallback.ttf`
+
+当前接入文件：
+
+- `assets/fonts/DroidSansFallback.ttf`
+- `assets/fonts/LICENSE.DroidSans.txt`
+
+当前用途：
+
+- 作为 `demo_racing` 的项目级 GUI 默认字体，用于覆盖 Web 导出时首页、结算页和 HUD 的中文字符显示，避免浏览器环境下默认字体回退不稳定导致乱码。
+
 ## 本地语音提示
 
 以下 Combo 语音提示由开发机上的系统语音本地合成，用于玩法反馈验证：

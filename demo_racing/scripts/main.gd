@@ -542,11 +542,24 @@ func _process(delta: float) -> void:
 		_update_hud()
 
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and (not event.pressed or event.echo):
+		return
+
+	if _state == GameState.PLAYING:
+		return
+
+	if _is_start_game_event(event):
+		_start_run()
+		get_viewport().set_input_as_handled()
+		return
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and (not event.pressed or event.echo):
 		return
 
-	if event.is_action_pressed(&"start_game"):
+	if _is_start_game_event(event):
 		if _state != GameState.PLAYING:
 			_start_run()
 			get_viewport().set_input_as_handled()
@@ -576,6 +589,21 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(&"promote_rank"):
 		_promote_rank()
 		get_viewport().set_input_as_handled()
+
+
+func _is_start_game_event(event: InputEvent) -> bool:
+	if event.is_action_pressed(&"start_game"):
+		return true
+
+	if event is InputEventKey:
+		return (
+			event.keycode == KEY_ENTER
+			or event.keycode == KEY_KP_ENTER
+			or event.physical_keycode == KEY_ENTER
+			or event.physical_keycode == KEY_KP_ENTER
+		)
+
+	return false
 
 
 func _start_run() -> void:
@@ -1245,6 +1273,7 @@ func _refresh_start_screen() -> void:
 		"冲撞：劫持期间撞上同车道车辆会把它们甩飞，还会补一点劫持持续时间。",
 		"高连击：Combo 越高，语音鼓励越强；5 连击后还会触发短暂节油窗口。",
 		"操作：A / D 或方向键变线，Space 跳跃 / 劫持，Enter 发车，1 / 2 / 3 升级，P 晋升。",
+		"Web：浏览器版如果键盘暂时没响应，先点一下游戏画面再按 Enter。",
 	])
 
 	_start_tag_label.text = "高速简报"
@@ -1252,7 +1281,7 @@ func _refresh_start_screen() -> void:
 	_start_summary_label.text = "在五车道高速里贴尾切线、连击补油，并在劫持大型车辆后直接撞开密集封锁。"
 	_start_info_label.text = "\n".join(info_lines)
 	_start_garage_label.text = _garage_status_text("车库状态", true)
-	_start_prompt_label.text = "按 Enter 发车。Space 只负责跳跃 / 劫持。"
+	_start_prompt_label.text = "按 Enter 发车。Web 版若没响应先点一下画面。Space 只负责跳跃 / 劫持。"
 
 	_start_tag_label.modulate = accent_color
 	_start_title_label.modulate = title_color
@@ -1296,7 +1325,7 @@ func _refresh_end_screen() -> void:
 	_result_summary_label.text = report_summary
 	_result_stats_label.text = "\n".join(report_lines)
 	_result_garage_label.text = _garage_status_text("下一趟出发前", false)
-	_result_prompt_label.text = "按 Enter 再跑一局，或先按 1 / 2 / 3 / P 调整车库。"
+	_result_prompt_label.text = "按 Enter 再跑一局。Web 版若没响应先点一下画面，或先按 1 / 2 / 3 / P 调整车库。"
 
 	_result_tag_label.modulate = accent_color
 	_result_title_label.modulate = title_color

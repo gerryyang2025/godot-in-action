@@ -11,6 +11,7 @@
 .godot/
 .import/
 export_presets.cfg
+!demo_racing/export_presets.cfg
 
 # Godot exports / builds
 builds/

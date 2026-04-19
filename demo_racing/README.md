@@ -22,11 +22,44 @@ godot --headless --editor --quit --path demo_racing
 
 其中 `verify_fresh_checkout.sh` 会把 `demo_racing/` 复制到一个不带项目级 `.godot/` 缓存的临时目录里，再执行启动和编辑器导入检查；它用于保证新环境 `git clone` 后也能直接运行，而不是只在当前机器导入过一次后才正常。
 
+## Web 导出
+
+项目已经附带 `demo_racing/export_presets.cfg`，可直接在 Godot 4.6.2 编辑器里添加好的 `Web` 预设基础上导出。
+
+```sh
+godot --headless --path demo_racing --export-release Web demo_racing/dist/web/index.html
+```
+
+导出前请先在 Godot 编辑器里安装对应版本的 Web export templates。导出后的浏览器版建议通过本地 HTTP 服务预览，而不是直接双击 `index.html`：
+
+```sh
+python3 -m http.server 8060 --directory demo_racing/dist/web
+```
+
+这个命令的作用是：在本机启动一个最简 HTTP 静态文件服务，把 `demo_racing/dist/web/` 当作网站根目录提供给浏览器访问。
+
+- `python3`：使用本机安装的 Python 3。
+- `-m http.server`：直接运行 Python 标准库自带的轻量 HTTP 服务器模块，不需要额外安装依赖。
+- `8060`：让这个本地服务监听 `8060` 端口。
+- `--directory demo_racing/dist/web`：把导出的 Web 文件目录作为服务根目录，对外提供 `index.html`、`index.js`、`index.wasm`、`index.pck` 等文件。
+
+这样浏览器访问时走的是 `http://localhost:8060`，而不是 `file://` 本地文件协议。Godot Web 导出依赖浏览器通过 HTTP 加载旁边的 `.js`、`.wasm`、`.pck` 等资源，因此推荐用这个方式预览。
+
+如果你想直接一键预览，在 macOS 下也可以双击 `demo_racing/dist/web/preview_web.command`。这个脚本本质上就是在导出目录里启动同样的本地 HTTP 服务，并自动尝试打开默认浏览器。
+
+然后打开 `http://localhost:8060`。
+
+Web 版说明：
+
+- 推荐优先用 Chromium 系浏览器或 Firefox，Safari 的 WebGL 2 兼容性相对更挑。
+- 开始页和结算页默认仍用 `Enter` 开始；如果浏览器里键盘一开始没响应，先点一下游戏画面再按键。
+- 车库存档仍写入 `user://demo_racing_save.cfg`；在 Web 平台上这依赖浏览器的 IndexedDB 持久化能力。
+
 ## 操作
 
 - `A` / `D` 或方向键左右：五车道切线
 - `Space`：起跳；贴近同车道大型车辆时会触发劫持
-- `Enter`：从开始页或结算页进入下一局
+- `Enter`：从开始页或结算页进入下一局；Web 版若键盘没响应先点一下游戏画面
 - `1`：升级加速度
 - `2`：升级最高速
 - `3`：升级节油
